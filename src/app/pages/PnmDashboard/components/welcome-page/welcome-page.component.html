@@ -1,0 +1,194 @@
+<div #scrollElement>
+    <div class="imagelogo">
+<div class="imagebuttons">
+    <div class="row">
+        <p style="padding-left: 10px;" class="titleofpage">{{"Manage your business by managing your customer relationships"|translate}}</p>
+    </div>
+    <div class="row m-1 mb-3">
+        <p style="padding-left: 10px;" class="titleofpage">{{"and projects, with a precise temporal vision"|translate}}</p>
+    </div>
+    <div class="row m-1 mb-3">
+        <p style="padding-left: 10px;" class="disofpage">{{"Management, CRM, planning, reporting, production monitoring."|translate}}</p>
+    </div>
+<div class="row ">
+<div class="col-sm-6  col-md-5 col-lg-3 col-xl-3">
+    <button  style="background-color: #055cf3;" (click)="locationchange('LiveDemo')"
+    class="livebuttonclass">{{'Live Demo'|translate}} </button>
+</div>
+<div class="col-sm-6  col-md-5 col-lg-3 col-xl-3">
+    <button style="background-color: green;margin-left: 30px;" (click)="locationchange('TestIt')" 
+    class="livebuttonclass" >{{'Test It'|translate}} </button>
+</div>
+</div>
+</div>
+        </div>
+ 
+    <div class="row mt-2 mb-2 ">
+        <div class="col-sm-12  col-md-12 col-lg-6 col-xl-6">
+            <div class="imageright1"></div>
+        </div>
+        <div class="col-sm-12  col-md-12 col-lg-6 col-xl-6" >
+            <div style="padding: 10px;background-color: black;" class="textcontentbody">
+                <h1 class="titleclass">{{'Management Of Time'|translate}}</h1>
+                <div class="row" *ngFor="let x of management">
+                    <div class="col-2"><mat-icon>done</mat-icon></div>
+                    <div class="col-10">
+                        <h2 style="color:white">
+                            {{x|translate}}
+                        </h2>
+                    </div>
+                </div>
+            <div class="row mt-4 justify-content-end">
+                <div class="col-5 p-0">
+                    <button (click)="locationchange('Management')"
+                    class="buttonclass">{{'En savoir plus'|translate}}
+                </button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <div class="row mt-2 mb-2 ">
+        <div
+            class="col-12 order-2  col-sm-12 order-sm-2 col-md-12 order-md-2 col-lg-6 order-lg-1 order-xl-1 col-xl-6">
+            <div style="padding: 10px;" class="textcontentbody">
+                <h1 class="titleclass">{{'Customer Relationship Management'|translate}}</h1>
+                <div class="row" *ngFor="let x of planning">
+                    <div class="col-2"><mat-icon>done</mat-icon></div>
+                    <div class="col-10">
+                        <h2>
+                            {{x|translate}}
+                        </h2>
+                    </div>
+                </div>
+            <div class="row mt-4 justify-content-end">
+                <div class="col-5 p-0">
+                    <button (click)="locationchange('Planning')"
+                    class="buttonclass">{{'En savoir plus'|translate}}
+                </button>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div
+            class=" col-12 order-1 col-sm-12 order-sm-1 col-md-12 order-md-1 col-lg-6 order-lg-2 col-xl-6 order-xl-2">
+            <div class="imageright2"></div>
+        </div>
+    </div>
+
+    <div class="row mt-2 mb-2" >
+        <div class="col-sm-12  col-md-12 col-lg-6 col-xl-6  ">
+            <div class="imageright3"></div>
+        </div>
+        <div class="col-sm-12  col-md-12 col-lg-6 col-xl-6">
+            <div style="padding: 10px;background-color: black;" class="textcontentbody">
+                <h1 class="titleclass">{{"Project Management"|translate}}</h1>
+                <div class="row" *ngFor="let x of map">
+                    <div class="col-2"><mat-icon>done</mat-icon></div>
+                    <div class="col-10">
+                        <h2 style="color:white">
+                            {{x|translate}}
+                        </h2>
+                    </div>
+                </div>
+            <div class="row mt-4 justify-content-end">
+                <div class="col-5 p-0">
+                    <button (click)="locationchange('Map')"
+                    class="buttonclass">{{'En savoir plus'|translate}}
+                </button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-2 mb-2 ">
+        <div
+            class=" col-12 order-2  col-sm-12 order-sm-2 col-md-12 order-md-2 col-lg-6 order-lg-1 order-xl-1 col-xl-6">
+            <div style="padding: 10px;" class="textcontentbody">
+                <h1 class="titleclass">{{'Automated Management'|translate}}</h1>
+                <div class="row" *ngFor="let x of reporting">
+                    <div class="col-2"><mat-icon>done</mat-icon></div>
+                    <div class="col-10">
+                        <h2>
+                            {{x|translate}}
+                        </h2>
+                    </div>
+                </div>
+            <div class="row mt-4 justify-content-end">
+                <div class="col-5 p-0">
+                    <button (click)="locationchange('Reporting')"
+                    class="buttonclass">{{'En savoir plus'|translate}}
+                </button>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div
+            class="  col-12 order-1 col-sm-12 order-sm-1 col-md-12 order-md-1 col-lg-6 order-lg-2 col-xl-6 order-xl-2">
+            <div class="imageright4"></div>
+        </div>
+    </div>
+
+    <div class="row mt-2 mb-2 " >
+        <div class="col-sm-12  col-md-12 col-lg-6 col-xl-6 ">
+            <div class="imageright5"></div>
+        </div>
+        <div class="col-sm-12  col-md-12 col-lg-6 col-xl-6">
+            <div style="padding: 10px;background-color: black;" class="textcontentbody">
+                <h1 class="titleclass">{{'Document Management'|translate}}</h1>
+                <div class="row" *ngFor="let x of settings">
+                    <div class="col-2"><mat-icon>done</mat-icon></div>
+                    <div class="col-10">
+                        <h2 style="color:white">
+                            {{x|translate}}
+                        </h2>
+                    </div>
+                </div>
+            <div class="row mt-4 justify-content-end">
+                <div class="col-5 p-0">
+                    <button (click)="locationchange('Settings')"
+                    class="buttonclass">{{'En savoir plus'|translate}}
+                </button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="row mt-2 mb-2 ">
+        <div
+            class="col-12 order-2  col-sm-12 order-sm-2 col-md-12 order-md-2 col-lg-6 order-lg-1 order-xl-1 col-xl-6">
+            <div style="padding: 10px;" class="textcontentbody">
+                <h1 class="titleclass">{{'Fichiers & notes'|translate}}</h1>
+                <div class="row" *ngFor="let x of management">
+                    <div class="col-1"></div>
+                    <div class="col-1"><mat-icon>done</mat-icon></div>
+                    <div class="col-10">
+                        <h2>
+                            {{x|translate}}
+                        </h2>
+                    </div>
+                </div>
+            <div class="row mt-4 justify-content-end">
+                <div class="col-4">
+                    <button (click)="locationchange('Fichiers&notes')"
+                    class="buttonclass">{{'En savoir plus'|translate}}
+                </button>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div
+            class="col-12 order-1 col-sm-12 order-sm-1 col-md-12 order-md-1 col-lg-6 order-lg-2 col-xl-6 order-xl-2">
+            <div class="imageright6"></div>
+        </div>
+    </div> -->
+</div>

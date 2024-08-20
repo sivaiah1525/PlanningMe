@@ -1,0 +1,31 @@
+<ng-container *ngIf="resposncesstatus==true">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <div class="card">
+              <div class="card-body">
+                <h1 class="card-title text-center" style="color: blue;">Authentication Successfull!</h1>
+                <p class="card-text text-center">You have successfully authenticated with our system.</p>
+                <p class="card-text text-center">You can now access the protected features of our application.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+</ng-container>
+
+  <ng-container *ngIf="resposncesstatus==false">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="card-title text-center" style="color: red;">Authentication Failed</h1>
+                        <p class="card-text text-center">Sorry, there was an error during the authentication process.</p>
+                        <p class="card-text text-center">Please try again later or contact support for assistance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </ng-container>

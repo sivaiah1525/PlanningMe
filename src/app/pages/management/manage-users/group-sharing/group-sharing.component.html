@@ -1,0 +1,45 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;"> person</mat-icon>
+        {{'Group Sharing'|translate}}
+    </h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+<mat-dialog-content style="margin: 0 !important;">
+
+    <div class="row">
+        <div class="col-8">
+            <mat-form-field class="w-100">
+                <mat-label>{{'Search'|translate}}</mat-label>
+                <input matInput [(ngModel)]="singleSearchValue" placeholder="Placeholder">
+                <mat-icon matSuffix class="pointer searchicon"
+                    (click)="applyFilter(singleSearchValue)">search</mat-icon>
+            </mat-form-field>
+        </div>
+        <div *ngIf="showicon == true" class="col-3 mt-2">
+            <button mat-raised-button class="b-blue" (click)="closesearch()">{{'Remove Filter'|translate}}</button>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 p-2" *ngFor="let list of AllEntityList">
+            <mat-radio-button [value]="list.id" (click)="SelactGroupShareId(list)">
+                <div id="main">
+                    <div>
+                        <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                            [src]="list?.profilePicture ? list.profilePicture:'assets/avatar.svg'"
+                            onError="this.src='assets/avatar.svg'">
+                    </div>
+                    <div>
+                        <p style="white-space: normal !important;"> {{list.firstName|titlecase}}
+                            {{list.lastName|titlecase}}</p>
+                    </div>
+                </div>
+            </mat-radio-button>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="mb-1 pr-5">
+    <button mat-raised-button mat-dialog-close>{{'Cancel'|translate}}</button>
+    <button mat-raised-button class="b-blue" (click)="ApplygroupShare()">{{'Apply'|translate}}</button>
+</mat-dialog-actions>

@@ -1,0 +1,439 @@
+<mat-card class="fonltfamily"
+    style="margin: 0 !important;padding: 0 !important;background-color: white ;">
+    <mat-card-content style="margin: 0 !important;padding: 0 !important;">
+        <!-- 000000000000  -->
+        <div style="background-color: #FFF3E6;padding: 10px !important;">
+            <div
+                style="overflow: hidden;display: flex;margin: auto;justify-content: center;margin-top:20px;">
+                <div style="overflow: hidden">
+                    <label class="toggle" style="overflow: hidden">
+                        <span class="monthlyYearly">{{'Yearly'|translate}}</span>
+                        <input (click)="selectplan()"
+                            class="toggle-checkbox"
+                            type="checkbox" checked>
+                        <div class="toggle-switch"></div>
+                        <span class="monthlyYearly">{{'Monthly'|translate}}</span>
+                    </label>
+                </div>
+            </div>
+            <div class="row mt-3"
+                style="display: flex;justify-content: center;"
+                *ngIf="Monthlyplan">
+                <h6 class="planstyle" >
+                    <b> € {{amount}}</b>{{'/ '+ getUserscount(sliderValue)+' user/ Per Month'|translate}}</h6>
+            </div>
+            <div class="row mt-2"
+                style="display: flex;justify-content: center;"
+                *ngIf="!Monthlyplan">
+                <h6 class="planstyle">
+                    <b> € {{amount1}}</b>{{'/ '+getUserscount(sliderValue)+' user/ Per Year'|translate}}</h6>
+
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <h2 style="text-align: center;font-weight: normal;">
+                        {{'All the prices mentioned in this page are without the taxes (taxes may increase those prices 20% more)'|translate}}
+                    </h2>
+                </div>
+            </div>
+            <div class="row" *ngIf="!Monthlyplan">
+                <div class="col-12">
+                    <h2 style="text-align: center;font-weight: normal;">
+                        {{'You will be able to resign every 60 first days of the year Only for annual Plan'|translate}}
+                    </h2>
+                </div>
+            </div>
+              
+          
+              
+
+
+            <div class="row justify-content-center">
+                <!-- <div class="col-6">
+                   <mat-slider class="w-100" thumbLabel [value]="sliderValue"
+                   [min]="minRange" [max]="maxRange" (change)="calculateAmount($event.value)" color="primary">
+                   </mat-slider>
+                </div> -->
+                <div class="col-6">
+                    <div class="slider-container">
+                        <input type="range" [min]="minRange" [max]="maxRange"  [(ngModel)]="sliderValue" class="slider" (input)="updateValue(sliderValue)">
+                        <div class="tooltip">{{ sliderValue }}</div>
+                      </div>
+                 </div>
+               </div>
+            <div class="row  mb-5 mt-4  justify-content-center">
+                <div class="col-6" style="overflow: hidden;">
+                    <button mat-raised-button color="primary" style="font-size: 20px;"
+                        (click)="gotosingup()"
+                        class="w-100 b-blue"><b>{{'Start'|translate}}</b></button>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- 00000000000000  -->
+        <div>
+            <div class="row p-2 justify-content-center">
+                <!-- <div
+                    class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 mt-4">
+                    <div class="row">
+                        <div class="col-2">
+                            <mat-icon style="color: #528bf1;">desktop_mac</mat-icon>
+                        </div>
+                        <div class="col-10">
+                            <p class="pakagelist"><b>{{'Management'|translate}}</b></p>
+                            <p class="pakagelist">1.{{'Listing'|translate}}</p>
+                            <p class="pakagelist">2.{{'Tags'|translate}}</p>
+                            <p class="pakagelist">3.{{'Targets'|translate}}</p>
+                            <p class="pakagelist">4.{{'Discounts'|translate}}</p>
+                            <p class="pakagelist">5.{{'Invoice'|translate}}
+                                & Quotes</p>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 mt-4">
+                    <div class="row">
+                        <div class="col-2">
+                            <mat-icon style="color: red;">event</mat-icon>
+                        </div>
+                        <div class="col-10">
+                            <p class="pakagelist"><b>{{'Planning'|translate}}</b></p>
+                            <p class="pakagelist">1.{{'Private'|translate}}
+                                & Public events</p>
+                            <p class="pakagelist">2.{{'Event Category & criticity'|translate}}</p>
+                            <p class="pakagelist">3.{{'Sync with external planing'|translate}}</p>
+                            <p class="pakagelist">4.{{'Event Proposal'|translate}}</p>
+                            <p class="pakagelist">5.{{'Event simulation'|translate}}</p>
+                            <p class="pakagelist">6.{{'Physical & Virtual Events'|translate}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 mt-4">
+                    <div class="row">
+                        <div class="col-2">
+                            <mat-icon style="color:blue;">map</mat-icon>
+                        </div>
+                        <div class="col-10">
+                            <p class="pakagelist"><b> {{'Map'|translate}}</b></p>
+                            <p class="pakagelist">1.
+                                {{'Location for physical events'|translate}}</p>
+                            <p class="pakagelist">2.
+                                {{'Map configuration'|translate}} </p>
+                            <p class="pakagelist">3.
+                                {{'Prospect Search(with mysource)'|translate}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 mt-4">
+                    <div class="row">
+                        <div class="col-2">
+                            <mat-icon style="color: blue;">file_copy</mat-icon>
+                        </div>
+                        <div class="col-10">
+                            <p class="pakagelist"><b>
+                                    {{'Files & Notes'|translate}} </b></p>
+                            <p class="pakagelist">1.
+                                {{'Organise with keywords'|translate}} </p>
+                            <p class="pakagelist"> 2.
+                                {{'Export option'|translate}} </p>
+                            <p class="pakagelist">3.
+                                {{'Sync with external tools'|translate}}</p>
+                            <p class="pakagelist">4.
+                                {{'Api available for files & Notes'|translate}}</p>
+                            <p class="pakagelist">5.
+                                {{'Access files & notes'|translate}} </p>
+                            <p class="pakagelist">6.
+                                {{'File version'|translate}}</p>
+                            <p class="pakagelist">7.
+                                {{'Private & Public'|translate}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 mt-4">
+                    <div class="row">
+                        <div class="col-2">
+                            <mat-icon style="color: red;">construction</mat-icon>
+                        </div>
+                        <div class="col-10">
+                            <p class="pakagelist"><b>{{'Settings'|translate}}</b></p>
+                            <p class="pakagelist"> 1.
+                                {{'Deep level Configuration'|translate}}</p>
+                            <p class="pakagelist">2.
+                                {{'Deep level permission'|translate}}</p>
+                            <p class="pakagelist">3.
+                                {{'api management'|translate}}</p>
+                            <p class="pakagelist">4.
+                                {{'Audit log'|translate}}</p>
+                            <p class="pakagelist">5.
+                                {{'Payment management'|translate}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 mt-4">
+                    <div class="row">
+                        <div class="col-2">
+                            <mat-icon style="color: green;">bar_chart</mat-icon>
+                        </div>
+                        <div class="col-10">
+                            <p class="pakagelist"><b>
+                                    {{'Activity Reports'|translate}}</b></p>
+                            <p class="pakagelist">1.
+                                {{'Based on events'|translate}}</p>
+                            <p class="pakagelist">2.
+                                {{'Based on Transaction'|translate}}</p>
+                            <p class="pakagelist">3.
+                                {{'Reports based on groups'|translate}} </p>
+                            <p class="pakagelist"> 4.
+                                {{'Export on excel'|translate}}</p>
+                            <p class="pakagelist"> 5.
+                                {{'keywords associated reports'|translate}}
+                            </p>
+                        </div>
+                    </div>
+                </div> -->
+
+
+                 <div class="col-12" style="margin-bottom: 50px;">
+                    <h2 style="font-family: Poppins;text-align:center; color: #2D2666;font-size:25px;font-weight:600">{{'All your activity on a single tool Intuitive, efficient and profitable.'}}</h2>
+                    <img class="imageformainlogo"  src="../../../../../assets/images/presentationImage.png" alt="">
+                 </div>
+                <!-- ----------  -->
+                <div
+                    class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 mt-4">
+                    <div class="row">
+                        <div class="col-2">
+                            <img
+                                src="../../../../../assets/images/iconsForsvg/S3.svg">
+                        </div>
+                        <div class="col-10">
+                            <p class="pakagelist1"><b>{{'S3 Storage'|translate}}
+                                </b></p>
+                            <p class="pakagelist"
+                                style="line-height: 30px;">
+                                <b> {{'Free'|translate}} : </b> {{'Get 2GB of storage for free, forever.'|translate}} <br> <br>
+                                <b>{{'Pay-As-You-Go'|translate}} : </b>
+                                 {{'Pay only for the storage you use, at a rate of'|translate}} <b>€ 1 {{'per GB per month per user'|translate}}.</b> <br><br>
+                                <!-- <span style="font-style: italic;">
+                                    <b>{{'Example'|translate}} :</b>
+                                    {{'If you use 5GB of S3 storage, you will pay € 3 per month'|translate}} (5GB - 2GB = € 3 For 3GB)
+                                </span> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 mt-4">
+                        <div class="row">
+                            <div class="col-2">
+                                <img
+                                    src="../../../../../assets/images/iconsForsvg/DB.svg"
+                                    alt>
+                            </div>
+                            <div class="col-10">
+                                <p class="pakagelist1"><b>{{'DB Storage'|translate}} </b></p>
+                                <p class="pakagelist"
+                                    style="line-height: 30px;">
+                                    <b>{{'Free'|translate}} : </b>
+                                    {{'Get 10GB of storage for free, plus 0.5GB per user in your organization.'|translate}} <br><br>
+                                    <b>{{'Pay-As-You-Go'|translate}} : </b>{{'Pay only for the storage you use above the free tier, at a rate of'|translate}} <b>€2.5 {{'per GB per month per user'|translate}}.</b> <br><br>
+                                    <!-- <span style="font-style: italic;">
+                                        <b>{{'Example'|translate}} :</b>
+                                       {{"If you have 10 users in your organization and use 20GB of SQL storage, you will pay €125 per month"|translate}}
+                                        <br>
+                                        {{'- free_storage'|translate}} = 10GB + (0.5GB *
+                                        10
+                                        users) = 15GB <br>
+                                        {{'storage used above free tier'|translate}} =
+                                        20GB
+                                        {{'- free_storage'|translate}} = 5GB <br>
+                                        {{'additional_cost'|translate}} =
+                                        {{'storage used above free tier'|translate}} *
+                                        €2.5/GB = €12.50 per User
+                                    </span> -->
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-4 mt-4">
+                        <div class="row">
+                            <div class="col-2">
+                                <img
+                                    src="../../../../../assets/images/iconsForsvg/api.svg"
+                                    alt>
+                            </div>
+                            <div class="col-10">
+                                <p class="pakagelist1"><b>{{'API call'|translate}}</b></p>
+                                <p class="pakagelist">
+                                    <b>{{'Free limit'|translate}} : </b> 2 {{'API calls per'|translate}}
+                                    second per user</p>
+                                <p class="pakagelist">
+                                    {{'3000 API calls per hour per user'|translate}}</p>
+                                <p class="pakagelist">
+                                    {{'15,000 API calls per day per user'|translate}}
+                                </p>
+                                <p class="pakagelist">
+                                    {{'300,000 API calls per month per user'|translate}}</p>
+                                <p class="pakagelist"
+                                    style="line-height: 30px;">
+                                    <b> {{'Pay-As-You-Go'|translate}} : </b>
+                                   {{'After you reach your free limit, you will be'|translate}} <b>{{'charged € 5 for every 1000 API calls'|translate}}</b> {{'you make'|translate}}. <br><br>
+                                    <!-- <span style="font-style: italic;">
+                                        <b>{{'Example'|translate}} :</b>
+                                   {{'If you make 5000 API calls more in one day, you will be charged €25'|translate}}</span> -->
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- 000000000000000000000000  -->
+            <div style="background-color: #FFF3E6;padding: 15px !important;">
+                <div class="row">
+                        <h2 style="text-align: center;font-weight: bold;width:100%;">
+                            {{'Comparison table between Planning&Me and similar market products'|translate}}
+                        </h2>
+                </div>
+            </div>
+            <!-- 0000000000000  -->
+                    <!-- tables   -->
+                        <table class="table table-striped" style="overflow-x: scroll;margin-left:15px">
+                            <thead class="pakagelist">
+                                <tr class="pakagelist">
+                                    <th scope="col">Planning&Me</th>
+                                    <th scope="col">{{"Average Market Price per Month"|translate}}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="pakagelist">
+                                <tr class="pakagelist">
+                                    <td><span class="pricecolor">{{"FREE"|translate}}</span> {{"Mobile Access in the offer"|translate}}</td>
+                                    <td>{{"Paid"|translate}}: <span class="pricecolor">€ 50</span> {{"excluding tax"|translate}}</td>
+                                </tr>
+                                <tr class="pakagelist">
+                                    <td>{{"Billing"|translate}} <span class="pricecolor">{{"FREE"|translate}}</span> {{"in the offer"|translate}}</td>
+                                    <td>{{"Paid"|translate}}: {{"more than"|translate}} <span
+                                            class="pricecolor">€ 60</span> {{"excluding tax"|translate}}</td>
+                                </tr>
+                                <tr class="pakagelist">
+                                    <td>{{"Options linked to the Map"|translate}} <span class="pricecolor">{{"FREE"|translate}}</span> inthe offer</td>
+                                    <td>{{"Paid"|translate}}: {{"more than"|translate}} <span class="pricecolor">€ 60</span> {{"excluding tax"|translate}}</td>
+                                </tr>
+                                <tr class="pakagelist">
+                                    <td>{{"Unlimited reporting"|translate}} <span class="pricecolor">{{"FREE"|translate}}</span> {{"in the offer"|translate}}</td>
+                                    <td>{{"Paid"|translate}}: {{"greater than"|translate}} <span class="pricecolor">€ 100</span> {{"excluding tax"|translate}}</td>
+                                </tr>
+                                <tr class="pakagelist">
+                                    <td>{{"API calls greater than 15,000 calls/day"|translate}}:<span class="pricecolor">€ 2</span> per1000 calls</td>
+                                    <td>{{"Paid"|translate}}: <span class="pricecolor">€ 5</span> {{"per 1000 calls for all calls greater than 15,000 calls/day"|translate}}</td>
+                                </tr>
+                                <tr class="pakagelist">
+                                    <td>{{"2 GB of file storage offered per user with an additional €1 per GB per month"|translate}}</td>
+                                    <td>{{"Paid"|translate}}: <span class="pricecolor">€ 5</span> {{"per additional"|translate}} GB </td>
+                                </tr>
+                                <tr class="pakagelist">
+                                    <td>{{"Database storage: €2.5 per additional GB, per user, per month"|translate}}</td>
+                                    <td>{{"Paid"|translate}}: <span class="pricecolor">€ 5</span> {{"per additional"|translate}} GB, per user</td>
+                                </tr>
+                            </tbody>
+                        </table>
+        </mat-card-content>
+    </mat-card>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="cookies-popup fonltfamily">
+        <ng-container *ngIf="popup1">
+            <mat-card style="background-color: #c6ae96;opacity: 0.9;">
+                <div class="row mt-2">
+                    <div class="col-10" style="display: flex;">
+                        <span><img  class="imagelogo" src="../../../assets/logo/startpro.png"></span>
+                        <span><img style="width: 100px;height:30px;object-fit: contain;"
+                            src="../../../../../assets/logo/middle-logo-dark.png"></span>
+                    </div>
+                    <div class="col-2"><mat-icon (click)="closepopup('1')" class="closeicon">close</mat-icon></div>
+                </div>
+                <div class="row">
+                    <h4 style="margin: 0 0 8px !important;"><b>Do you want any help ? Better call Seb</b> </h4>
+                    <h4 style="margin: 0 0 8px !important;"><mat-icon class="closeicon"> email</mat-icon> <b>  sebastien.minson@planningandme.com</b></h4>
+                    <h4 style="margin: 0 0 8px !important;"><mat-icon class="closeicon"> phone</mat-icon> <b>+ 33 6 98 33 88 80</b></h4>
+                </div>
+            </mat-card>
+        </ng-container>
+
+        <!-- <ng-container *ngIf="popup2">
+            <mat-card class="mt-2" style="background-color: #c6ae96;opacity: 0.9;">
+                <div class="row mt-2">
+                    <div class="col-10" style="display: flex;">
+                        <span><img  class="imagelogo" src="../../../assets/logo/startpro.png"></span>
+                        <span><img style="width: 100px;height:30px;object-fit: contain;"
+                            src="../../../../../assets/logo/middle-logo-dark.png"></span>
+                    </div>
+                    <div class="col-2"><mat-icon class="closeicon" (click)="closepopup('2')">close</mat-icon></div>
+                </div>
+                <div class="row">
+                    <img class="whitebookstyle" src="../../../../../assets/logo/WhiteBook.png"  (click)="whitebookopen()">
+                </div>
+                <div class="row">
+                    <h5 style="margin: 0 0 8px !important;"> <b>Download the whitebook for </b><a style="cursor: pointer;" (click)="whitebookopen()"><u> more understanding</u></a></h5>
+                </div>
+            </mat-card>
+        </ng-container> -->
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,113 @@
+<div *ngFor="let event of event; let i=index">
+  <div style="padding-left: 10px !important;" [ngClass]="{
+    'bdr-invited': event.isEventCreator == true, 
+    'bdr-simulation': event.isSimulation == true,
+    'bdr-thumbsup': thumbsup === 1,
+    'bdr-thumbsdown': thumbsup === 0
+  }">
+    <div class="d-flex flex-row align-items-end pointer">
+      <div class="fw-600 flex-74" (click)="onClick(event.id,event)">
+        <!-- Google Calender  -->
+        <span *ngIf="event.isExternalEvent === true && event.source == 'Google Calendar'">
+          <img style="border-radius: 50%;" width="20" height="20" src="assets/logo/GoogleCalendar.png">
+        </span>
+        <!-- handshake  -->
+        <span *ngIf="event.isOnlineEvent==false">
+          <img src="../../../../assets/images/iconsForsvg/handshake.svg">
+        </span>
+        <!-- phone-call  -->
+        <span *ngIf="event.isOnlineEvent==true">
+          <img src="../../../../assets/images/iconsForsvg/phone-call.svg">
+        </span>
+        <!-- OutlookCalendar  -->
+        <span *ngIf="event.isExternalEvent === true && event.source == 'Outlook Calendar'">
+          <img style="border-radius: 50%; width: 20px !important; height: 20px !important;"
+            src="assets/logo/OutlookCalendar.png">
+        </span>
+
+        <span *ngIf="event.isConvertedFromTask">
+          <img style="width: 20px;height: 20px;" src="../../../../../../assets/images/iconsForsvg/event_upcoming.svg">
+        </span>
+        <!-- lock icon  -->
+        <span *ngIf="!event.isPublic">
+          <mat-icon style="font-size:15px; position: relative; top:3px ;">lock</mat-icon>
+        </span>
+        <span *ngIf="event.isPublic">
+          <img src="../../../../assets/images/iconsForsvg/Unlock.svg">
+        </span>
+        <!-- attach_file  -->
+        <span *ngIf="event.hasFile==true ||event.hasNote==true  ">
+          <mat-icon style="font-size:15px; position: relative; top:3px ; color: #528bf1;">
+            attach_file</mat-icon>
+        </span>
+        <span style="color: black;"> {{event.title|titlecase}}</span>
+      </div>
+      <div>
+        <button *ngIf="OtherpeplePlanningStatus!=true" mat-button class="moreicon" [matMenuTriggerFor]="menu">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <span *ngIf="event.isEventCreator">
+            <button mat-menu-item class="fw-600" (click)="openEditdEventDialog(event.id)">
+              <mat-icon class="btn-blue">edit</mat-icon> {{'Edit'|translate}}
+            </button>
+            <button mat-menu-item class="fw-600" (click)="deleteDialogConfirmation(event,'deleteEvent')">
+              <mat-icon class="btn-red">delete</mat-icon>
+              {{'delete'|translate}}
+            </button>
+          </span>
+          <span *ngIf="!event.isEventCreator">
+            <button mat-menu-item class="fw-600" (click)="invitedEventUpdate(event.id, 1)">
+              <mat-icon class="btn-blue">thumb_up_alt</mat-icon> {{'Accept'|translate}}
+            </button>
+            <button mat-menu-item class="fw-600" (click)="invitedEventUpdate(event.id, 0)">
+              <mat-icon class="btn-red">thumb_down_alt</mat-icon> {{'Reject'|translate}}
+            </button>
+            <button mat-menu-item class="fw-600" (click)="eventProposal(event)">
+              <mat-icon class="btn-black">help</mat-icon> {{'Event Proposal'|translate}}
+            </button>
+          </span>
+        </mat-menu>
+      </div>
+    </div>
+
+    <div class="d-flex flex-row align-items-center pointer" (click)="onClick(event.id,event)">
+      <div class="fw-600 flex-74" style="color: grey;">
+        <span>
+          <span style="color: black;"> {{'Start Date'|translate}} : </span>
+          <span> {{event?.start | date:'dd-MMM-yyyy'}} {{' '+event?.start|date:'H:mm'}}</span>
+        </span>
+        <br>
+        <span>
+          <span style="color: black;">{{'End Date'|translate}} : </span>
+          <span>{{event?.end | date:'dd-MMM-yyyy'}} {{' '+event?.end |date:'H:mm'}}</span>
+        </span>
+      </div>
+      <div>
+        <span class="event" [ngStyle]="{'background': event.categorycolor}"></span>
+      </div>
+    </div>
+    <div class="pb-1 PM-icon pointer fw-600 flex-74 color_grey">
+      <span *ngIf="(event.address||event.city||event.country )" style="white-space: normal !important;">
+        <span style="color: black;">{{'Address'|translate}} : </span>
+        <span *ngIf="event.address !== null">{{event.address|titlecase}}</span>
+        <span *ngIf="event.city !== null">{{event.city|titlecase}}</span>
+        <span *ngIf="event.country !== null">{{event.country|titlecase}}</span>
+      </span>
+      <span *ngIf="event.myValidationStatus == 'Attendee' && !event.isEventCreator">
+        <mat-icon class="btn-blue">thumb_up_alt</mat-icon>
+      </span>
+      <span *ngIf="event.myValidationStatus == 'Not Attendee' && !event.isEventCreator">
+        <mat-icon class="btn-red">thumb_down_alt</mat-icon>
+      </span>
+      <span *ngIf="event.isSimulation">
+        <mat-icon style="font-size: 20px;">visibility</mat-icon>
+      </span>
+      <span *ngIf="event.isProposalEvent && event.isEventCreator" class="proposal">
+        <mat-icon class="btn-black" (click)="openEditProposalDialog(event.id)"> help</mat-icon>
+      </span>
+      <span>
+      </span>
+    </div>
+  </div>
+</div>

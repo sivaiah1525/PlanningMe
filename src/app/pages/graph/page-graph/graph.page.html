@@ -1,0 +1,454 @@
+
+
+     <div class="row w-100">
+        <form [formGroup]="searchUserForm" style="margin:10px;width: 100%;">
+            <div class="row justify-content-center">
+                <div class="col-5">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"Saved Reports"|translate}}</mat-label>
+                        <mat-select formControlName="userType" multiple #mySelect>
+                            <mat-select-filter [placeholder]="'Filter'" [displayMember]="'title'" [array]="allReports1"
+                                (filteredReturn)="allReports =$event"></mat-select-filter>
+                            <mat-option #allSelected (click)="toggleAllSelection()" [value]="0">{{"All"|translate}}</mat-option>
+                            <mat-option *ngFor="let filters of allReports" (onSelectionChange)="change($event)" [value]="filters.id"
+                                (click)="tosslePerOne(allSelected.viewValue)">
+                                {{filters.title|titlecase}}
+                            </mat-option>
+                            <button mat-raised-button class="right b-blue" (click)="showReports()">{{"Apply"|translate}}</button>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-5">
+                    <mat-form-field appearance="fill"  class="w-100">
+                        <mat-label>Color Scheme</mat-label>
+                        <mat-select  formControlName="ColorSchemeselectedValue" >
+                          <mat-option (click)="changescolorScheme('fire')" value="fire">Fire</mat-option>
+                          <mat-option (click)="changescolorScheme('Forest')" value="Forest">Forest</mat-option>
+                          <mat-option  (click)="changescolorScheme('neons')" value="cool">Neons</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                </div>
+             </div>
+        </form>
+     </div>
+<!-- Lkjhgfd  -->
+
+
+
+
+
+<div class="row mb-4 p-0" *ngFor="let data of defaultCharts">
+    <!-- chart with valid Data -->
+    <ng-container>
+        <mat-card>
+            <!-- headder  -->
+            <div class="row bdr">
+                <div class="col-2">
+                    <mat-checkbox *ngIf="data?.savedBarChartData?.length != 0 || data?.multipleSaleBar?.length != 0 || data?.linechartbar?.length != 0
+    || data?.areachartbar?.length != 0  || data?.tableheader?.length != 0"
+                        (change)="selectSavedChart($event,data)"></mat-checkbox>
+                </div>
+                <div class="col-8">
+                    <span style="text-align: center; align-items: start;">
+                        {{data.reportTitle|titlecase}}</span>
+                </div>
+                <div class="col-2">
+                    <span style="float: right;cursor: pointer;" (click)="close(data.reportId)">X</span>
+                </div>
+            </div>
+
+            <!-- ------------  -->
+            <!-- Bar Chart  -->
+            <div >
+                <div class="row chart-container" *ngIf="(data.chartType == 'Bar Chart' && data.savedBarChartData.length > 0)">
+                    <ngx-charts-bar-vertical-2d [barPadding]="10" [groupPadding]="2" [view]="data.graphDimension"
+                        [tooltipText]="tooltipText" [scrollX]="true" [scheme]="colorScheme"
+                        [results]="data.savedBarChartData" [gradient]="false" [xAxis]="true" [yAxis]="true"
+                        [legend]="true" [legendPosition]="'below'" [showGridLines]="false" [showXAxisLabel]="true"
+                        [showYAxisLabel]="true" [yAxisLabel]="data.yaxisLabelName"
+                        [yAxisTickFormatting]="yAxisTickFormatting" [xAxisTickFormatting]="xAxisTickFormatting">
+                        <ng-template #tooltipTemplate let-model="model">
+                            <h1>{{model.name|titlecase}}</h1>
+                            <h2>{{transform(model.value)}}</h2>
+                        </ng-template>
+                    </ngx-charts-bar-vertical-2d>
+                    <!-- -----------  -->
+                </div>
+                <div class="row" *ngIf="(data.chartType == 'Bar Chart' && data.savedBarChartData.length == 0)">
+                    <div class="col-10">
+                        <p style="text-align: center;">No Data Found</p>
+                    </div>
+                    <div class="col-2">
+                        <pm-graph-more [id]="data.reportId" (delete)="deleteChart($event)">
+                        </pm-graph-more>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pie Chart  -->
+            <div >
+                <div class="row chart-container" *ngIf="(data.chartType == 'Pie Chart' && data.multipleSaleBar.length > 0)">
+                    <ngx-charts-pie-chart [view]="data.graphDimension" [scrollX]="true" [results]="data.multipleSaleBar"
+                        [scheme]="colorScheme" [legend]="true" [legendPosition]="'below'">
+                        <ng-template #tooltipTemplate let-model="model">
+                            <h1>{{model.name|titlecase}}</h1>
+                            <h2>{{transform(model.value)}}</h2>
+                        </ng-template>
+                    </ngx-charts-pie-chart>
+                    <div style="padding: 10px 0 10px 4px;" class="w100"><b>{{labelName}}</b></div>
+                </div>
+                <div class="row" *ngIf="(data.chartType == 'Pie Chart' && data.multipleSaleBar.length == 0)">
+                    <div class="col-10">
+                        <p style="text-align: center;">No Data Found</p>
+                    </div>
+                    <div class="col-2">
+                        <pm-graph-more [id]="data.reportId" (delete)="deleteChart($event)">
+                        </pm-graph-more>
+                    </div>
+                </div>
+            </div>
+            <!-- Line Chart  -->
+            <div>
+                <div class="row chart-container" *ngIf="(data.chartType=='Line Chart' && data.linechartbar.length > 0) || (data.chartType=='Line Chart' && data.marginlinechartbar.length >0)">
+                    <ngx-charts-line-chart [view]="data.graphDimension" [scrollX]="true" [scheme]="colorScheme"
+                        [legend]="true" [showXAxisLabel]="true" [showYAxisLabel]="true" [xAxis]="true"
+                        [legendPosition]="'below'" [showGridLines]="false" [yAxis]="true"
+                        [yAxisLabel]="data.yaxisLabelName" [timeline]="timeline" [results]="data.linechartbar"
+                        [yAxisTickFormatting]="yAxisTickFormatting" [xAxisTickFormatting]="xAxisTickFormatting">
+                        <ng-template #tooltipTemplate let-model="model">
+                            <h1>{{model.name|titlecase}}</h1>
+                            <h2>{{transform(model.value)}}</h2>
+                        </ng-template>
+                    </ngx-charts-line-chart>
+                    <div class="row m-t-60" *ngIf="data.showMargin==true">
+                        <div class="col-6"></div>
+                        <b *ngIf="data.showMargin==true" class="m-l-11">
+                            {{"Margin Report"|translate}} :</b>
+                    </div>
+                    <ngx-charts-line-chart *ngIf="data.showMargin==true" [view]="data.graphDimension" [scrollX]="true"
+                        [scheme]="colorScheme" [legend]="true" [showXAxisLabel]="true" [showYAxisLabel]="true"
+                        [xAxis]="true" [legendPosition]="'below'" [showGridLines]="false" [yAxis]="true"
+                        [yAxisLabel]="data.yaxisLabelName" [timeline]="timeline" [results]="data.marginlinechartbar"
+                        [yAxisTickFormatting]="yAxisTickFormatting" [xAxisTickFormatting]="xAxisTickFormatting">
+                        <ng-template #tooltipTemplate let-model="model">
+                            <h1>{{model.name|titlecase}}</h1>
+                            <h2>{{transform(model.value)}}</h2>
+                        </ng-template>
+                    </ngx-charts-line-chart>
+                </div>
+                <div class="row"
+                    *ngIf="(data.chartType=='Line Chart' && data.linechartbar.length == 0)">
+                    <div class="col-10">
+                        <p style="text-align: center;">No Data Found</p>
+                    </div>
+                    <div class="col-2">
+                        <pm-graph-more [id]="data.reportId" (delete)="deleteChart($event)">
+                        </pm-graph-more>
+                    </div>
+                </div>
+            </div>
+            <!-- Area Chart  -->
+            <div >
+                <div class="row chart-container" *ngIf="(data.chartType=='Area Chart' && data.areachartbar.length > 0)">
+                    <ngx-charts-area-chart [view]="data.graphDimension" [scrollX]="true" [scheme]="colorScheme"
+                        [results]="data.areachartbar" [xAxis]="true" [yAxis]="true" [legend]="true"
+                        [showXAxisLabel]="true" [showYAxisLabel]="true" [yAxisLabel]="data.yaxisLabelName"
+                        [legendPosition]="'below'" [showGridLines]="false" [autoScale]="true"
+                        (select)="onSelect($event)" [yAxisTickFormatting]="yAxisTickFormatting"
+                        [xAxisTickFormatting]="xAxisTickFormatting">
+                        <ng-template #tooltipTemplate let-model="model">
+                            <h1>{{model.name|titlecase}}</h1>
+                            <h2>{{transform(model.value)}}</h2>
+                        </ng-template>
+                    </ngx-charts-area-chart>
+                </div>
+                <div class="row" *ngIf="(data.chartType=='Area Chart' && data.areachartbar.length == 0)">
+                    <div class="col-10">
+                        <p style="text-align: center;">No Data Found</p>
+                    </div>
+                    <div class="col-2">
+                        <pm-graph-more [id]="data.reportId" (delete)="deleteChart($event)">
+                        </pm-graph-more>
+                    </div>
+                </div>
+            </div>
+            <!-- Pivot Table  ranking table -->
+            <div >
+                <!-- {{data.tableheader|json}}
+                {{data.pivotTable|json}} -->
+                <div style="overflow-x:auto;" *ngIf="((data.chartType=='Pivot Table' || data.chartType == 'ranking table') && data.pivotTable.length !=0)">
+                    <table border="1">
+                        <tr>
+                            <th>{{"Name"|translate}}</th>
+                            <th *ngFor="let item of data.tableheader">{{item.year}}</th>
+                        </tr>
+                        <tr *ngFor="let item of data.pivotTable">
+                            <th *ngFor="let value of item">{{transform(value.value)}}</th>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row"
+                    *ngIf="(data.chartType=='Pivot Table' || data.chartType == 'ranking table') && data.pivotTable.length == 0">
+                    <div class="col-10">
+                        <p style="text-align: center;">No Data Found</p>
+                    </div>
+                    <div class="col-2">
+                        <pm-graph-more [id]="data.reportId" (delete)="deleteChart($event)">
+                        </pm-graph-more>
+                    </div>
+                </div>
+            </div>
+            <!-- Vertical bar chart  -->
+            <div>
+                <div class="row chart-container" *ngIf="(data.chartType == 'Vertical bar chart' && data.savedBarChartData.length > 0)">
+                    <div class="row ">
+                        <ngx-charts-bar-horizontal-2d [barPadding]="2" [groupPadding]="2" [view]="data.graphDimension"
+                            [tooltipText]="tooltipText" [scrollX]="true" [scheme]="colorScheme"
+                            [results]="data.savedBarChartData" [gradient]="false" [xAxis]="true" [yAxis]="true"
+                            [legend]="true" [legendPosition]="'below'" [showGridLines]="false" [showXAxisLabel]="true"
+                            [showYAxisLabel]="true" [yAxisLabel]="data.xDisplayType" [xAxisLabel]="data.yaxisLabelName"
+                            [yAxisTickFormatting]="yAxisTickFormatting" [xAxisTickFormatting]="xAxisTickFormatting">
+                            <ng-template #tooltipTemplate let-model="model">
+                                <h1>{{model.name|titlecase}}</h1>
+                                <h2>{{transform(model.value)}}</h2>
+                            </ng-template>
+                        </ngx-charts-bar-horizontal-2d>
+                    </div>
+                    <div class="row m-t-20" *ngIf="data.withMargin==true">
+                        <b class="m-l-11"> {{"Margin Report"|translate}}</b>
+                    </div>
+                    <ngx-charts-bar-horizontal-2d *ngIf="data.withMargin==true" [view]="data.graphDimension"
+                        [scrollX]="true" [scheme]="colorScheme" [results]="data.savedBarChartData" [gradient]="false"
+                        [xAxis]="true" [yAxis]="true" [legend]="true" [legendPosition]="'below'" [showGridLines]="false"
+                        [showXAxisLabel]="true" [showYAxisLabel]="true" [yAxisLabel]="data.yaxisLabelName"
+                        [yAxisTickFormatting]="yAxisTickFormatting" [xAxisTickFormatting]="xAxisTickFormatting">
+                        <ng-template #tooltipTemplate let-model="model">
+                            <h1>{{model.name|titlecase}}</h1>
+                            <h2>{{transform(model.value)}}</h2>
+                        </ng-template>
+                    </ngx-charts-bar-horizontal-2d>
+                </div>
+                <div class="row" *ngIf="(data.chartType == 'Vertical bar chart' && data.savedBarChartData.length == 0)">
+                    <div class="col-10">
+                        <p style="text-align: center;">No Data Found</p>
+                    </div>
+                    <div class="col-2">
+                        <pm-graph-more [id]="data.reportId" (delete)="deleteChart($event)">
+                        </pm-graph-more>
+                    </div>
+                </div>
+            </div>
+            <!-- Pie Doughnut Chart  -->
+            <div>
+                <div class="row chart-container" *ngIf="(data.chartType=='Pie Doughnut Chart' && data.multipleSaleBar.length > 0)">
+                    <ngx-charts-pie-chart [view]="data.graphDimension" [scrollX]="true" [scheme]="colorScheme"
+                        [results]="data.multipleSaleBar" [legend]="true" [legendPosition]="'below'" [legendTitle]="''"
+                        [arcWidth]=".5" [doughnut]="true">
+                        <ng-template #tooltipTemplate let-model="model">
+                            <h1>{{model.name|titlecase}}</h1>
+                            <h2>{{transform(model.value)}}</h2>
+                        </ng-template>
+                    </ngx-charts-pie-chart>
+                    <div style="padding: 10px 0 10px 4px;" class="w100"><b>{{labelName}}</b>
+                    </div>
+                </div>
+                <div class="row" *ngIf="(data.chartType=='Pie Doughnut Chart' && data.multipleSaleBar.length == 0)">
+                    <div class="col-10">
+                        <p style="text-align: center;">No Data Found</p>
+                    </div>
+                    <div class="col-2">
+                        <pm-graph-more [id]="data.reportId" (delete)="deleteChart($event)">
+                        </pm-graph-more>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-10">
+                    <!-- Start Date  End Date  -->
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div style="padding: 10px 0 10px 4px;" class="w100">
+                                <mat-icon class="info-icon-chart">access_time</mat-icon>
+                                <span><b>{{"Start Date"|translate}} : </b></span><span class="greyed">{{data.startDate
+                                    |date:'dd-MMM-yyyy'}}</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div style="padding: 10px 0 10px 4px;" class="w100">
+                                <mat-icon class="info-icon-chart">access_time</mat-icon>
+                                <span><b>{{"End Date"|translate}} : </b></span><span class="greyed">{{data.endDate
+                                    |date:'dd-MMM-yyyy'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Description  Keywords  -->
+                    <div class="row">
+                        <div class="col-6">
+                            <div style="padding: 10px 0 10px 4px;" class="w100">
+                                <mat-icon class="info-icon-chart">info</mat-icon>
+                                <span><b>{{"Description"|translate}} : </b></span><span
+                                    class="greyed">{{data.description|titlecase}}</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <!-- 00000000  -->
+                            <div style="padding: 10px 0 10px 4px;" class="w100">
+                                <div style="display: flex;">
+                                    <div>
+                                        <mat-icon class="info-icon-chart">vpn_key</mat-icon><b>Keywords:</b>
+                                    </div>
+                                    <div>
+                                        <div>
+                                            <!-- 0000000  -->
+                                            <ng-container *ngIf="data.discountKeywords!=null">
+                                                <ng-container *ngIf="findkeywordlength(data.discountKeywords)!=0">
+                                                    <span
+                                                        (click)="viewkeywordslist(data.discountKeywords,'discountKeyword',viewkeywords)">
+                                                        <button [matBadge]="findkeywordlength(data.discountKeywords)"
+                                                            class="discountReff">
+                                                            {{"Discount Keywords list"|translate}}
+                                                        </button>
+                                                    </span>
+                                                </ng-container>
+                                            </ng-container>
+                                        </div>
+                                        <div>
+                                            <!-- 11111111111  -->
+                                            <!-- <ng-container *ngIf="data.transactionKeywords!=null">
+                                                <ng-container *ngIf="findkeywordlength(data.transactionKeywords)!=0">
+                                                    <span
+                                                        (click)="viewkeywordslist(data.transactionKeywords,'transactionKeyword',viewkeywords)">
+                                                        <button class="transactionReff"
+                                                            [matBadge]="findkeywordlength(data.transactionKeywords)">
+                                                            {{"Transaction keywords list"|translate}} </button>
+                                                    </span>
+                                                </ng-container>
+                                            </ng-container>
+                                        </div>
+                                        <div> -->
+                                            <!-- 22222222222  -->
+                                            <!-- <ng-container *ngIf="data.groupKeywords!=null">
+                                                <ng-container *ngIf="findkeywordlength(data.groupKeywords)!=0">
+                                                    <span
+                                                        (click)="viewkeywordslist(data.groupKeywords,'groupKeyword',viewkeywords)">
+                                                        <button [matBadge]="findkeywordlength(data.groupKeywords)"
+                                                            class="normalkeyword">
+                                                            {{"Group Keywords list"|translate}} </button>
+                                                    </span>
+                                                </ng-container>
+                                            </ng-container>
+                                        </div>
+                                        <div> -->
+                                            <!-- 33333333333  -->
+
+                                            <ng-container *ngIf="data.orderKeywords!=null">
+                                                <ng-container *ngIf="findkeywordlength(data.orderKeywords)!=0">
+                                                    <span
+                                                        (click)="viewkeywordslist(data.orderKeywords,'orderKeyword',viewkeywords)">
+                                                        <button [matBadge]="findkeywordlength(data.orderKeywords)"
+                                                            class="EventReff">
+                                                            {{"Order Keywords list"|translate}} </button>
+                                                    </span>
+                                                </ng-container>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-2 mt-4">
+                    <pm-graph-more [id]="data.reportId" (save)="saveChart(viewDialog)" (edit)="editChart($event)"
+                        (delete)="deleteChart($event)">
+                    </pm-graph-more>
+                </div>
+            </div>
+        </mat-card>
+    </ng-container>
+</div>
+
+
+
+<section>
+    <span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+        <button id="add-button3" mat-fab (click)="exportChart()">
+            <mat-icon style="color: white;"> import_export</mat-icon>
+        </button><br><br>
+        <button id="add-button2" mat-fab (click)="onCreate()">
+            <mat-icon style="color: white;">add</mat-icon>
+        </button>
+    </span>
+</section>
+
+
+
+
+
+
+
+
+
+<div class="overlay" *ngIf="loader">
+    <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+    </mat-progress-spinner>
+</div>
+
+
+
+<!-- Are you sure you want to save the report?  -->
+<ng-template #viewDialog class="container">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"Confirmation"|translate}}</h2>
+    </div>
+    <mat-dialog-content class="viewDialog pading "
+        style="padding: 0px  !important; margin: 0px !important;height:110px; width: 310px;">
+        <div class="row">
+            <h3 style="margin-top: 14px;margin-left: 34px;">{{"Are you sure you want to save the report?"|translate}}
+            </h3>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-action>
+        <div class="row justify-content-center" style="margin-bottom: 8px;">
+            <div class="col-4">
+                <button mat-raised-button mat-dialog-close (click)="closedialogbox()">{{"Cancel"|translate}}</button>
+            </div>
+            <div class="col-4">
+                <button mat-raised-button class="b-blue" (click)="saveechart()">{{"Save"|translate}}</button>
+            </div>
+        </div>
+    </mat-dialog-action>
+</ng-template>
+
+
+
+
+
+ 
+
+<!-- viewkeywords  -->
+<ng-template #viewkeywords class="container">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{setspace(keywordtype) |titlecase}} Keywords</h2>
+        <mat-icon mat-dialog-close (click)="closedialogbox()">close</mat-icon>
+
+    </div>
+    <mat-dialog-content class="viewDialog pading "
+        style="padding: 0px  !important; margin: 0px !important;height:300px; width:500px;">
+        <div class="row justify-content-center">
+            <span *ngFor="let x of removeemptyvalues(keywordslist)" (click)="keywordtransation(x,keywordtype)">
+                <button class="discountReff"  [ngClass]="{ 
+                    'discountReff': keywordtype==='discountKeyword',
+                 'transactionReff': (keywordtype==='transactionKeyword' && x.dynamic == false),
+                 'transactiondynamicReff':(keywordtype==='transactionKeyword' && x.dynamic == true),
+                 'normalkeyword': keywordtype==='groupKeyword',
+                 'EventReff': keywordtype==='orderKeyword'
+                }">
+                    {{x.keyword|titlecase}}
+                </button>
+            </span>
+        </div>
+    </mat-dialog-content>
+</ng-template>

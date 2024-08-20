@@ -1,0 +1,100 @@
+<div class="User-details">
+  <div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+      <img style="border-radius: 50%;" width="30" height="30"
+        [src]="data.eventId?.profilePicture ? data.eventId.profilePicture:'assets/avatar.svg'"
+        onError="this.src='assets/avatar.svg'"> {{' '+name|titlecase}}
+    </h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+  </div>
+  <mat-dialog-content class="mr-0 ml-0 p-0">
+    <div class="row m-0" *ngFor="let event of events;let i = index" class="pointer w-100"
+      [ngClass]="{'bdr-invited': event.isEventCreator == true, 'bdr-simulation': event.isSimulation == true }">
+      <!-- title  -->
+      <div class="row">
+        <div class="col-6">
+          <div class="fw-600 " (click)="onClick(event,event.id)">{{event.title|titlecase}}</div>
+        </div>
+        <div class="col-4">
+          <span *ngIf="event.myValidationStatus == 'Attendee' && !event.isEventCreator">
+            <mat-icon style="float: right; margin-right: 25px;" class="btn-blue">thumb_up_alt</mat-icon>
+          </span>
+          <span *ngIf="event.myValidationStatus == 'Not Attendee' && !event.isEventCreator">
+            <mat-icon style="float: right; margin-right: 25px;" class="btn-red">thumb_down_alt</mat-icon>
+          </span>
+          <span *ngIf="event.isSimulation">
+            <mat-icon style="float: right; margin-right: 25px;">visibility</mat-icon>
+          </span>
+          <span *ngIf="event.isProposalEvent == true">
+            <mat-icon style="float: right; margin-right: 16px;" class="btn-black"
+              (click)="openEditProposalDialog(event.id)">help</mat-icon>
+          </span>
+        </div>
+        <div class="col-2">
+          <span class="event" style="background-color: #1E90FF;"></span>
+        </div>
+      </div>
+      <!-- date  -->
+      <div class="row">
+        <div class=" col-10 fw-600 " style="color: grey;">{{event.start | date:'mediumDate'}},
+          {{event.start | date:'shortTime'}}, {{event.end | date:'mediumDate'}},{{event.end | date:'shortTime'}}
+        </div>
+        <div class="col-2">
+          <button mat-button class="moreicon" [matMenuTriggerFor]="menu"> <mat-icon>more_horiz</mat-icon></button>
+          <mat-menu #menu="matMenu">
+            <span *ngIf="event.isEventCreator">
+              <button mat-menu-item class="fw-600" (click)="openEditdEventDialog(event.id)">
+                <mat-icon class="btn-blue">edit</mat-icon> Edit
+              </button>
+              <button mat-menu-item class="fw-600" (click)="deletecontactGroupdialog(viewgroupDialog,event.id)">
+                <mat-icon class="btn-red">delete</mat-icon>
+                delete
+              </button>
+            </span>
+            <span *ngIf="!event.isEventCreator">
+              <button mat-menu-item class="fw-600" (click)="invitedEventUpdate(event.id, 1)">
+                <mat-icon class="btn-blue">thumb_up_alt</mat-icon> Accept
+              </button>
+              <button mat-menu-item class="fw-600" (click)="invitedEventUpdate(event.id, 0)">
+                <mat-icon class="btn-red">thumb_down_alt</mat-icon> Reject
+              </button>
+              <button mat-menu-item class="fw-600" (click)="eventProposal(event)">
+                <mat-icon class="btn-black">help</mat-icon> Event Proposal
+              </button>
+            </span>
+          </mat-menu>
+        </div>
+        <div class="col-12">
+          <div class="fw-600" style="color: grey;">{{event.address}},{{event.city}},{{event.country}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+</div>
+
+<!-- body  -->
+
+
+<ng-template #viewgroupDialog class="container">
+  <div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Confirmation</h2>
+  </div>
+  <mat-dialog-content class="viewDialog pading "
+    style="padding: 0px  !important; margin: 0px !important;height:60px; width: 340px;">
+    <div class="row">
+      <h3 style="
+          margin-top: 14px;
+          margin-left: 34px;
+      ">Are you sure you want to delete the event?</h3>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-action>
+    <div class="row" style="margin-bottom: 8px;">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6"></div>
+      <button mat-raised-button mat-dialog-close (click)="closedialogbox()">Cancel</button>
+      <button mat-raised-button cdkFocusInitial color="danger" (click)="deleteEvent()">Delete</button>
+    </div>
+
+  </mat-dialog-action>
+</ng-template>

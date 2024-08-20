@@ -1,0 +1,1114 @@
+<mat-tab-group mat-align-tabs="center" class="no-bg" (selectedTabChange)="tabChange($event.index)">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tabclas">
+                <mat-icon [ngClass]="{
+                    'btn-blue': tabnumber == 0 
+                  }">list</mat-icon>
+                <span>{{'Task List'|translate}}</span>
+            </div>
+        </ng-template>
+        <!-- KanbanView true  -->
+        <ng-container *ngIf="KanbanView">
+            <div class="row mt-4" >
+                <div class="col-8 col-sm-8  col-md-8 col-lg-6 col-xl-6"> 
+                    <mat-form-field class="w-100" appearance="outline"> 
+                        <mat-label>{{"Select Pipeline"|translate}} *</mat-label> 
+                        <mat-select (selectionChange)="onSelectionChange($event)" [(ngModel)]="selectedOption">
+                            <mat-option [value]="x.id"
+                                *ngFor="let x of listofFindPipelines">{{x.name|translate}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-4 col-sm-4  col-md-4 col-lg-4 col-xl-2">
+                    <div [matMenuTriggerFor]="moreMenu0">
+                        <mat-icon class="icon-options" style="margin-top: 20px;" >more_vert</mat-icon>
+                    </div>
+                    <mat-menu #moreMenu0="matMenu" class="eventlist">
+                        <ng-template matMenuContent>
+                            <button  class="fw-600" mat-menu-item (click)="updatepipe(selectedOption, 'UpdatePipeline')">
+                                <mat-icon class="icon-options">edit</mat-icon> 
+                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                            </button>
+                            <button class="fw-600" mat-menu-item (click)="deleteDialogConfirmation(selectedOption,'deletepipeforTask')">
+                                <mat-icon class="icon-options">delete</mat-icon>
+                                <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                            </button>
+                            </ng-template>
+                            </mat-menu>
+                </div>
+            </div>
+                    <!-- 000000000  -->
+        <ng-container *ngIf="KanbanView">
+            <app-kanban-task-view [taskcardview]="taskcardview" *ngIf="KanbanView"></app-kanban-task-view>
+        </ng-container>
+        </ng-container> 
+        <!-- KanbanView False  -->
+        <ng-container *ngIf="!KanbanView">
+            <!-- isMobileView  true  -->
+            <ng-container *ngIf="isMobileView">
+                <div style="display: flex;font-weight: 900; margin-top: 15px;margin-bottom: 20px;border-bottom: 1px solid lightgray;">
+                    <div style="width: 50%;"><mat-icon></mat-icon></div>
+                    <div style="width: 50%;text-align: start;">Name</div>
+                </div>
+                <div class="accordion">
+                    <div *ngFor="let x of taskData; let index=index;" class="panel">
+                        <div style="display: flex; margin-top: 15px;margin-bottom: 20px;border-bottom: 1px solid lightgray;">
+                            <div style="width: 50%;">
+                                <div style="display: flex;">
+                                    <div *ngIf="x.subTaskCount!=0">
+                                        <mat-icon (click)="togglePanel1(index)"  style="color: black;" *ngIf="x.expanded">expand_less</mat-icon>
+                                        <mat-icon  (click)="getsubtasksA(x,index)"  (click)="togglePanel1(index)" style="color: black;"  *ngIf="!x.expanded">expand_more</mat-icon>
+                                    </div>
+                                    <div *ngIf="x.subTaskCount==0">
+                                        <mat-icon ></mat-icon>
+                                    </div>
+                                    <div *ngIf="x.isMilestone==true">
+                                        <span><img src="../../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg"></span>
+                                    </div>
+                                    <div *ngIf="x.isMilestone==false">
+                                        <mat-icon style="color:green;" > assignment_turned_in</mat-icon>
+                                    </div>
+                                    <div [matMenuTriggerFor]="moreMenu">
+                                        <mat-icon class="icon-options" >more_vert</mat-icon>
+                                    </div>
+                                    <div *ngIf="x.isPublic==true">
+                                            <img style="position: relative; left: -5px;" src="../../../../assets/images/iconsForsvg/Unlock.svg">
+                                    </div>
+                                    <div *ngIf="x.isPublic==false">
+                                        <mat-icon style="font-size:15px; position: relative; top:3px ;">lock</mat-icon>
+                                </div>
+                                <div *ngIf="x?.isConvertedToEvent">
+                                    <img style="width: 18px;height: 18px;"  src="../../../../../../assets/images/iconsForsvg/event_upcoming.svg">
+                                </div>
+                                    <div *ngIf="x.isThreeDaysLeft == true">
+                                        <img  style="width: 18px;height: 18px;"  class="timeauto" src="../../../../../assets/images/iconsForsvg/warning_FILL0_wght400_GRAD0_opsz24.svg">
+                                    </div>
+                                    <div *ngIf="x?.isParent == true"> 
+                                        <img style="width: 18px;height: 18px;"  style="position: relative"  src="../../../../../assets/images/iconsForsvg/up_arrow.svg">
+                                    </div> 
+                                    <div *ngIf="x?.sucessorCount!=0">
+                                        <img  style="width: 18px;height: 18px;"  style="position: relative;cursor: pointer;" (click)="getlinkedsuccessor(x,sucessorCount)"   src="../../../../../assets/images/iconsForsvg/right-arrow.svg">
+                                    </div>
+                                     <div *ngIf="x?.predecessorCount!=0">
+                                        <img style="width: 18px;height: 18px;"  style="position: relative;cursor: pointer;" (click)="getlinkedpredecessor(x,predecessorCount)"    src="../../../../../assets/images/iconsForsvg/left-arrow.svg">
+                                    </div>
+                                  </div>
+                                    <mat-menu #moreMenu="matMenu" class="eventlist">
+                                        <ng-template matMenuContent>
+                                            <button class="fw-600" mat-menu-item (click)="opentaskDialog(x.id)"> 
+                                                <mat-icon class="icon-options">visibility</mat-icon>
+                                                <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="x.isMilestone != true" class="fw-600" mat-menu-item (click)="updateTask(x, 'edit-task')">
+                                                <mat-icon class="icon-options">edit</mat-icon> 
+                                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="x.isMilestone == true" class="fw-600" mat-menu-item (click)="updateMilestone(x, 'edit-task')">
+                                                <mat-icon class="icon-options">edit</mat-icon> 
+                                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item (click)="deleteDialogConfirmation(x,'deleteTask')">
+                                                <mat-icon class="icon-options">delete</mat-icon>
+                                                <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item
+                                                (click)="createNewTask(false,x)">
+                                                <mat-icon style="color: green;">assignment_turned_in</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add subTask'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item *ngIf="x.status=='Assigned'" >
+                                                <mat-icon style="color: green;">autorenew</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Update Status'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="x.isMilestone != true&&x.isConvertedToEvent==false" class="fw-600" mat-menu-item (click)="TaskInToEvent(x)" >
+                                                <mat-icon style="color: red;">swap_horiz</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Convert to Event'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="x.isMilestone != true&&x.isConvertedToEvent==false" class="fw-600" mat-menu-item (click)="TaskInToMilestone(x)" >
+                                                <mat-icon style="color: blue;">swap_horiz</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Convert to Milestone'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>group</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add to Group'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>event</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Create an Event'|translate}}</span>
+                                            </button>
+        
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:green">bar_chart</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create an Activity Report'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>wb_incandescent</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create Stratergy'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add File'|translate}}</span>
+        
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:rgb(255,193,111) ;">speaker_notes </mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add Note'|translate}}</span>
+        
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>vpn_key</mat-icon>
+                                                <span class="fw-600 color_black">{{'Edit Permission'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>track_changes</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create Target'|translate}}</span>
+                                            </button>
+                                        </ng-template>
+                                    </mat-menu>
+                            </div>
+                            <div style="width: 50%;font-weight: 900;text-align: start;" >
+                                <span (click)="opentaskDialog(x.id)">{{get30TenCharacters(x.title)}}</span>    
+                            </div>
+                        </div>
+          <!-- 0000000000  -->
+          <div *ngIf="x?.expanded" class="panel-content p-0" >
+            <div *ngFor="let subtask of subtasklistA[index];let i=index;" class="panel">
+                <div style="display: flex; margin-top: 15px;margin-bottom: 20px;background-color: rgb(247, 243, 243); padding: 20px 0px 0px 0px;">
+                    <div style="width: 50%;">
+                        <div style="display: flex;">
+                            <div *ngIf="subtask.subTaskCount!=0">
+                                <mat-icon  (click)="togglePanel2(subtask)" style="color: black;" *ngIf="subtask.expanded">expand_less</mat-icon>
+                                <mat-icon (click)="getsubtasksB(subtask,i)"  (click)="togglePanel2(subtask,i)" style="color: black;"  *ngIf="!subtask.expanded">expand_more</mat-icon>
+                            </div>
+                            <div *ngIf="subtask.subTaskCount==0">
+                                <mat-icon ></mat-icon>
+                            </div>
+                            <div *ngIf="subtask.isMilestone==true">
+                                <span><img src="../../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg"></span>
+                            </div>
+                            <div *ngIf="subtask.isMilestone==false">
+                                <mat-icon style="color:green;" > assignment_turned_in</mat-icon>
+                            </div>
+                            <div [matMenuTriggerFor]="moreMenu">
+                                <mat-icon class="icon-options" >more_vert</mat-icon>
+                            </div>
+                            <div *ngIf="subtask.isThreeDaysLeft == true">
+                                <img  class="timeauto" src="../../../../../assets/images/iconsForsvg/warning_FILL0_wght400_GRAD0_opsz24.svg">
+                            </div>
+                            <div *ngIf="subtask?.isParent == false&&subtask?.isSuccessortask == false&&subtask?.isPredecessortask == false">
+                                <img style="position: relative"  src="../../../../../assets/images/iconsForsvg/down-arrow.svg">
+                            </div>
+                            <div *ngIf="subtask?.isSuccessortask == true">
+                                <img style="position: relative"   *ngIf="subtask?.successorTaskCount>0" [matBadge]="subtask?.successorTaskCount" matBadgeColor="warn"  src="../../../../../assets/images/iconsForsvg/right-arrow.svg">
+                            </div>
+                             <div *ngIf="subtask?.isPredecessortask == true">
+                                <img style="position: relative" *ngIf="subtask?.predecessorTaskcount>0" [matBadge]="subtask?.predecessorTaskcount" matBadgeColor="warn"  src="../../../../../assets/images/iconsForsvg/left-arrow.svg">
+                            </div>
+                          </div>
+                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                <ng-template matMenuContent>
+                                    <button class="fw-600" mat-menu-item (click)="opentaskDialog(subtask.id)"> 
+                                        <mat-icon class="icon-options">visibility</mat-icon>
+                                        <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                    </button>
+                                    <button *ngIf="x.isMilestone != true" class="fw-600" mat-menu-item (click)="updateTask(subtask, 'edit-task')">
+                                        <mat-icon class="icon-options">edit</mat-icon> 
+                                        <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                    </button>
+                                    <button *ngIf="x.isMilestone == true" class="fw-600" mat-menu-item (click)="updateMilestone(subtask, 'edit-task')">
+                                        <mat-icon class="icon-options">edit</mat-icon> 
+                                        <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="deleteDialogConfirmation(subtask,'deleteTask')">
+                                        <mat-icon class="icon-options">delete</mat-icon>
+                                        <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item
+                                        (click)="createNewTask(false,subtask)">
+                                        <mat-icon style="color: green;">assignment_turned_in</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Add subTask'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item *ngIf="subtask.status=='Assigned'" >
+                                        <mat-icon style="color: green;">autorenew</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Update Status'|translate}}</span>
+                                    </button>
+                                    <button *ngIf="subtask.isMilestone != true&&subtask.isConvertedToEvent==false" class="fw-600" mat-menu-item (click)="TaskInToEvent(subtask)" >
+                                        <mat-icon style="color: red;">swap_horiz</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Convert to Event'|translate}}</span>
+                                    </button>
+                                    <button *ngIf="subtask.isMilestone != true&&subtask.isConvertedToEvent==false" class="fw-600" mat-menu-item (click)="TaskInToMilestone(subtask)" >
+                                        <mat-icon style="color: blue;">swap_horiz</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Convert to Milestone'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon>group</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Add to Group'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon>event</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Create an Event'|translate}}</span>
+                                    </button>
+        
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon style="color:green">bar_chart</mat-icon>
+                                        <span class="fw-600 color_black">{{'Create an Activity Report'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon>wb_incandescent</mat-icon>
+                                        <span class="fw-600 color_black">{{'Create Stratergy'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Add File'|translate}}</span>
+        
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon style="color:rgb(255,193,111) ;">speaker_notes </mat-icon>
+                                        <span class="fw-600 color_black"> {{'Add Note'|translate}}</span>
+        
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon>vpn_key</mat-icon>
+                                        <span class="fw-600 color_black">{{'Edit Permission'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon>track_changes</mat-icon>
+                                        <span class="fw-600 color_black">{{'Create Target'|translate}}</span>
+                                    </button>
+                                </ng-template>
+                            </mat-menu>
+                    </div>
+                    <div style="width: 50%;font-weight: 900;text-align: start;" >
+                        <span (click)="opentaskDialog(subtask.id)">{{get30TenCharacters(subtask.title)}}</span>    
+                    </div>
+                </div>
+        
+                <!-- 0000000000  -->
+                <div *ngIf="x?.expanded" class="panel-content p-0" style="background-color: rgb(252, 250, 250);">
+                    <div *ngFor="let subtaskbysubtask of subtasklistB[i];let i=index;" class="panel">
+                        <div style="display: flex; margin-top: 15px;margin-bottom: 20px;">
+                            <div style="width: 50%;">
+                                <div style="display: flex;">
+                                    <div *ngIf="subtaskbysubtask.subTaskCount!=0">
+                                        <mat-icon  (click)="togglePanel3(subtask)" style="color: black;" *ngIf="subtaskbysubtask.expanded">expand_less</mat-icon>
+                                        <mat-icon (click)="getsubtasksC(subtask,i)"  (click)="togglePanel3(subtask,i)" style="color: black;"  *ngIf="!subtaskbysubtask.expanded">expand_more</mat-icon>
+                                    </div>
+                                    <div *ngIf="subtaskbysubtask.subTaskCount==0">
+                                        <mat-icon ></mat-icon>
+                                    </div>
+                                    <div *ngIf="subtaskbysubtask.isMilestone==true">
+                                        <span><img src="../../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg"></span>
+                                    </div>
+                                    <div *ngIf="subtaskbysubtask.isMilestone==false">
+                                        <mat-icon style="color:green;" > assignment_turned_in</mat-icon>
+                                    </div>
+                                    <div [matMenuTriggerFor]="moreMenu">
+                                        <mat-icon class="icon-options" >more_vert</mat-icon>
+                                    </div>
+                                    <div *ngIf="subtaskbysubtask.isThreeDaysLeft == true">
+                                        <img  class="timeauto" src="../../../../../assets/images/iconsForsvg/warning_FILL0_wght400_GRAD0_opsz24.svg">
+                                    </div>
+                                    <div *ngIf="subtaskbysubtask?.isParent == false&&subtaskbysubtask?.isSuccessortask == false&&subtaskbysubtask?.isPredecessortask == false">
+                                        <img style="position: relative"  src="../../../../../assets/images/iconsForsvg/down-arrow.svg">
+                                    </div>
+                                    <div *ngIf="subtaskbysubtask?.isSuccessortask == true">
+                                        <img style="position: relative"   *ngIf="subtaskbysubtask?.successorTaskCount>0" [matBadge]="subtaskbysubtask?.successorTaskCount" matBadgeColor="warn"  src="../../../../../assets/images/iconsForsvg/right-arrow.svg">
+                                    </div>
+                                     <div *ngIf="subtaskbysubtask?.isPredecessortask == true">
+                                        <img style="position: relative" *ngIf="subtaskbysubtask?.predecessorTaskcount>0" [matBadge]="subtaskbysubtask?.predecessorTaskcount" matBadgeColor="warn"  src="../../../../../assets/images/iconsForsvg/left-arrow.svg">
+                                    </div>
+                                  </div>
+                                    <mat-menu #moreMenu="matMenu" class="eventlist">
+                                        <ng-template matMenuContent>
+                                            <button class="fw-600" mat-menu-item (click)="opentaskDialog(subtaskbysubtask.id)"> 
+                                                <mat-icon class="icon-options">visibility</mat-icon>
+                                                <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="x.isMilestone != true" class="fw-600" mat-menu-item (click)="updateTask(subtaskbysubtask, 'edit-task')">
+                                                <mat-icon class="icon-options">edit</mat-icon> 
+                                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="x.isMilestone == true" class="fw-600" mat-menu-item (click)="updateMilestone(subtaskbysubtask, 'edit-task')">
+                                                <mat-icon class="icon-options">edit</mat-icon> 
+                                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item (click)="deleteDialogConfirmation(subtaskbysubtask,'deleteTask')">
+                                                <mat-icon class="icon-options">delete</mat-icon>
+                                                <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item
+                                                (click)="createNewTask(false,subtask)">
+                                                <mat-icon style="color: green;">assignment_turned_in</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add subTask'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item *ngIf="subtaskbysubtask.status=='Assigned'" >
+                                                <mat-icon style="color: green;">autorenew</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Update Status'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="subtaskbysubtask.isMilestone != true" class="fw-600" mat-menu-item (click)="TaskInToEvent(subtaskbysubtask)" >
+                                                <mat-icon style="color: red;">swap_horiz</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Convert to Event'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="subtaskbysubtask.isMilestone != true&&subtaskbysubtask.isConvertedToEvent==false" class="fw-600" mat-menu-item (click)="TaskInToMilestone(subtaskbysubtask)" >
+                                                <mat-icon style="color: blue;">swap_horiz</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Convert to Milestone'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>group</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add to Group'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>event</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Create an Event'|translate}}</span>
+                                            </button>
+                
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:green">bar_chart</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create an Activity Report'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>wb_incandescent</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create Stratergy'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add File'|translate}}</span>
+                
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:rgb(255,193,111) ;">speaker_notes </mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add Note'|translate}}</span>
+                
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>vpn_key</mat-icon>
+                                                <span class="fw-600 color_black">{{'Edit Permission'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>track_changes</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create Target'|translate}}</span>
+                                            </button>
+                                        </ng-template>
+                                    </mat-menu>
+                            </div>
+                            <div style="width: 50%;font-weight: 900;text-align: start;" >
+                                <span (click)="opentaskDialog(subtaskbysubtask.id)">{{get30TenCharacters(subtaskbysubtask.title)}}</span>    
+                            </div>
+                        </div>
+                        </div>
+                      </div>
+                </div>
+              </div>
+             </div>      
+             </div>
+            </ng-container>
+
+            <!-- isMobileView False  -->
+            <ng-container *ngIf="!isMobileView">
+                <div class="row" style="margin-top: 10px;margin-bottom: 10px;" *ngIf="showicon">
+                    <h3 style="margin-top:10px;">Search Results of :</h3>
+                    <!-- Container for the keyword items -->
+                    <div style="display: flex; flex-wrap: wrap; align-items: flex-start;">
+    
+                        <!-- Left arrow to navigate to previous items -->
+                        <div style="cursor: pointer;" *ngIf="startIndex > 0">
+                            <mat-icon (click)="navigateItems('left')"
+                                style="padding: 8px;font-size: 35px;margin-right: 10px;">keyboard_arrow_left</mat-icon>
+                        </div>
+    
+                        <!-- Show the items in a row -->
+                        <ng-container *ngFor="let x of displayedItems; let index = index;">
+                            <span class="keywordsearch" style="margin: 10px;">
+                                <ng-container *ngIf="x?.name=='Title'"><span
+                                        class="keywordvalue">Name: {{x.value}}</span></ng-container>
+                                <ng-container *ngIf="x?.name=='AdvancedSearch'"><span
+                                            class="keywordvalue">{{x.value}}</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsPublic'"><span
+                                        class="keywordvalue">Public</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsPrivate'"><span
+                                        class="keywordvalue">Private</span></ng-container>
+                                <ng-container *ngIf="x?.name=='Ischild'"><span
+                                            class="keywordvalue">Child</span></ng-container>
+                                <ng-container *ngIf="x?.name=='Isparent'"><span
+                                                class="keywordvalue">Parent</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsPredecessortask'"><span
+                                                class="keywordvalue">Predecessortask</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsSuccessortask'"><span
+                                                class="keywordvalue">Successortask</span></ng-container>
+                                <ng-container *ngIf="x?.name=='Hours'"><span
+                                                class="keywordvalue">Hours: {{x.value}}Hrs</span></ng-container>
+                                <ng-container *ngIf="x?.name=='Minutes'"><span
+                                                class="keywordvalue">Minutes: {{x.value}}Mins</span></ng-container>                       
+                                <ng-container *ngIf="x?.name=='Status'">
+                                    <span class="keywordvalue">Status: {{x?.value == 1 ? 'Assigned' : x?.value == 2 ? 'Not Assigned' : x?.value == 3 ? 'In Progress' : x?.value == 4 ? 'Completed' : 'Canceled'}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='Condition'">
+                                    <span class="keywordvalue">Condition : {{x?.value}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='EndDate' || x?.name=='StartDate'">
+                                    <span class="keywordvalue">{{x?.name+' '}}{{x?.value|date:'dd-MMM-yyyy'}}</span>
+                                </ng-container>
+                                <span><mat-icon class="keywordremove"
+                                        (click)="removekeyword(x, startIndex + index)">cancel</mat-icon></span>
+                            </span>
+                        </ng-container>
+    
+                        <!-- Right arrow to navigate to next items -->
+                        <div style="cursor: pointer;"
+                            *ngIf="ListOftragetfiltervalues.length > 5 && startIndex + displayedItems.length < ListOftragetfiltervalues.length">
+                            <mat-icon (click)="navigateItems('right')"
+                                style="padding: 10px;font-size: 35px;">keyboard_arrow_right</mat-icon>
+                        </div>
+    
+                    </div>
+    
+                </div>
+                  <div class="row" *ngIf="showicon" style="background-color: #fffde3;padding: 10px;">
+                    <div class="col-3">
+                        <span class="fs-16" style="font-weight: 700;">No of Records : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{tasklength}}</span>
+                    </div>
+                </div>
+                <div style="display: flex;font-weight: 900; margin-top: 15px;margin-bottom: 20px;border-bottom: 1px solid lightgray;">
+                    <div style="width: 15%;"><mat-icon></mat-icon></div>
+                    <div style="width: 15%;text-align: start;">Name</div>
+                    <div style="width: 15%;text-align: start;">Assignee</div>
+                    <div style="width: 10%;text-align: center;">Status</div>
+                    <div style="width: 10%;text-align: center;">End Date </div>
+                    <div style="width: 10%;text-align: center;">Duration</div>
+                    <div style="width: 15%;text-align: center;">Progress</div>
+                    <div style="width: 10%;text-align: center;">Category</div>
+                </div>
+                <div class="accordion">
+                    <div *ngFor="let x of taskData; let index=index;" class="panel">
+                        <div style="display: flex; margin-top: 15px;margin-bottom: 20px;border-bottom: 1px solid lightgray;">
+                            <div style="width: 15%;">
+                                <div style="display: flex;">
+                                    <div *ngIf="x.subTaskCount!=0">
+                                        <mat-icon (click)="togglePanel1(index)"  style="color: black;" *ngIf="x.expanded">expand_less</mat-icon>
+                                        <mat-icon  (click)="getsubtasksA(x,index)"  (click)="togglePanel1(index)" style="color: black;"  *ngIf="!x.expanded">expand_more</mat-icon>
+                                    </div>
+                                    <div *ngIf="x.subTaskCount==0">
+                                        <mat-icon ></mat-icon>
+                                    </div>
+                                    <div *ngIf="x.isMilestone==true">
+                                        <span><img src="../../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg"></span>
+                                    </div>
+                                    <div *ngIf="x.isMilestone==false">
+                                        <mat-icon style="color:green;" > assignment_turned_in</mat-icon>
+                                    </div>
+                                    <div [matMenuTriggerFor]="moreMenu">
+                                        <mat-icon class="icon-options" >more_vert</mat-icon>
+                                    </div>
+                                    <div *ngIf="x.isPublic==true">
+                                            <img style="position: relative; left: -5px;" src="../../../../assets/images/iconsForsvg/Unlock.svg">
+                                    </div>
+                                    <div *ngIf="x.isPublic==false">
+                                        <mat-icon style="font-size:15px; position: relative; top:3px ;">lock</mat-icon>
+                                </div>
+                                <div *ngIf="x?.isConvertedToEvent">
+                                    <img style="width: 18px;height: 18px;"  src="../../../../../../assets/images/iconsForsvg/event_upcoming.svg">
+                                </div>
+                                    <div *ngIf="x.isThreeDaysLeft == true">
+                                        <img  style="width: 18px;height: 18px;"  class="timeauto" src="../../../../../assets/images/iconsForsvg/warning_FILL0_wght400_GRAD0_opsz24.svg">
+                                    </div>
+                                    <div *ngIf="x?.isParent == true"> 
+                                        <img style="width: 18px;height: 18px;"  style="position: relative"  src="../../../../../assets/images/iconsForsvg/up_arrow.svg">
+                                    </div> 
+                                    <div *ngIf="x?.sucessorCount!=0">
+                                        <img  style="width: 18px;height: 18px;"  style="position: relative;cursor: pointer;" (click)="getlinkedsuccessor(x,sucessorCount)"   src="../../../../../assets/images/iconsForsvg/right-arrow.svg">
+                                    </div>
+                                     <div *ngIf="x?.predecessorCount!=0">
+                                        <img style="width: 18px;height: 18px;"  style="position: relative;cursor: pointer;" (click)="getlinkedpredecessor(x,predecessorCount)"    src="../../../../../assets/images/iconsForsvg/left-arrow.svg">
+                                    </div>
+                                  </div>
+                                    <mat-menu #moreMenu="matMenu" class="eventlist">
+                                        <ng-template matMenuContent>
+                                            <button class="fw-600" mat-menu-item (click)="opentaskDialog(x.id)"> 
+                                                <mat-icon class="icon-options">visibility</mat-icon>
+                                                <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="x.isMilestone != true" class="fw-600" mat-menu-item (click)="updateTask(x, 'edit-task')">
+                                                <mat-icon class="icon-options">edit</mat-icon> 
+                                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="x.isMilestone == true" class="fw-600" mat-menu-item (click)="updateMilestone(x, 'edit-task')">
+                                                <mat-icon class="icon-options">edit</mat-icon> 
+                                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item (click)="deleteDialogConfirmation(x,'deleteTask')">
+                                                <mat-icon class="icon-options">delete</mat-icon>
+                                                <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item
+                                                (click)="createNewTask(false,x)">
+                                                <mat-icon style="color: green;">assignment_turned_in</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add subTask'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item *ngIf="x.status=='Assigned'" >
+                                                <mat-icon style="color: green;">autorenew</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Update Status'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="x.isMilestone != true&&x.isConvertedToEvent==false&&x.status!='Not_Assigned'" class="fw-600" mat-menu-item (click)="TaskInToEvent(x)" >
+                                                <mat-icon style="color: red;">swap_horiz</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Convert to Event'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="x.isMilestone != true&&x.isConvertedToEvent==false&&x.status!='Not_Assigned'" class="fw-600" mat-menu-item (click)="TaskInToMilestone(x)" >
+                                                <mat-icon style="color: blue;">swap_horiz</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Convert to Milestone'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>group</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add to Group'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>event</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Create an Event'|translate}}</span>
+                                            </button>
+        
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:green">bar_chart</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create an Activity Report'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>wb_incandescent</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create Stratergy'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add File'|translate}}</span>
+        
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:rgb(255,193,111) ;">speaker_notes </mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add Note'|translate}}</span>
+        
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>vpn_key</mat-icon>
+                                                <span class="fw-600 color_black">{{'Edit Permission'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>track_changes</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create Target'|translate}}</span>
+                                            </button>
+                                        </ng-template>
+                                    </mat-menu>
+                            </div>
+                            <div style="width: 15%;font-weight: 900;text-align: start;" >
+                                <span (click)="opentaskDialog(x.id)">{{get30TenCharacters(x.title)}}</span>    
+                            </div>
+                            <div style="width: 15%;text-align: center;margin-top: -10px;">
+                              
+                                    <div style="display: flex;" >
+                                        <div *ngIf="x.assignedTo.length>3&&x.assignedTo.length<6" >
+                                            <mat-icon style="color: black;position: relative;top: 5px;" *ngIf="x.Listofassignes==0||x.Listofassignes==3" (click)="getListofassignes(x)">keyboard_arrow_right</mat-icon>
+                                        </div>
+                                           <div *ngFor="let p of getassigned(x,x?.assignedTo);let index=index;">
+                                            <img class="avatar" style="border-radius: 50%;" *ngIf="p?.profilePicture!=''"
+                                            onError="this.src='assets/avatar.svg'" (click)="opentaskDialog(x.id)"
+                                            [src]="p?.profilePicture ? p?.profilePicture:'assets/avatar.svg'">
+                                            <span  *ngIf="p?.profilePicture==''" [style.background]="getColor(index)"  style="color: white; padding: 8px;border-radius: 50%;position: relative; top: 5px;margin: 5px">{{getuserFLnames(p.userName)}}</span>
+                                            <span *ngIf="x.assignedTo.length==1"  style="margin-left: 5px;"><b>{{p.userName}}</b></span>
+                                        </div> 
+                                        <div *ngIf="x.assignedTo.length>3" >
+                                            <mat-icon style="color: black;position: relative;top: 5px;" *ngIf="x.Listofassignes==0||x.Listofassignes==3" (click)="getListofassignes(x)">keyboard_arrow_right</mat-icon>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div style="width: 10%;text-align: center;">
+                                    <span *ngIf="x.status!=0" [ngClass]="getStatusColorClass(x?.status)">{{getstatus(x?.status)}}</span> 
+                            </div>
+                            <div style="width: 10%;text-align: center;">{{x.endDate|date:'dd-MMM-yyyy'}}</div>
+                            <div style="width: 10%;text-align: center;">
+                                <span *ngIf="x.isMilestone != true">{{x.duration}}</span>
+                            </div>
+                            <div style="width: 15%;text-align: center;">
+                                <div class="row justify-content-center" style="position: relative;top: -10px;">
+                                    <div class="col-8 p-0 m-0" style="text-align: center;">{{x.percentage+'%'}}</div>
+                                    <div class="col-8 p-0 m-0">
+                                        <mat-progress-bar class="w-100 p-0 m-0" [value]="x.percentage" [ngClass]="assignCssClass(x.percentage)">
+                                        </mat-progress-bar>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="width: 10%;text-align: center;">
+                                <span [style.background]="x.color" [style.color]="x.fontColor"  style="border: none; border-radius:20px;padding: 6px 7px">{{getfirstTenCharacters(x.categoryName)}}</span>
+                            </div>
+                        </div>
+          <!-- 0000000000  -->
+          <div *ngIf="x?.expanded" class="panel-content p-0" >
+            <div *ngFor="let subtask of subtasklistA[index];let i=index;" class="panel">
+                <div style="display: flex; margin-top: 15px;margin-bottom: 20px;background-color: rgb(247, 243, 243); padding: 20px 0px 0px 0px;">
+                    <div style="width: 15%;">
+                        <div style="display: flex;">
+                            <div *ngIf="subtask.subTaskCount!=0">
+                                <mat-icon  (click)="togglePanel2(subtask)" style="color: black;" *ngIf="subtask.expanded">expand_less</mat-icon>
+                                <mat-icon (click)="getsubtasksB(subtask,i)"  (click)="togglePanel2(subtask,i)" style="color: black;"  *ngIf="!subtask.expanded">expand_more</mat-icon>
+                            </div>
+                            <div *ngIf="subtask.subTaskCount==0">
+                                <mat-icon ></mat-icon>
+                            </div>
+                            <div *ngIf="subtask.isMilestone==true">
+                                <span><img src="../../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg"></span>
+                            </div>
+                            <div *ngIf="subtask.isMilestone==false">
+                                <mat-icon style="color:green;" > assignment_turned_in</mat-icon>
+                            </div>
+                            <div [matMenuTriggerFor]="moreMenu">
+                                <mat-icon class="icon-options" >more_vert</mat-icon>
+                            </div>
+                            <div *ngIf="subtask.isPublic==true">
+                                <img style="position: relative; left: -5px;" src="../../../../assets/images/iconsForsvg/Unlock.svg">
+                        </div>
+                        <div *ngIf="subtask.isPublic==false">
+                            <mat-icon style="font-size:15px; position: relative; top:3px ;">lock</mat-icon>
+                    </div>
+                    <div *ngIf="subtask?.isConvertedToEvent">
+                        <img style="width: 18px;height: 18px;"  src="../../../../../../assets/images/iconsForsvg/event_upcoming.svg">
+                    </div>
+                            <div *ngIf="subtask.isThreeDaysLeft == true">
+                                <img  class="timeauto" src="../../../../../assets/images/iconsForsvg/warning_FILL0_wght400_GRAD0_opsz24.svg">
+                            </div>
+                            <div *ngIf="subtask?.isParent == false&&subtask?.isSuccessortask == false&&subtask?.isPredecessortask == false">
+                                <img style="position: relative"  src="../../../../../assets/images/iconsForsvg/down-arrow.svg">
+                            </div>
+                            <div *ngIf="subtask?.isSuccessortask == true">
+                                <img style="position: relative"   *ngIf="subtask?.successorTaskCount>0" [matBadge]="subtask?.successorTaskCount" matBadgeColor="warn"  src="../../../../../assets/images/iconsForsvg/right-arrow.svg">
+                            </div>
+                             <div *ngIf="subtask?.isPredecessortask == true">
+                                <img style="position: relative" *ngIf="subtask?.predecessorTaskcount>0" [matBadge]="subtask?.predecessorTaskcount" matBadgeColor="warn"  src="../../../../../assets/images/iconsForsvg/left-arrow.svg">
+                            </div>
+                          </div>
+                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                <ng-template matMenuContent>
+                                    <button class="fw-600" mat-menu-item (click)="opentaskDialog(subtask.id)"> 
+                                        <mat-icon class="icon-options">visibility</mat-icon>
+                                        <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                    </button>
+                                    <button *ngIf="x.isMilestone != true" class="fw-600" mat-menu-item (click)="updateTask(subtask, 'edit-task')">
+                                        <mat-icon class="icon-options">edit</mat-icon> 
+                                        <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                    </button>
+                                    <button *ngIf="x.isMilestone == true" class="fw-600" mat-menu-item (click)="updateMilestone(subtask, 'edit-task')">
+                                        <mat-icon class="icon-options">edit</mat-icon> 
+                                        <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="deleteDialogConfirmation(subtask,'deleteTask')">
+                                        <mat-icon class="icon-options">delete</mat-icon>
+                                        <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item
+                                        (click)="createNewTask(false,subtask)">
+                                        <mat-icon style="color: green;">assignment_turned_in</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Add subTask'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item *ngIf="subtask.status=='Assigned'" >
+                                        <mat-icon style="color: green;">autorenew</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Update Status'|translate}}</span>
+                                    </button>
+                                    <button *ngIf="subtask.isMilestone != true&&subtask.isConvertedToEvent==false&&subtask.status!='Not_Assigned'" class="fw-600" mat-menu-item (click)="TaskInToEvent(subtask)" >
+                                        <mat-icon style="color: red;">swap_horiz</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Convert to Event'|translate}}</span>
+                                    </button>
+                                    <button *ngIf="subtask.isMilestone != true&&subtask.isConvertedToEvent==false&&subtask.status!='Not_Assigned'" class="fw-600" mat-menu-item (click)="TaskInToMilestone(subtask)" >
+                                        <mat-icon style="color: blue;">swap_horiz</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Convert to Milestone'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon>group</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Add to Group'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon>event</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Create an Event'|translate}}</span>
+                                    </button>
+        
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon style="color:green">bar_chart</mat-icon>
+                                        <span class="fw-600 color_black">{{'Create an Activity Report'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon>wb_incandescent</mat-icon>
+                                        <span class="fw-600 color_black">{{'Create Stratergy'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Add File'|translate}}</span>
+        
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon style="color:rgb(255,193,111) ;">speaker_notes </mat-icon>
+                                        <span class="fw-600 color_black"> {{'Add Note'|translate}}</span>
+        
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon>vpn_key</mat-icon>
+                                        <span class="fw-600 color_black">{{'Edit Permission'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item>
+                                        <mat-icon>track_changes</mat-icon>
+                                        <span class="fw-600 color_black">{{'Create Target'|translate}}</span>
+                                    </button>
+                                </ng-template>
+                            </mat-menu>
+                    </div>
+                    <div style="width: 15%;font-weight: 900;text-align: start;" >
+                        <span (click)="opentaskDialog(subtask.id)">{{get30TenCharacters(subtask.title)}}</span>    
+                    </div>
+                    <div style="width: 15%;text-align: center;margin-top: -10px;">
+                        <ng-container *ngIf="subtask.assignedTo.length==1">
+                            <div style="display: flex;" >
+                                <div *ngIf="subtask.assignedTo.length!=0" style="margin: 5px;">
+                                    <img class="avatar" style="border-radius: 50%;" *ngIf="subtask.assignedTo[0]?.userName"
+                                    onError="this.src='assets/avatar.svg'" (click)="opentaskDialog(subtask.id)"
+                                    [src]="subtask?.assignedTo[0]?.profilePicture ? subtask. assignedTo[0]?.profilePicture:'assets/avatar.svg'">
+                                <span 
+                                    style="margin-left: 2px;margin-top: 8px;font-weight: 900;">{{subtask.assignedTo[0]?.userName}}</span>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="subtask.assignedTo.length>1">
+                            <div style="display: flex;" >
+                                   <div *ngFor="let p of getassigned(subtask,subtask?.assignedTo);let index=index;">
+                                    <img class="avatar" style="border-radius: 50%;" *ngIf="p?.profilePicture!=''"
+                                    onError="this.src='assets/avatar.svg'" (click)="opentaskDialog(subtask.id)"
+                                    [src]="p?.profilePicture ? p?.profilePicture:'assets/avatar.svg'">
+                                    <span  *ngIf="p?.profilePicture==''" [style.background]="getColor(index)"  style="color: white; padding: 8px;border-radius: 50%;position: relative;top: 5px;margin: 5px;">{{getuserFLnames(p.userName)}}</span>
+                                </div>
+                                <div *ngIf="subtask.assignedTo.length>3" >
+                                    <mat-icon style="color: black;position: relative;top: 5px;" *ngIf="subtask.Listofassignes==0||x.Listofassignes==3" (click)="getListofassignes(subtask)">keyboard_arrow_right</mat-icon>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                    <div style="width: 10%;text-align: center;">
+                            <span *ngIf="subtask.status!=0" [ngClass]="getStatusColorClass(subtask?.status)">{{getstatus(subtask?.status)}}</span> 
+                    </div>
+                    <div style="width: 10%;text-align: center;">{{subtask.endDate|date:'dd-MMM-yyyy'}}</div>
+                    <div style="width: 10%;text-align: center;">
+                        <span *ngIf="subtask.isMilestone != true">{{subtask.duration}}</span>
+                    </div>
+                    <div style="width: 15%;text-align: center;">
+                        <div class="row justify-content-center" style="position: relative;top: -10px;">
+                            <div class="col-8 p-0 m-0" style="text-align: center;">{{subtask.percentage+'%'}}</div>
+                            <div class="col-8 p-0 m-0">
+                                <mat-progress-bar class="w-100 p-0 m-0" [value]="subtask.percentage" [ngClass]="assignCssClass(subtask.percentage)">
+                                </mat-progress-bar>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="width: 10%;text-align: center;">
+                        <span [style.background]="subtask.color" [style.color]="subtask.fontColor"  style="border: none; border-radius:20px;padding: 6px 7px">{{getfirstTenCharacters(subtask.categoryName)}}</span>
+                    </div>
+                </div>
+        
+                <!-- 0000000000  -->
+                <div *ngIf="x?.expanded" class="panel-content p-0" style="background-color: rgb(252, 250, 250);">
+                    <div *ngFor="let subtaskbysubtask of subtasklistB[i];let i=index;" class="panel">
+                        <div style="display: flex; margin-top: 15px;margin-bottom: 20px;">
+                            <div style="width: 15%;">
+                                <div style="display: flex;">
+                                    <div *ngIf="subtaskbysubtask.subTaskCount!=0">
+                                        <mat-icon  (click)="togglePanel3(subtask)" style="color: black;" *ngIf="subtaskbysubtask.expanded">expand_less</mat-icon>
+                                        <mat-icon (click)="getsubtasksC(subtask,i)"  (click)="togglePanel3(subtask,i)" style="color: black;"  *ngIf="!subtaskbysubtask.expanded">expand_more</mat-icon>
+                                    </div>
+                                    <div *ngIf="subtaskbysubtask.subTaskCount==0">
+                                        <mat-icon ></mat-icon>
+                                    </div>
+                                    <div *ngIf="subtaskbysubtask.isMilestone==true">
+                                        <span><img src="../../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg"></span>
+                                    </div>
+                                    <div *ngIf="subtaskbysubtask.isMilestone==false">
+                                        <mat-icon style="color:green;" > assignment_turned_in</mat-icon>
+                                    </div>
+                                    <div [matMenuTriggerFor]="moreMenu">
+                                        <mat-icon class="icon-options" >more_vert</mat-icon>
+                                    </div>
+                                    <div *ngIf="subtaskbysubtask.isThreeDaysLeft == true">
+                                        <img  class="timeauto" src="../../../../../assets/images/iconsForsvg/warning_FILL0_wght400_GRAD0_opsz24.svg">
+                                    </div>
+                                    <div *ngIf="subtaskbysubtask?.isParent == false&&subtaskbysubtask?.isSuccessortask == false&&subtaskbysubtask?.isPredecessortask == false">
+                                        <img style="position: relative"  src="../../../../../assets/images/iconsForsvg/down-arrow.svg">
+                                    </div>
+                                    <div *ngIf="subtaskbysubtask?.isSuccessortask == true">
+                                        <img style="position: relative"   *ngIf="subtaskbysubtask?.successorTaskCount>0" [matBadge]="subtaskbysubtask?.successorTaskCount" matBadgeColor="warn"  src="../../../../../assets/images/iconsForsvg/right-arrow.svg">
+                                    </div>
+                                     <div *ngIf="subtaskbysubtask?.isPredecessortask == true">
+                                        <img style="position: relative" *ngIf="subtaskbysubtask?.predecessorTaskcount>0" [matBadge]="subtaskbysubtask?.predecessorTaskcount" matBadgeColor="warn"  src="../../../../../assets/images/iconsForsvg/left-arrow.svg">
+                                    </div>
+                                  </div>
+                                    <mat-menu #moreMenu="matMenu" class="eventlist">
+                                        <ng-template matMenuContent>
+                                            <button class="fw-600" mat-menu-item (click)="opentaskDialog(subtaskbysubtask.id)"> 
+                                                <mat-icon class="icon-options">visibility</mat-icon>
+                                                <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="x.isMilestone != true" class="fw-600" mat-menu-item (click)="updateTask(subtaskbysubtask, 'edit-task')">
+                                                <mat-icon class="icon-options">edit</mat-icon> 
+                                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="x.isMilestone == true" class="fw-600" mat-menu-item (click)="updateMilestone(subtaskbysubtask, 'edit-task')">
+                                                <mat-icon class="icon-options">edit</mat-icon> 
+                                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item (click)="deleteDialogConfirmation(subtaskbysubtask,'deleteTask')">
+                                                <mat-icon class="icon-options">delete</mat-icon>
+                                                <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item
+                                                (click)="createNewTask(false,subtask)">
+                                                <mat-icon style="color: green;">assignment_turned_in</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add subTask'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item *ngIf="subtaskbysubtask.status=='Assigned'" >
+                                                <mat-icon style="color: green;">autorenew</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Update Status'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="subtaskbysubtask.isMilestone != true" class="fw-600" mat-menu-item (click)="TaskInToEvent(subtaskbysubtask)" >
+                                                <mat-icon style="color: red;">swap_horiz</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Convert to Event'|translate}}</span>
+                                            </button>
+                                            <button *ngIf="subtaskbysubtask.isMilestone != true&&subtaskbysubtask.isConvertedToEvent==false" class="fw-600" mat-menu-item (click)="TaskInToMilestone(subtaskbysubtask)" >
+                                                <mat-icon style="color: blue;">swap_horiz</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Convert to Milestone'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>group</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add to Group'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>event</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Create an Event'|translate}}</span>
+                                            </button>
+                
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:green">bar_chart</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create an Activity Report'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>wb_incandescent</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create Stratergy'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add File'|translate}}</span>
+                
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:rgb(255,193,111) ;">speaker_notes </mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add Note'|translate}}</span>
+                
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>vpn_key</mat-icon>
+                                                <span class="fw-600 color_black">{{'Edit Permission'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>track_changes</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create Target'|translate}}</span>
+                                            </button>
+                                        </ng-template>
+                                    </mat-menu>
+                            </div>
+                            <div style="width: 15%;font-weight: 900;text-align: start;" >
+                                <span (click)="opentaskDialog(subtaskbysubtask.id)">{{get30TenCharacters(subtaskbysubtask.title)}}</span>    
+                            </div>
+                            <div style="width: 15%;text-align: center;margin-top: -10px;">
+                                <ng-container *ngIf="subtaskbysubtask.assignedTo.length==1">
+                                    <div style="display: flex;" >
+                                        <div *ngIf="subtaskbysubtask.assignedTo.length!=0" style="margin: 5px;">
+                                            <img class="avatar" style="border-radius: 50%;" *ngIf="subtaskbysubtask.assignedTo[0]?.userName"
+                                            onError="this.src='assets/avatar.svg'" (click)="opentaskDialog(subtaskbysubtask.id)"
+                                            [src]="subtask?.assignedTo[0]?.profilePicture ? subtaskbysubtask. assignedTo[0]?.profilePicture:'assets/avatar.svg'">
+                                        <span 
+                                            style="margin-left: 2px;margin-top: 8px;font-weight: 900;">{{subtaskbysubtask.assignedTo[0]?.userName}}</span>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="subtaskbysubtask.assignedTo.length>1">
+                                    <div style="display: flex;" >
+                                           <div *ngFor="let p of getassigned(subtaskbysubtask,subtask?.assignedTo);let index=index;">
+                                            <img class="avatar" style="border-radius: 50%;" *ngIf="p?.profilePicture!=''&&p?.profilePicture!=null"
+                                            onError="this.src='assets/avatar.svg'" (click)="opentaskDialog(subtask.id)"
+                                            [src]="p?.profilePicture ? p?.profilePicture:'assets/avatar.svg'">
+                                            <span  *ngIf="p?.profilePicture==''||p?.profilePicture==null" [style.background]="getColor(index)"  style="color: white; padding: 8px;border-radius: 50%;position: relative;top: 5px;margin: 5px;">{{getuserFLnames(p.userName)}}</span>
+                                        </div>
+                                        <div *ngIf="subtaskbysubtask.assignedTo.length>3" >
+                                            <mat-icon style="color: black;position: relative;top: 5px;" *ngIf="subtaskbysubtask.Listofassignes==0||x.Listofassignes==3" (click)="getListofassignes(subtask)">keyboard_arrow_right</mat-icon>
+                                        </div>
+                                    </div>
+                                </ng-container> 
+                            </div>
+                            <div style="width: 10%;text-align: center;">
+                                    <span *ngIf="subtaskbysubtask.status!=0" [ngClass]="getStatusColorClass(subtask?.status)">{{getstatus(subtask?.status)}}</span> 
+                            </div>
+                            <div style="width: 10%;text-align: center;">{{subtaskbysubtask.endDate|date:'dd-MMM-yyyy'}}</div>
+                            <div style="width: 10%;text-align: center;">
+                                <span *ngIf="subtaskbysubtask.isMilestone != true">{{subtaskbysubtask.duration}}</span>
+                            </div>
+                            <div style="width: 15%;text-align: center;">
+                                <div class="row justify-content-center" style="position: relative;top: -10px;">
+                                    <div class="col-8 p-0 m-0" style="text-align: center;">{{subtaskbysubtask.percentage+'%'}}</div>
+                                    <div class="col-8 p-0 m-0">
+                                        <mat-progress-bar class="w-100 p-0 m-0" [value]="subtaskbysubtask.percentage" [ngClass]="assignCssClass(subtaskbysubtask.percentage)">
+                                        </mat-progress-bar>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="width: 10%;text-align: center;">
+                                <span [style.background]="subtaskbysubtask.color" [style.color]="subtaskbysubtask.fontColor"  style="border: none; border-radius:20px;padding: 6px 7px">{{getfirstTenCharacters(subtaskbysubtask.categoryName)}}</span>
+                            </div>
+                        </div>
+                        </div>
+                      </div>
+                </div>
+              </div>
+             </div>      
+             </div>
+            </ng-container>
+
+         <!-- 00000000  -->
+        <div class="row">
+            <div class="col-11">
+                <mat-paginator style="display: inline !important;font-weight: 500;font-size: 14px !important;" *ngIf="!this.showicon" [pageSize]="NumberOfRecord" [length]="tasklength" (page)="next($event)"></mat-paginator> 
+                <mat-paginator style="display: inline !important;font-weight: 500;font-size: 14px !important;" *ngIf="this.showicon" [pageSize]="NumberOfRecord" [length]="tasklength" (page)="nextAdvanceSearch($event)"></mat-paginator> 
+            </div>
+        </div>
+        </ng-container>
+ 
+        <span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+            <button  *ngIf="!KanbanView" style="border-radius: 50%;width: 56px; height: 56px;background-color: green;border: none;">
+                <img src="../../../../assets/images/iconsForsvg/view_kanban.svg"(click)="changeKanbanView()"
+             style="width: 30px; height: 30px;border-radius: 50%; object-fit: fill;cursor: pointer;">
+            </button>
+            <button *ngIf="KanbanView" style="border-radius: 50%;width: 56px;height: 56px;background-color: green;border: none;" >
+                <img src="../../../../assets/images/iconsForsvg/list_View.svg"  (click)="changeKanbanView()"
+                style="width: 30px; height: 30px;border-radius: 50%; object-fit: fill;cursor: pointer;">
+               </button><br><br> 
+                <button *ngIf="!KanbanView" matTooltip="searchandfiltrer" (click)="searchandfiltrer()" id="add-button1" mat-fab>
+                    <mat-icon style="color: white;">search</mat-icon>
+                </button><br *ngIf="!KanbanView"><br *ngIf="!KanbanView">
+                <button *ngIf="KanbanView"  matTooltip="searchandfiltrer" (click)="searchKanbanView()" id="add-button1" mat-fab>
+                    <mat-icon style="color: white;">search</mat-icon>
+                </button><br *ngIf="KanbanView"><br *ngIf="KanbanView">
+                <button matTooltip="Add task" (click)="createNewTask(true,'')" id="add-button2" mat-fab>
+                    <mat-icon style="color: white;">add</mat-icon>
+                </button><br><br>
+                <button *ngIf="showicon" matTooltip="delete Search" id="add-button1" mat-fab
+                    (click)="closesearch('single')">
+                    <mat-icon style="color: white;">delete_forever</mat-icon>
+                </button>
+
+        </span>
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tabclas">
+                <mat-icon [ngClass]="{
+                    'btn-blue': tabnumber == 1 
+                  }">people</mat-icon>
+                <span>{{'Groups'|translate}}</span>
+            </div>
+        </ng-template>
+        <div class="tab-container  p-2 mt-2">
+
+            <mat-accordion>
+                <mat-expansion-panel *ngFor="let group of taskData; let index=index;"
+                    (mouseenter)="activeIndex = index">
+                    <mat-expansion-panel-header  style="height:60px;">
+                        <mat-panel-title>
+                            <div id="main">
+                                <div>
+                                    <mat-icon style="margin-top:10px;" [matBadge]="group.usersCount" matBadgeColor="warn"
+                                        [ngStyle]="{'color':(group.dynamicGroupId ==null)?'red':'blue'}">group</mat-icon>
+                                </div>
+                                <div>
+                                    <div style="margin-top:12px">
+                                        <span class="ml-4 fw-600">{{ group.title|titlecase}}</span>
+                                        <span>{{' '+group.status|titlecase}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-panel-title>
+                        <mat-panel-description class="d-flex flex-row justify-content-end">
+                            <div>
+                                <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                                    <mat-icon class="icon-options">more_vert</mat-icon>
+                                </button>
+                                <mat-menu #moreMenu="matMenu" class="eventlist">
+                                    <ng-template matMenuContent>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon class="icon-options">edit</mat-icon>
+                                            <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon class="icon-options">delete</mat-icon>
+                                            <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon>event</mat-icon>
+                                            <span class="fw-600 color_black">{{'Create an Event'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon style="color:green">bar_chart</mat-icon>
+                                            <span class="fw-600 color_black">{{'Create an Activity Report'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon>wb_incandescent</mat-icon>
+                                            <span class="fw-600 color_black">{{'Create Stratergy'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon>track_changes</mat-icon>
+                                            <span class="fw-600 color_black">{{'Create Target'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon style="color:rgb(66,135,245) ;">
+                                                insert_drive_file</mat-icon>
+                                            <span class="fw-600 color_black">{{'Add File'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon style="color:rgb(255,193,111) ;"> speaker_notes </mat-icon>
+                                            <span class="fw-600 color_black">{{'Add Note'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600 " mat-menu-item>
+                                            <img src="../../../../assets/images/iconsForsvg/share-square-1.svg" alt="">
+                                            <span class="fw-600 color_black" style="margin-left:24px;">
+                                                {{'Group Share'|translate}}</span>
+                                        </button>
+                                    </ng-template>
+                                </mat-menu>
+                            </div>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <mat-list>
+                        <div class="f-weight" mat-subheader *ngFor="let user of taskData">
+                            <div class="avatar" style="cursor: pointer;">
+                                <img class="avatar" onError="this.src='assets/avatar.svg'"
+                                    [src]="user?.creatorProfile ? user. creatorProfile:'assets/avatar.svg'">
+                            </div><span style="cursor: pointer;">{{user.title |titlecase}} </span>
+                        </div>
+                    </mat-list>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+                <button matTooltip="Advance Search" id="add-button1" mat-fab (click)="AdvanceSearchSingle()">
+                <mat-icon style="color: white;">search</mat-icon>
+            </button><br><br>
+                <button id="add-button2" mat-fab>
+                    <mat-icon style="color: white;">add</mat-icon>
+                </button><br><br>
+                <button *ngIf="showicon" matTooltip="delete Search" id="add-button1" mat-fab
+                (click)="closesearch('single')">
+                <mat-icon style="color: white;">delete_forever</mat-icon>
+            </button>
+            </span>
+        </div>
+    </mat-tab>
+</mat-tab-group>
+
+<div class="overlay" *ngIf="loader">
+    <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+    </mat-progress-spinner>
+</div>

@@ -1,0 +1,38 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"Tasks and Milestones"|translate}}</h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+  </div>
+
+  <ng-container *ngIf="data.create == true">
+    <div class="container">
+      <div class="row justify-content-start">
+          <div class="col-12 p-2">
+              <button class="fw-600" mat-menu-item (click)="radioChange(1,'Create-task')">
+                <mat-icon style="color:green ;">assignment_turned_in</mat-icon>{{"Create Task"|translate}}
+              </button>
+              <button class="fw-600" mat-menu-item (click)="radioChange(2,'Create-Milestone')">
+                <img style="margin-right: 12px;"
+                src="../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg">
+                {{"Create Milestone"|translate}}
+              </button>
+          </div>
+      </div>
+  </div>
+  </ng-container>
+
+  <ng-container *ngIf="data.create == false">
+    <div class="container">
+      <div class="row justify-content-start">
+          <div class="col-12 p-2">
+              <button class="fw-600" mat-menu-item (click)="radioChange(1,'Create-subTask')">
+                <mat-icon style="color:green ;">assignment_turned_in</mat-icon>{{"Add Sub Task"|translate}}
+              </button>
+              <button class="fw-600" mat-menu-item (click)="radioChange(2,'Create-subTask')">
+                <img style="margin-right: 12px;"
+                src="../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg">
+                {{"Add Sub Milestone"|translate}}
+              </button>
+          </div>
+      </div>
+  </div>
+  </ng-container>

@@ -1,0 +1,174 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;"> loyalty</mat-icon>
+        {{'Discount Details'|translate}}
+    </h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+<!-- viewdiscountdetails  -->
+<ng-container *ngIf="screenType=='viewdiscountdetails'">
+    <mat-dialog-content class="viewDialog pading "
+        style="padding: 0px  !important; margin: 0px !important;">
+        <div class="row  mt-1">
+            <div class="col-10" style="display: flex;justify-content: center;">
+                        <span *ngIf="Details.isPublic ==true">
+                            <img style="border-radius: 50%; width: 50px; height: 50px;"
+                                src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                        </span>
+                        <span *ngIf="Details.isPublic !=true">
+                            <img style="border-radius: 50%; width: 50px; height: 50px;"
+                                src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                        </span>
+            </div>
+            <div class="col-2 mt-2">
+                <mat-icon [matMenuTriggerFor]="menu">more_vert</mat-icon>
+                <mat-menu #menu="matMenu">
+                    <button class="fw-600" mat-menu-item (click)="UpdateDiscount(Details)">
+                        <mat-icon>edit</mat-icon> {{'Edit'|translate}}
+                    </button>
+                    <button class="fw-600" mat-menu-item (click)="deleteDialogConfirmation(Details,'deletediscount')">
+                        <mat-icon>delete</mat-icon> {{'Delete'|translate}}
+                    </button>
+                </mat-menu>
+            </div>
+        </div>
+        <h2 class="name_red" style="text-align: center; align-items: center; margin-top:5px;">
+            {{Details.name|titlecase}}
+        </h2>
+        <div class="row">
+            <section class="detail-wrapper" style="margin-left:15px;">
+                <mat-list>
+                    <mat-list-item *ngIf="Details?.amount!=null||0">
+                        <div class="fw-600"> {{'Amount'|translate}} : </div>
+                        <span class="ml-3 fw-600 color_grey"> {{Details.amount+'%'}}</span>
+                    </mat-list-item>
+                    <mat-list-item *ngIf="Details?.limit!=null||0">
+                        <div class="fw-600">{{'Max limit'|translate}} : </div>
+                        <span class="ml-3 fw-600 color_grey"> {{Details.limit}}</span>
+                    </mat-list-item>
+
+                    <mat-list-item *ngIf="Details?.startDate!=null||0">
+                        <div class="fw-600">{{'Start Date'|translate}} : </div>
+                        <span class="ml-3 fw-600 color_grey"> {{Details.startDate | date:'dd-MMM-yyyy'}}</span>
+                    </mat-list-item>
+
+                    <mat-list-item *ngIf="Details?.endDate!=null||0">
+                        <div class="fw-600">{{'End Date'|translate}} : </div>
+                        <span class="ml-3 fw-600 color_grey"> {{Details.endDate | date:'dd-MMM-yyyy'}}</span>
+                    </mat-list-item>
+
+                    <mat-list-item *ngIf="Details?.code!=null||0">
+                        <div class="fw-600"> {{'Code'|translate}} : </div>
+                        <span class="ml-3 fw-600 color_grey"> {{Details?.code}}</span>
+                    </mat-list-item>
+                    <mat-list-item *ngIf="Details?.getKeyword!=null||0">
+                        <div class="fw-600">{{'Keywords'|translate}}: </div>
+                        <span class="ml-3 fw-600 color_grey">
+                            <span>
+                                <button class="discountReff">
+                                    <span>{{Details?.code|titlecase}}</span>
+                                </button>
+                            </span>
+                            <span *ngFor="let x of getKeyword">
+                                <button class="normalkeyword">
+                                    <span>{{x|titlecase}}</span>
+                                </button>
+                            </span></span>
+                    </mat-list-item>
+                    <mat-list-item *ngIf="Details?.description!=null||0">
+                        <div class="fw-600"> {{'Description'|translate}} : </div>
+                        <span class="ml-3 fw-600 color_grey"> {{Details.description|titlecase}}</span>
+                    </mat-list-item>
+                </mat-list>
+            </section>
+        </div>
+    </mat-dialog-content>
+</ng-container>
+
+<!-- viewdiscountTable  -->
+<ng-container *ngIf="screenType=='viewdiscountTable'">
+    <mat-dialog-content class="mr-0 ml-0">
+        <ng-container *ngIf="discountEntity=='Sites'">
+            <div class="row justify-content-center">
+                <div class="col-3">
+                    <span>
+                        <img style="width: 50px; height: 50px;"
+                            src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                    </span>
+                </div>
+            </div>
+            <div>
+                <h2 class="name_red" style="text-align: center;">{{Details.companyName|titlecase}}</h2>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="discountEntity=='Contacts'">
+            <div class="row justify-content-center">
+                <div class="col-3">
+                    <img class="avatar-70" style=" position: relative;  right: -20px; border-radius: 50%;"
+                        [src]="Details.profilePicture ? Details.profilePicture:'assets/avatar.svg'"
+                        onError="this.src='assets/avatar.svg'">
+                </div>
+            </div>
+            <div>
+                <h2 class="name_red" style="text-align: center;">{{Details.firstName|titlecase}}
+                    {{Details.lastName|titlecase}}</h2>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="discountEntity=='Products'">
+            <div class="row justify-content-center">
+                <div class="col-3">
+                    <img class="avatar-70" style=" position: relative;  right: -20px; border-radius: 50%;"
+                        [src]="Details.profilePicture ? Details.profilePicture:'assets/images/iconsForsvg/icon_product.svg'"
+                        onError="this.src='assets/images/iconsForsvg/icon_product.svg'">
+                </div>
+            </div>
+            <div>
+                <h2 class="name_red" style="text-align: center;">{{Details.productName|titlecase}}</h2>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="listOftableDiscount.length==1">
+            <div class="row mt-2">
+                <div class="col-2">
+                    <mat-icon (click)="AddDiscountForEntity()">add_box</mat-icon>
+                </div>
+            </div>
+        </ng-container>
+        <div class="row mt-3">
+            <table class="table table-striped">
+                <thead>
+                    <tr style="height:50px !important;">
+                        <th></th>
+                        <th>{{'Name'|translate}}</th>
+                        <th>{{'Code'|translate}}</th>
+                        <th>{{'Percentage'|translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let x of listOftableDiscount" style="height:50px !important;">
+                        <td>
+                            <span *ngIf="x.isPublic ==true">
+                                <img style="border-radius: 50%;" src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                            </span>
+                            <span *ngIf="x.isPublic !=true">
+                                <img style="border-radius: 50%;"
+                                    src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                            </span>
+                        </td>
+                        <td>{{x.name|titlecase}}</td>
+                        <td>{{x.code}}</td>
+                        <td>{{x.amount+'%'}}</td>
+                        <td>
+                            <mat-icon *ngIf="x?.isCreator==true" class="icon-options"
+                                (click)="UpdateDiscountForEntity(x)">edit</mat-icon>
+                        </td>
+                        <td>
+                            <mat-icon *ngIf="x?.isCreator==true" class="icon-options"
+                                (click)="deleteDialogConfirmation(x,'DiscountFromManagement')">delete</mat-icon>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </mat-dialog-content>
+</ng-container>

@@ -1,0 +1,89 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"Confirmation"|translate}}</h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+  </div>
+
+ 
+  <!-- add-sub-task  -->
+  <ng-container *ngIf="screentype=='add-sub-task'">
+    <div class="container">
+      <div class="row mt-2 w-100">
+           <h3 style="color: green;text-align: cenete;width: 100%;display: flex;justify-content: center;">Initiative Created Successfully !</h3><br>
+           <h3 style="text-align: cenete;width: 100%;display: flex;justify-content: center;">Do you wish to add sub-task ...?</h3>
+      </div>
+    </div>
+  
+    <div class="row mt-2 mb-4 justify-content-center" style="margin-bottom: 10px !important;">
+      <div class="col-4">
+          <button mat-raised-button class="W-blue" (click)="onSubmit('no')">{{"NO"|translate}}</button>
+      </div>
+      <div class="col-4">
+          <button mat-raised-button class="b-blue" (click)="onSubmit('yes')">{{"YES"|translate}}</button>
+      </div>
+  </div>
+  </ng-container>
+
+
+
+  <ng-container *ngIf="screentype=='ConverttoMilestone'">
+    <div class="container">
+      <div class="row mt-2 w-100">
+           <h3 style="text-align: cenete;width: 100%;display: flex;justify-content: center;">Do you wish to convert this task into milestone ...??</h3>
+      </div>
+    </div>
+  
+    <div class="row mt-2 mb-4 justify-content-center" style="margin-bottom: 10px !important;">
+      <div class="col-4">
+          <button mat-raised-button class="W-blue" mat-dialog-close>{{"NO"|translate}}</button>
+      </div>
+      <div class="col-4">
+          <button mat-raised-button class="b-blue" (click)="onSubmit1()">{{"YES"|translate}}</button>
+      </div>
+  </div>
+  </ng-container>
+
+
+  <ng-container *ngIf="screentype=='taskconvertevent'">
+    <div class="container">
+      <div class="row mt-2 w-100">
+           <h3 style="text-align: cenete;width: 100%;display: flex;justify-content: center;">Do you wish to convert this task into Event ...??</h3>
+      </div>
+    </div>
+  
+    <div class="row mt-2 mb-4 justify-content-center" style="margin-bottom: 10px !important;">
+      <div class="col-4">
+          <button mat-raised-button class="W-blue" mat-dialog-close>{{"NO"|translate}}</button>
+      </div>
+      <div class="col-4">
+          <button mat-raised-button class="b-blue" (click)="onSubmit1()">{{"YES"|translate}}</button>
+      </div>
+  </div>
+  </ng-container>
+
+  <ng-container *ngIf="screentype=='tagdeleteconformation'">
+    <div class="container">
+      <div class="row mt-2 w-100">
+           <h3 style="text-align: cenete;width: 100%;display: flex;justify-content: center;">Are you sure you want to delete  Tag ?</h3>
+           <mat-radio-group [(ngModel)]="deleteType"  (change)="onRadioChange($event)" aria-label="Select an option">
+           <mat-radio-button value="1">Soft Delete</mat-radio-button>
+           <mat-radio-button value="2">Hard Delete</mat-radio-button><br><br>
+           <mat-hint *ngIf="deleteType=='1'">A soft delete operation marks a tag as inactive for future reference, ensuring its historical data is preserved without being physically removed from the database</mat-hint>
+           <mat-hint *ngIf="deleteType=='2'">A hard delete permanently erases data from the database, leaving no trace behind</mat-hint>
+       </mat-radio-group>
+      </div>
+    </div>
+  
+    <div class="row mt-2 mb-4 justify-content-center" style="margin-bottom: 10px !important;">
+      <div class="col-4">
+          <button mat-raised-button class="W-blue" mat-dialog-close>{{"NO"|translate}}</button>
+      </div>
+      <div class="col-4">
+          <button mat-raised-button class="b-blue" (click)="onSubmit2()">{{"YES"|translate}}</button>
+      </div>
+  </div>
+  </ng-container>
+
+
+
+  
+

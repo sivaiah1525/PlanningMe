@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks and Subtasks</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="taskTableContainer"></div>
+
+<script>
+    var tasks = [
+        { id: 1, name: "Task 1", subtasks: [
+            { id: 11, name: "Subtask 1.1" },
+            { id: 12, name: "Subtask 1.2" }
+        ]},
+        { id: 2, name: "Task 2", subtasks: [
+            { id: 21, name: "Subtask 2.1" },
+            { id: 22, name: "Subtask 2.2" }
+        ]},
+        { id: 3, name: "Task 3", subtasks: [
+            { id: 31, name: "Subtask 3.1" },
+            { id: 32, name: "Subtask 3.2" }
+        ]}
+    ];
+
+    // Function to generate HTML table from tasks array
+    function generateTable(tasks) {
+        var tableHtml = '<table>';
+        tableHtml += '<thead><tr><th>Task</th><th>Subtasks</th></tr></thead>';
+        tableHtml += '<tbody>';
+
+        tasks.forEach(task => {
+            tableHtml += '<tr>';
+            tableHtml += `<td>${task.name}</td>`;
+            tableHtml += '<td>';
+            if (task.subtasks && task.subtasks.length > 0) {
+                tableHtml += '<ul>';
+                task.subtasks.forEach(subtask => {
+                    tableHtml += `<li>${subtask.name}</li>`;
+                });
+                tableHtml += '</ul>';
+            }
+            tableHtml += '</td>';
+            tableHtml += '</tr>';
+        });
+
+        tableHtml += '</tbody>';
+        tableHtml += '</table>';
+
+        return tableHtml;
+    }
+
+    // Render the table
+    var tableContainer = document.getElementById('taskTableContainer');
+    tableContainer.innerHTML = generateTable(tasks);
+</script>
+
+</body>
+</html>

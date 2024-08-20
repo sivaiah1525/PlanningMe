@@ -1,0 +1,22 @@
+.invoice-detail{
+    // width:580px;
+    padding:5px;
+    max-width: 100%;
+    overflow-y: auto;
+}
+.bodysection{
+    height: 400px;
+}
+.tablehead >th{
+    padding: 10px;
+    text-align: center;
+
+}
+.tablebody>td{
+    padding-top: 10px;
+    text-align: center;
+}
+.value{
+    padding-left: 5px;
+}
+

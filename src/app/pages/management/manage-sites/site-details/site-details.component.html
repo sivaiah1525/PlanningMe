@@ -1,0 +1,428 @@
+<div class="User-details" *ngIf="siteData.type === 'site'">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+            <img src="../../../../../assets/images/iconsForsvg/Site_Icon_white.svg">
+            {{'Site Details'|translate}}
+        </h2>
+        <mat-icon mat-dialog-close>close</mat-icon>
+    </div>
+    <mat-dialog-content *ngIf="site" class="mr-0 ml-0">
+        <div class="row m-t-14">
+            <div class="col-4">
+                <div *ngFor="let x of site.yearTargetDtos">
+                    <div style="text-align: center; position: relative; top: -16px; left:-9px;">
+                        <p style="margin: 0; font-size:10px ;position: relative; top:3px;">{{'Year'|translate}} {{x.year}}</p>
+                        <button class="fw-600" style="border-bottom: none;padding: -1; border-left: none; border-right: none;
+                         background-color: transparent; border-top: 2px solid rgb(185, 230, 249);font-size:10px  ">
+                            {{transform(x.saleAmount )+'€'}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4  justify-content-md-start justify-content-start">
+                <img style="width: 50px; height: 50px;" src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+            </div>
+            <div class="col-4">
+                <button [matMenuTriggerFor]="beforeMenu" style="display: flex;justify-content: end;position: relative;left: 50px;" class="mr-1 b-color">
+                    <mat-icon class="icon-options">more_vert</mat-icon>
+                </button>
+                <mat-menu #beforeMenu="matMenu" xPosition="before">
+
+                    <button class="fw-600" mat-menu-item *ngIf="(AdminStatus=='true'||site?.isCreator==true)"
+                        (click)="updatesiteDialog(site)">
+                        <mat-icon>edit</mat-icon> {{'Edit'|translate}}
+                    </button>
+                    <button class="fw-600" mat-menu-item *ngIf="(AdminStatus=='true'||site?.isCreator==true)"
+                        (click)="deleteDialogConfirmation(site,'deleteSite')">
+                        <mat-icon>delete</mat-icon> {{"Delete"|translate}}
+                    </button>
+                    <button class="fw-600" mat-menu-item (click)="openAddEventDialog()">
+                        <mat-icon>event</mat-icon> Create an Event
+                    </button>
+                    <button class="fw-600" mat-menu-item (click)="ActivityReport(site,true)">
+                        <mat-icon style="color:green">bar_chart</mat-icon> {{"Create an Activity Report"|translate}}
+                    </button>
+                    <button class="fw-600" mat-menu-item (click)="CreateStratergy()">
+                        <mat-icon>wb_incandescent</mat-icon> {{'Create Stratergy'|translate}}
+                    </button>
+                    <button class="fw-600" mat-menu-item>
+                        <mat-icon>vpn_key</mat-icon> {{"Edit Permission"|translate}}
+                    </button>
+                    <button class="fw-600" mat-menu-item (click)="CreateQuote()">
+                        <mat-icon class="yellow">assignment</mat-icon> {{"Create Quote"|translate}}
+                    </button>
+                    <button class="fw-600 " mat-menu-item (click)="CreateInvoice()">
+                        <mat-icon class="blue">assignment</mat-icon>{{"Create Invoice"|translate}}
+                    </button>
+                    <button class="fw-600" mat-menu-item (click)="AddFile(site,'single')">
+                        <mat-icon style="color:rgb(66,135,245) ;">
+                            insert_drive_file</mat-icon>
+                        {{"Add File"|translate}}
+                    </button>
+                    <button class="fw-600" mat-menu-item (click)="AddNote(site,'single')">
+                        <mat-icon style="color:rgb(255,193,111) ;">
+                            speaker_notes </mat-icon>
+                        {{"Add Note"|translate}}
+                    </button>
+                    <button class="fw-600" mat-menu-item (click)="createTarget()">
+                        <mat-icon>track_changes</mat-icon> {{"Create Target"|translate}}
+                    </button>
+                    <button class="fw-600 " mat-menu-item>
+                        <mat-icon class="green">loyalty</mat-icon> {{"Add Discount"|translate}}
+                    </button>
+                </mat-menu>
+            </div>
+        </div>
+        <div>
+            <h2 class="name_red" style="text-align: center;">{{site.companyName|titlecase}}</h2>
+        </div>
+
+        <!-- show Discount %  -->
+        <div class="container">
+            <div class="row justify-content-md-center justify-content-center">
+                <ng-container *ngIf="site.privateDiscountAmount!=null">
+                    <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6" *ngIf="site.privateDiscountAmount!=0">
+                        <span class="discountpercentageprivate">{{"Discount"|translate}} :
+                            {{site?.privateDiscountAmount?site.privateDiscountAmount:0}}</span>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="site.publicDiscountAmount!=null">
+                    <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6" *ngIf="site.publicDiscountAmount!=0">
+                        <span class="discountpercentagepublic">Discount : {{site?.publicDiscountAmount ?
+                            site.publicDiscountAmount:0}}</span>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+
+        <!-- Show CurrentYearTargetValue -->
+        <ng-container *ngIf="getCurrentYearTargetValue.length !=0">
+            <div class="row" *ngFor="let targetvalue of getCurrentYearTargetValue;">
+                <div class="row mt-3">
+                    <div class="col-2 p-0">
+                        <img class="avatar" style="border-radius: 50% !important;"
+                            [src]="targetvalue?.creatorProfile ? targetvalue.creatorProfile:'assets/avatar.svg'"
+                            onError="this.src='assets/avatar.svg'">
+                    </div>
+                    <div class="col-10 p-0 mt-2">
+                        <span style="color: blue; font-style: italic;">{{targetvalue.creatorName}} </span>
+                        <span style="margin-left: 5px;">
+                            <mat-icon *ngIf="targetvalue.isPrivate" style="font-size: 20px;">lock</mat-icon>
+                            <img *ngIf="targetvalue.isPublic" src="../../../../../assets/images/iconsForsvg/Unlock.svg"
+                                alt="">
+                            <mat-icon *ngIf="targetvalue.isDelegate" class="green"
+                                style="font-size: 20px;">device_hub</mat-icon>
+                        </span>
+                    </div>
+                </div>
+                <div class="row p-0">
+                    <div class="col-4 p-0">
+                        <div class="row m-t-14">
+                        </div>
+                        <div class="row f-weight m-t-22">
+                            <div>{{"Target"|translate}} For {{targetvalue.month}} {{targetvalue.year}} </div>
+                            <div style="color: green !important;" *ngIf="targetvalue.percentage>99"><b>+{{targetvalue.percentage}}% PERFORMANCE</b></div>
+                        </div>
+
+                    </div>
+                    <div class="col-8 p-0">
+                        <div class="row ">
+                            <div class="col-5"></div>
+                            <p style="position: relative; top: 15px;" class="f-weight"> {{targetvalue.percentage>100?100:targetvalue.percentage}} %
+                            </p>
+                        </div>
+
+                        <div class="row m-t-10">
+                            <mat-progress-bar [value]="targetvalue.percentage"
+                                [ngClass]="assignCssClass(targetvalue.percentage)">
+                            </mat-progress-bar>
+                        </div>
+                        <div class="row m-t-10 ">
+                            <div class="col-2"></div>
+                            <div class=" fw-600 color_grey">{{transform(targetvalue.achievedAmount)+' '+'€'}}
+                                /{{transform(targetvalue.target)+' '+'€'}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <section class="detail-wrapper">
+            <mat-list>
+                <mat-list-item *ngIf="site.contactPhone !=null&&site.contactPhone !=0">
+                    <div class="fw-600">{{'Phone Number'|translate}} :</div>
+                    <span class="ml-3 fw-600 color_grey"> {{site.contactPhone}}</span>
+                </mat-list-item>
+                <mat-list-item *ngIf="site.activityName !=null">
+                    <div class="fw-600">{{'Activity Name'|translate}} : </div>
+                    <span class="ml-3 fw-600 color_grey">{{site.activityName|titlecase}}</span>
+                </mat-list-item>
+                <mat-list-item *ngIf="site.address !=null">
+                    <div class="fw-600">{{'Address'|translate}}: </div>
+                    <span class="ml-3 fw-600 color_grey">
+                        {{site.address|titlecase}}<br> {{site.country|titlecase}} {{site.city|titlecase}}
+                        {{site.zipCode|titlecase}}
+                    </span>
+                </mat-list-item>
+
+                <!-- Users -->
+                <mat-list-item>
+                    <div class="fw-600">
+                        <mat-icon class="red vertical-bottom">person</mat-icon> {{'Users'|translate}} :
+                    </div>
+                    <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+                        [ngClass]="{'color_grey': site?.usersCount > 0,'name_red': site.usersCount == 0 }"
+                        (click)="findUserLinked(site.usersCount,'Users')">
+                        {{site.usersCount}} {{site.usersCount > 1 ? 'Users' : 'User'}}</span>
+                </mat-list-item>
+                <div class="col-10 m-t-10  " *ngIf="showUser"
+                    [ngClass]="{'auto_height': site.usersCount > 4,'overflow': site.usersCount < 4 }">
+                    <div class="row  m-t-10 fw-600 color_grey" *ngFor="let user of getuser ; let i = index">
+                        <span class="m-l-28"><img style="border-radius: 50%;cursor: pointer;" width="30" height="30"
+                                (click)="ShowUserDEtails(user, 'user')"
+                                [src]="user.profile ? user.profile :'assets/avatar.svg'"></span>
+                        <span class="p-l-10" style="cursor: pointer;" (click)="ShowUserDEtails(user, 'user')">
+                            {{user.firstName|titlecase}} {{user.lastName|titlecase}}</span>
+                    </div>
+                </div>
+
+                <!-- Contacts -->
+                <mat-list-item>
+                    <div class="fw-600">
+                        <mat-icon class="vertical-bottom" style="color: #6495ed;">contacts</mat-icon> {{'Contacts'|translate}} :
+                    </div>
+                    <span class="ml-3 fs-14 m-t-6 pointer fw-600 color_grey"
+                        [ngClass]="{'color_grey': site?.contactsCount > 0,'name_red': site.contactsCount == 0 }"
+                        (click)="findcontactLinked(site.contactsCount,'Contacts')">
+                        {{site.contactsCount}} {{site.contactsCount > 1 ? 'Contacts' : 'Contact'}}</span>
+                </mat-list-item>
+                <div class="col-10 m-b-10  " *ngIf="showcontact"
+                    [ngClass]="{'auto_height': site.contactsCount > 4,'overflow': site.contactsCount < 4 }">
+                    <div class="row  m-t-10  fw-600 color_grey" *ngFor="let contact of getcontact ; let i = index"><span
+                            class="m-l-28"><img style="border-radius: 50%;cursor: pointer;" width="30" height="30"
+                                (click)="ShowContactDetails(contact, 'contact')"
+                                [src]="contact.profile ? contact.profile :'assets/avatar.svg'"></span>
+                        <span (click)="ShowContactDetails(contact, 'contact')" class="p-l-10">
+                            {{contact.firstName|titlecase}} {{contact.lastName|titlecase}}</span>
+                    </div>
+                </div>
+
+                <!-- Product -->
+                <mat-list-item>
+                    <div class="fw-600">
+                        <mat-icon class="red vertical-bottom">business_center</mat-icon> {{'Product'|translate}} :
+                    </div>
+                    <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+                        [ngClass]="{'color_grey': site?.productsCount > 0,'name_red': site.productsCount == 0 }"
+                        (click)="getProductDetails(site.productsCount,'Products')">
+                        {{site.productsCount}} {{site.productsCount > 1 ? 'Products' : 'Product'}}
+                    </span>
+                </mat-list-item>
+                <div class="col-10 " *ngIf="showProductDetails"
+                    [ngClass]="{'auto_height': site.productsCount > 4,'overflow': site.productsCount < 4 }">
+                    <div class="row m-t-10" *ngFor="let product of getProduct ; let i = index">
+                        <span class="m-l-28"><img style="border-radius: 50%; cursor: pointer;" width="30" height="30"
+                                (click)="ShowProductDetails(product,'product')"
+                                [src]="product.profile ? product.profile :'assets/avatar.svg'"></span>
+                        <span (click)="ShowProductDetails(product,'product')" style="cursor: pointer;"
+                            class="p-l-10 fw-600 color_grey">{{product.firstName|titlecase}}</span>
+                    </div>
+                </div>
+
+
+                <!-- Groups -->
+                <mat-list-item>
+                    <div class="fw-600">
+                        <mat-icon class="red vertical-bottom">people</mat-icon> {{'Groups'|translate}} :
+                    </div>
+                    <span class="ml-3 fs-14 m-t-6  pointer fw-600 color_grey"
+                        [ngClass]="{'color_grey': site?.groupsCount > 0,'name_red': site.groupsCount == 0 }"
+                        (click)="findGroupLinked(site.groupsCount)">
+                        {{site.groupsCount}} {{site.groupsCount > 1 ? 'Groups' : 'Group'}}</span>
+                </mat-list-item>
+                <div class="col-10  " *ngIf="showGrp"
+                    [ngClass]="{'auto_height': site.groupsCount > 4,'overflow': site.groupsCount < 4 }">
+                    <div (click)="ShowstaticGroup(grp.id)" class="row  fw-600 color_grey m-t-10"
+                        *ngFor="let grp of getGrp ; let i = index">
+                        <mat-icon>group</mat-icon> <span class="m-l-10">{{grp.siteGroupName|titlecase}}</span>
+                    </div>
+                    <div (click)="ShowdynamicGroup(grp.dynamicGroupId)" class="row  fw-600 color_grey m-t-10"
+                        *ngFor="let grp of site?.dynamicGroups ; let i = index">
+                        <mat-icon style="color: blue;">group</mat-icon> <span
+                            class="m-l-10">{{grp.siteGroupName|titlecase}}</span>
+                    </div>
+                </div>
+
+                <!-- Files -->
+                <mat-list-item>
+                    <div class="fw-600">
+                        <mat-icon class="vertical-bottom" style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                        {{"Files"|translate}} :
+                    </div>
+                    <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+                        [ngClass]="{'color_grey': site?.filesCount > 0,'name_red': site.filesCount == 0 }"
+                        (click)="findfilesLinked(site.filesCount)">
+                        {{site.filesCount}} {{site.filesCount > 1 ? 'Files' : 'File'}}</span>
+                </mat-list-item>
+                <div class="col-10  " *ngIf="showfile"
+                    [ngClass]="{'auto_height': site.filesCount > 4,'overflow': site.filesCount < 4 }">
+                    <div class="row  fw-600 color_grey m-t-10" *ngFor="let file of getfile ; let i = index">
+                        <mat-icon class="vertical-bottom" style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                        <span (click)="gotofiles(file)" class="m-l-10">{{file.title|titlecase}}</span>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <mat-list-item>
+                    <div class="fw-600">
+                        <mat-icon class="vertical-bottom" style="color:rgb(255,193,111) ;">speaker_notes</mat-icon>
+                        {{'Notes'|translate}} :
+                    </div>
+                    <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+                        [ngClass]="{'color_grey': site?.notesCount > 0,'name_red': site.notesCount == 0 }"
+                        (click)="findnotesLinked(site.notesCount)">{{site.notesCount}}
+                        {{site.notesCount > 1 ? 'Notes' : 'Note'}}</span>
+                </mat-list-item>
+                <div class="col-10 pointer " *ngIf="shownotes"
+                    [ngClass]="{'auto_height': site.notesCount > 4,'overflow': site.notesCount < 4 }">
+                    <div (click)="ShowNote(notes.id)" class="row fw-600 color_grey m-t-10"
+                        *ngFor="let notes of getnotes ; let i = index">
+                        <mat-icon class="vertical-bottom" style="color:rgb(255,193,111) ;">speaker_notes</mat-icon>
+                        <span class="m-l-10">{{notes.title|titlecase}}</span>
+                    </div>
+                </div>
+
+
+                <!-- Events -->
+                <mat-list-item>
+                    <div class="fw-600">
+                        <mat-icon class="red vertical-bottom">event</mat-icon> {{'Events'|translate}} :
+                    </div>
+                    <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+                        [ngClass]="{'color_grey': site.eventsCount > 0,'name_red': site.eventsCount == 0 }"
+                        (click)="getEventDetails(site.eventsCount)"> Last
+                        {{site?.eventsCount > 0 ? ' 10 Events' : '0 Event'}}</span>
+                </mat-list-item>
+                <div class="col-12 p-0 auto_height" *ngIf="showEvents">
+                    <div class="row  m-t-10" *ngFor="let event of getEvents ; let i = index">
+                        <div class="col-2">
+                            <mat-icon style=" position: relative; top:22px;" class="red vertical-bottom">event
+                            </mat-icon>
+                        </div>
+                        <div class="col-10">
+                            <div class="row ">
+                                <span class="btn-blue fw-600 "> {{event.title|titlecase}}</span>
+                            </div>
+                            <div class="row">
+                                <span class="fw-600 color_grey"> Start Date : {{event.startDate |
+                                    date:'dd-MMM-yyyy H:mm'}}</span>
+                            </div>
+                            <div class="row">
+                                <span class="fw-600 color_grey"> End Date : {{event.endDate |
+                                    date:'dd-MMM-yyyy H:mm'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders -->
+                <mat-list-item>
+                    <div class="fw-600">
+                        <mat-icon class="vertical-bottom" style="color: #8ab2ef;">assignment</mat-icon> {{'Orders'|translate}} :
+                    </div>
+                    <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+                        [ngClass]="{'color_grey': site.orderCount > 0,'name_red': site.orderCount == 0 }"
+                        (click)="viewOrders(site.orderCount)">
+                        {{site?.orderCount > 0 ? 'Last 10 Orders' : '0 Order'}}</span>
+                </mat-list-item>
+                <div class="col-12 p-0" *ngIf="showTransaction">
+                    <div class="row m-t-10   fw-600  " *ngFor="let eve of getTransaction ; let i = index">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-2">
+                                    <mat-icon
+                                        style="vertical-align: middle; color: #8ab2ef; position: relative; top:40px;">
+                                        assignment</mat-icon>
+                                </div>
+                                <div class="col-10">
+                                    <div class="row">
+                                        <span class="fw-600">{{'Order Id'|translate}} : </span>
+                                        <span class="fw-600 color_grey">{{eve.orderId}}</span>
+                                    </div>
+                                    <div class="row">
+                                        <span class="fw-600">{{'Issue Date'|translate}} : </span>
+
+                                        <span class="fw-600 color_grey "> {{eve.issueDate |
+                                            date:'dd-MMM-yyyy H:mm'}}</span>
+                                    </div>
+                                    <div class="row">
+                                        <span class="fw-600">{{'Due Date'|translate}} : </span>
+
+                                        <span class="fw-600 color_grey "> {{eve.dueDate |
+                                            date:'dd-MMM-yyyy H:mm'}}</span>
+                                    </div>
+                                    <div class="row">
+                                        <span class="fw-600">{{'Total Amount'|translate}} : </span>
+
+                                        <span class="fw-600 color_grey"> {{eve.totalAmount+' '+'€'}} </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <ng-container class="row m-t-10 m-b-10" *ngFor="let tags of site.tagViewModels">
+                    <ng-container *ngIf="tags!.fieldValue">
+                        <div class="col-10">
+                            <div class="row">
+                                <div class="col-4 p-0">
+                                    <span class="fw-600" style="font-size: 16px;"
+                                        *ngIf="tags.fieldValue !== null || tags.fieldValue !== ''">{{tags.fieldName}}:
+                                    </span>
+                                </div>
+                                <div class="col-8 p-0">
+                                    <span class="ml-3 fw-600 color_grey"
+                                        *ngIf="tags.fieldValue !== null || tags.fieldValue !== ''">
+                                        {{tags.fieldValue}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </mat-list>
+        </section>
+
+    </mat-dialog-content>
+</div>
+
+<div class="User-group" *ngIf="siteData.type === 'sitegroup'">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <button mat-icon-button mat-dialog-close class="back-arrow">
+            <mat-icon>keyboard_backspace</mat-icon>
+        </button>
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"Site Group Details"|translate}}</h2>
+        <button mat-icon-button matDialogClose>
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+    <mat-dialog-content class="mr-0 ml-0">
+        <section class="d-flex flex-column align-items-center mt-3">
+            <div class="avatar-70">
+                <img src="assets/avatar.svg" />
+            </div>
+            <h2>{{siteData.siteGroupName|titlecase}} </h2>
+        </section>
+        <section class="detail-wrapper">
+            <mat-list>
+                <mat-list-item *ngFor="let site of siteGroup$.sites">
+                    <div matLine class="fw-600">{{site.siteName}} </div>
+                </mat-list-item>
+            </mat-list>
+        </section>
+    </mat-dialog-content>
+</div>
+
+<div class="overlay" *ngIf="spinner.isVisible() | async">
+    <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+    </mat-progress-spinner>
+</div>

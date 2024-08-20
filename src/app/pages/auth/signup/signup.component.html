@@ -1,0 +1,306 @@
+<pnm-top-navbar></pnm-top-navbar>
+<!-- Company Information  -->
+<ng-container *ngIf="singupFormstatus">
+    <div class="singupbody" [ngStyle]="{'background-image': 'url(' + image + ')'}">
+        <div>
+            <mat-card class="singup-card mat-elevation-z8 p-3">
+                <form [formGroup]="singupForm" novalidate>
+                    <mat-card-content>
+                        <div class="d-flex justify-content-center mb-2" (click)="gotodashboard()"> 
+                            <img src="assets/logo/login-logo.png" />
+                        </div>
+                        <div class="row mb-2 mt-0 justify-content-center">
+                            <div class="col">
+                                <span class="font-med fs-12">
+                                    {{"Already have an account."|translate}}
+                                </span>
+                                <a color="primary" routerLink="/app/login" class="cur-ptr fs-12">{{"Sign In Now"|translate}}</a>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="infomationstyle">{{"Company Information"|translate}} (1/2)</p>
+                        </div>
+                        <div>
+                            <!-- Company Name -->
+                            <mat-form-field appearance="outline" class="w-100">
+                                <mat-icon matPrefix>insert_emoticon</mat-icon>
+                                <mat-label>{{"Company Name"|translate}} * </mat-label>
+                                <input matInput type="text" formControlName="companyName">
+                                <mat-error *ngIf="f.companyName.invalid && f.companyName.touched">
+                                    <span *ngIf="f.companyName.errors?.required">
+                                        {{"Company name is required"|translate}}</span>
+                                </mat-error>
+                            </mat-form-field>
+                            <!-- email -->
+                            <mat-form-field appearance="outline" class="w-100">
+                                <mat-icon matPrefix>mail_outline</mat-icon>
+                                <mat-label>{{"Super Admin E-mail"|translate}} *</mat-label>
+                                <input matInput type="email" formControlName="email">
+                                <mat-hint> {{"Please enter a valid email address in the format"|translate}} name@example.com.</mat-hint>
+                                <mat-error *ngIf="f.email.invalid && f.email.touched">
+                                    <span *ngIf="f.email.errors?.required">
+                                        {{"Email is required"|translate}}</span>
+                                    <span *ngIf="f.email.errors?.email">
+                                        {{"Email must be a valid address"|translate}}</span>
+                                </mat-error>
+                            </mat-form-field><br><br>
+                            <!-- Phone Number  -->
+                            <mat-form-field appearance="outline" class="w-100">
+                                <mat-icon matPrefix>phone</mat-icon>
+                                <mat-label>{{'Phone Number'|translate}}
+                                </mat-label>
+                                <input matInput type="number" placeholder="Phone Number" formControlName="PhoneNumber">
+                                <mat-hint> {{"Please enter a valid phone number consisting of numbers only"|translate}} (e.g., 1234567890).</mat-hint>
+                            </mat-form-field><br><br>
+                            <!-- New Password  -->
+                            <mat-form-field appearance="outline" class="w-100"> 
+                                <mat-icon matPrefix>lock</mat-icon>
+                                <mat-label>{{'Password'|translate}} *</mat-label>
+                                <input matInput [type]="fieldTextType=='text'? 'text':'password'"
+                                    formControlName="password">
+                                <mat-icon *ngIf="fieldTextType=='password'" (click)="showpassword('off')"
+                                    matSuffix>visibility_off</mat-icon>
+                                <mat-icon *ngIf="fieldTextType=='text'" (click)="showpassword('on')"
+                                    matSuffix>visibility</mat-icon>
+                                <div *ngIf="singupForm.get('password').touched||validatePassword()==false||singupForm.get('password').invalid">
+                                    <mat-error *ngIf="singupForm.get('password').touched&&singupForm.get('password').errors?.required&&singupForm.get('password').invalid">
+                                        {{"Password is required"|translate}}
+                                    </mat-error>
+                                    <mat-error *ngIf="singupForm.get('password').touched&&singupForm.get('password').errors?.minlength">
+                                        {{"Password must be at least 8 characters long."|translate}}
+                                    </mat-error>
+                                    <mat-error *ngIf="singupForm.get('password').touched&&validatePassword()==false">
+                                        {{"Password must contain at least one number, one alphabet character, and one special character."|translate}}(e.g., P@ssw0rd).
+                                    </mat-error>
+                                </div>
+                            </mat-form-field>
+
+                            <!-- Confirm Password  -->
+                            <mat-form-field appearance="outline" class="w-100">
+                                <mat-icon matPrefix>lock</mat-icon>
+                                <mat-label>{{'Confirm Password'|translate}} *</mat-label>
+                                <input matInput [type]="fieldTextType=='text'? 'text':'password'"
+                                    formControlName="confirmPassword">
+                                <mat-icon *ngIf="fieldTextType=='password'" (click)="showpassword('off')"
+                                    matSuffix>visibility_off</mat-icon>
+                                <mat-icon *ngIf="fieldTextType=='text'" (click)="showpassword('on')"
+                                    matSuffix>visibility</mat-icon>
+                                <div
+                                    *ngIf="singupForm.get('confirmPassword').invalid && singupForm.get('confirmPassword').touched">
+                                    <mat-error *ngIf="singupForm.get('confirmPassword').errors?.required">
+                                        {{"ConfirmPassword is required"|translate}}
+                                    </mat-error>
+                                </div>
+                                <div *ngIf="singupForm.get('confirmPassword').touched">
+                                    <mat-error *ngIf="getpasswordmismatch()">
+                                        {{"Passwords do not match"|translate}}
+                                    </mat-error>
+                                </div>
+                            </mat-form-field>
+                            <!-- organizationCurrency -->
+                            <mat-form-field appearance="outline" class="w-100">
+                                <mat-icon matPrefix>flag</mat-icon>
+                                <mat-label>{{"Organization Currency"|translate}} * </mat-label>
+                                <mat-select formControlName="organizationCurrency">
+                                    <mat-option value="Euro">{{"Euro"|translate}}</mat-option>
+                                    <mat-option value="Dollar">{{"Dollar"|translate}}</mat-option>
+                                </mat-select>
+                                <mat-error>
+                                    <span *ngIf="f.organizationCurrency.invalid && f.organizationCurrency.touched">
+                                        <span *ngIf="f.organizationCurrency.errors?.required">
+                                            {{"Organization Currency is required"|translate}}</span>
+                                    </span>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <!-- Address -->
+                            <mat-form-field class="mainaddress" appearance="outline">
+                                <mat-icon matPrefix>home</mat-icon>
+                                <mat-label>{{"Company Address"|translate}} *</mat-label>
+                                <input ngx-google-places-autocomplete [options]='options' #placesRef="ngx-places"
+                                    (onAddressChange)="handleAddressChange($event)" matInput type="text"
+                                    formControlName="Address">
+                            </mat-form-field>
+
+                            <!-- country -->
+                            <mat-form-field appearance="outline" class="w-100">
+                                <mat-icon matPrefix>flag</mat-icon>
+                                <mat-label>{{"Country"|translate}}</mat-label>
+                                <input matInput type="text" formControlName="country">
+                            </mat-form-field>
+                            <div class="row col6format">
+                                <div class="col-6">
+                                    <!-- City -->
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-icon matPrefix>location_city</mat-icon>
+                                        <mat-label>{{"City"|translate}}
+                                        </mat-label>
+                                        <input matInput type="text" formControlName="city">
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-6">
+                                    <!-- zip Code -->
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-icon matPrefix>insert_emoticon</mat-icon>
+                                        <mat-label>{{"Zip Code"|translate}}</mat-label>
+                                        <input matInput type="text" formControlName="zipCode">
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+                        </div>
+                    </mat-card-content>
+                    <!-- [disabled]="!singupForm.valid"  -->
+                    <mat-card-actions class="px-2">
+                        <button mat-raised-button  (click)="clicksingupForm()"
+                        [ngClass]="singupForm.valid? 'b-blue' : 'g-blue'"
+                            [disabled]="!singupForm.valid" class="w-100 ">{{"Next"|translate}}</button>
+                    </mat-card-actions>
+                </form>
+            </mat-card>
+        </div>
+    </div>
+</ng-container>
+<!-- User Information  -->
+<ng-container *ngIf="userFormsatus">
+    <div class="singupbody" [ngStyle]="{'background-image': 'url(' + image + ')'}">
+        <div>
+            <mat-card class="singup-card mat-elevation-z8 p-4 ">
+                <form [formGroup]="userForm" novalidate>
+                    <mat-card-content>
+                        <div class="d-flex justify-content-center mb-2" (click)="gotodashboard()">
+                            <img src="assets/logo/login-logo.png" />
+                        </div>
+                        <div>
+                            <p class="infomationstyle">{{"User Information"|translate}}  (2/2)</p>
+                        </div>
+                        <div>
+                            <div class="row col6format">
+                                <div class="col-6">
+                                    <!-- firstName -->
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-icon matPrefix>person</mat-icon>
+                                        <mat-label>{{"First Name"|translate}} *</mat-label>
+                                        <input matInput type="text" formControlName="firstName">
+                                        <mat-error>
+                                            <span *ngIf="u.firstName.invalid && u.firstName.touched">
+                                                <span *ngIf="u.firstName.errors?.required">
+                                                    {{"Please enter your first name."|translate}}</span>
+                                            </span>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-6">
+                                    <!-- lastName -->
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-icon matPrefix>person</mat-icon>
+                                        <mat-label>{{"Last Name"|translate}}*</mat-label>
+                                        <input matInput type="text" formControlName="lastName">
+                                        <mat-error *ngIf="u.lastName.invalid && u.lastName.touched">
+                                            <span *ngIf="u.lastName.errors?.required">
+                                                {{"Please enter your last name."|translate}}</span>
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+
+                            <!-- Gender   -->
+                            <mat-form-field appearance="outline" class="w-100">
+                                <mat-icon matPrefix>person</mat-icon>
+                                <mat-label>{{"Gender"|translate}} *</mat-label>
+                                <mat-select formControlName="Gender">
+                                    <mat-option [value]="1">{{"Male"|translate}}
+                                    </mat-option>
+                                    <mat-option [value]="0">{{"Female"|translate}}</mat-option>
+                                </mat-select>
+                                <mat-error *ngIf="u.Gender.invalid && u.Gender.touched">
+                                    <span *ngIf="u.Gender.errors?.required">
+                                        {{"Please enter your Gender."|translate}}</span>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <!-- position -->
+                            <mat-form-field appearance="outline" class="w-100">
+                                <mat-icon matPrefix>moving</mat-icon>
+                                <mat-label>{{"position"|translate}} *</mat-label>
+                                <input matInput type="text" formControlName="position">
+                                <mat-error *ngIf="u.position.invalid && u.position.touched">
+                                    <span *ngIf="u.position.errors?.required">
+                                        {{"Please enter your Position."|translate}}</span>
+                                </mat-error>
+                            </mat-form-field>
+
+                            <!-- Phone Number  -->
+                            <mat-form-field appearance="outline" class="w-100">
+                                <mat-icon matPrefix>phone</mat-icon>
+                                <mat-label>{{'Phone Number'|translate}}
+                                </mat-label>
+                                <input matInput type="number" placeholder="Phone Number" formControlName="PhoneNumber">
+                                <mat-hint> {{"Please enter a valid phone number consisting of numbers only"|translate}}(e.g.,1234567890).</mat-hint>
+                            </mat-form-field><br><br>
+
+                            <!-- Address -->
+                            <mat-form-field class="mainaddress" appearance="outline">
+                                <mat-icon matPrefix>home</mat-icon>
+                                <mat-label>{{"User Address"|translate}} * </mat-label>
+                                <input ngx-google-places-autocomplete [options]='options' #placesRef="ngx-places"
+                                    (onAddressChange)="handleAddressChangeuser($event)" matInput type="text"
+                                    formControlName="Address">
+                            </mat-form-field>
+
+                            <!-- country -->
+                            <mat-form-field appearance="outline" class="w-100">
+                                <mat-icon matPrefix>flag</mat-icon>
+                                <mat-label>{{"Country"|translate}}</mat-label>
+                                <input matInput type="text" formControlName="country">
+                            </mat-form-field>
+                            <div class="row col6format">
+                                <div class="col-6">
+                                    <!-- City -->
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-icon matPrefix>location_city</mat-icon>
+                                        <mat-label>{{"City"|translate}}
+                                        </mat-label>
+                                        <input matInput type="text" formControlName="city">
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-6">
+                                    <!-- zip Code -->
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-icon matPrefix>insert_emoticon</mat-icon>
+                                        <mat-label>{{"Zip Code"|translate}}</mat-label>
+                                        <input matInput type="text" formControlName="zipCode">
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row justify-content-between align-items-center mx-1">
+                            <mat-checkbox formControlName="policy"></mat-checkbox>
+                            <a>I testify I read the <span (click)="Showpolicy()"style="color:blue;cursor: pointer;">
+                                    <u>{{"policy"|translate}}</u></span> from Planning&Me</a>
+                        </div>
+
+                    </mat-card-content>
+                    <mat-card-actions class="px-2">
+                        <div class="row justify-content-around">
+                            <div class="col-6">
+                                <button mat-raised-button (click)="backclickUserForm()"
+                                    class="w-100 g-blue">{{"Back"|translate}}</button>
+                            </div>
+                            <div class="col-6">
+                                <!-- [disabled]="!userForm.valid"  -->
+                                <button mat-raised-button [ngClass]="getstatuspolicy()==true? 'b-blue' : 'g-blue'"
+                                    [disabled]="!getstatuspolicy()&&!userForm.valid"
+                                    (click)='clickUserForm()' class="w-100"
+                                    type="submit">{{"Submit"|translate}}</button>
+                            </div>
+                        </div>
+
+                    </mat-card-actions>
+                </form>
+            </mat-card>
+        </div>
+    </div>
+</ng-container>
+<pnm-navbar-footer></pnm-navbar-footer>

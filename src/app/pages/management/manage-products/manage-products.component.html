@@ -1,0 +1,996 @@
+<mat-tab-group mat-align-tabs="center" class="no-bg" (selectedTabChange)="tabChange($event.index)">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tabclas">
+                <mat-icon [ngClass]="{
+                    'btn-blue': tabnumber == 0 
+                  }">list</mat-icon>
+                <span>{{"Product List"|translate}}</span>
+            </div>
+        </ng-template>
+        <div class="tab-container mt-2">
+            <div class="table-container mat-elevation-z2" *ngIf="!isMobileView">
+                <div class="row" style="margin-top: 10px;margin-bottom: 10px;" *ngIf="showicon">
+                    <h3 style="margin-top: 10px;margin-bottom: 10px;">Search Results Of :</h3>
+                    <span class="keywordsearch" *ngFor="let x of SearchResult; let index=index;">
+                        <span style="margin: 10px;">
+                        <span class="keywordvalue">{{x}}</span>
+                        <span> <mat-icon class="keywordremove" (click)="removeSearch(x,index)">cancel</mat-icon></span>
+                        </span>
+                    </span>
+                </div>
+                <div class="row" *ngIf="showicon" style="background-color: #fffde3;padding: 10px;">
+                  <div class="col-3">
+                      <span class="fs-16" style="font-weight: 700;">No of Records : </span> 
+                      <span class="fs-16" style="font-weight: 700;color: blue;">{{userDataLength}}</span>
+                  </div>
+                  <div class="col-3 ">
+                      <span class="fs-16 " style="font-weight: 700;">Total Quantity : </span> 
+                      <span class="fs-16" style="font-weight: 700;color: blue;">{{StockQuantity}} Unit / Liter</span>
+                  </div>
+                  <div class="col-3">
+                      <span class="fs-16" style="font-weight: 700;">Total Final Price : </span> 
+                      <span class="fs-16" style="font-weight: 700;color: blue;">{{transform(StockTotalPrice)}} &euro;</span>
+                  </div>
+                  <div class="col-3">
+                      <span class="fs-16" style="font-weight: 700;">Average Amount : </span> 
+                      <span class="fs-16" style="font-weight: 700;color: blue;">{{RoundAmount(StockTotalPrice / userDataLength)}} &euro;</span>
+                  </div>
+              </div>
+                <table mat-table [dataSource]="productDataSource" matSort class="table"
+                    (mouseleave)="activeIndex = undefined">
+                    <ng-container matColumnDef="options">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                        <td mat-cell *matCellDef="let row;let i = index">
+                            <div id="main">
+                                <div>
+                                    <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                                        <mat-icon class="icon-options">more_vert</mat-icon>
+                                    </button>
+                                </div>
+                                <div>
+                                    <span *ngIf="row.hasPrivateDiscount ==true">
+                                        <img style="border-radius: 50%;" (click)="ViewListOfDiscount(row,'Products')"
+                                            src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                    </span>
+                                    <span *ngIf="row.hasPublicDiscount ==true">
+                                        <img style="border-radius: 50%;" (click)="ViewListOfDiscount(row,'Products')"
+                                            src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                    </span>
+                                </div>
+                            </div>
+                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                <ng-template matMenuContent>
+                                    <button class="fw-600" mat-menu-item (click)="openProductDialog(row, 'product')">
+                                        <mat-icon class="icon-options">visibility</mat-icon>
+                                        <span class="fw-600 color_black">{{"View"|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item
+                                        *ngIf="(AdminStatus=='true'||row?.isCreator==true)"
+                                        (click)="updateproductDialog(row)">
+                                        <mat-icon class="icon-options">edit</mat-icon>
+                                        <span class="fw-600 color_black">{{"Edit"|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item
+                                        *ngIf="(AdminStatus=='true'||row?.isCreator==true)"
+                                        (click)="deleteDialogConfirmation(row,'deleteProduct')">
+                                        <mat-icon class="icon-options">delete</mat-icon>
+                                        <span class="fw-600 color_black">{{"Delete"|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="AddToGroupDialog(row)">
+                                        <mat-icon>group</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Add to Group'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="openAddEventDialog()">
+                                        <mat-icon>event</mat-icon>
+                                        <span class="fw-600 color_black">{{"Create an Event"|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="ActivityReport(row,true)">
+                                        <mat-icon style="color:green">bar_chart</mat-icon>
+                                        <span class="fw-600 color_black"> {{"Create an Activity Report"|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="CreateStratergy()">
+                                        <mat-icon>wb_incandescent</mat-icon>
+                                        <span class="fw-600 color_black">{{"Create Stratergy"|translate}}</span>
+                                    </button>
+                                    <button class="fw-600 " mat-menu-item (click)="CreateTransaction()">
+                                        <mat-icon class="blue">assignment</mat-icon>
+                                        <span class="fw-600 color_black">{{'Create Transaction'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item
+                                        (click)="createTarget(row,'Products','Single','Create')">
+                                        <mat-icon>track_changes</mat-icon>
+                                        <span class="fw-600 color_black">{{'Create Target'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="AddFile(row,'single')">
+                                        <mat-icon style="color:rgb(66,135,245) ;">
+                                            insert_drive_file</mat-icon>
+                                        <span class="fw-600 color_black"> {{"Add File"|translate}}</span>
+
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="AddNote(row,'single')">
+                                        <mat-icon style="color:rgb(255,193,111) ;">
+                                            speaker_notes </mat-icon>
+                                        <span class="fw-600 color_black"> {{"Add Note"|translate}}</span>
+
+                                    </button>
+                                    <button class="fw-600 " mat-menu-item (click)="AddDiscount(row,'Products')"
+                                        *ngIf="row.hasPrivateDiscount ==false && row.hasPublicDiscount ==false">
+                                        <mat-icon class="green">loyalty</mat-icon>
+                                        <span class="fw-600 color_black">{{"Add Discount"|translate}}</span>
+                                    </button>
+                                    <button class="fw-600 " mat-menu-item
+                                        *ngIf="row.hasPrivateDiscount ==true || row.hasPublicDiscount ==true"
+                                        (click)="ViewListOfDiscount(row,'Products')">
+                                        <mat-icon class="green">loyalty</mat-icon>
+                                        <span class="fw-600 color_black">{{"View Discount"|translate}}</span>
+                                    </button>
+                                </ng-template>
+                            </mat-menu>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="image">
+                        <th mat-header-cell *matHeaderCellDef> </th>
+                        <td mat-cell *matCellDef="let row">
+                            <div class="avatar">
+                                <img class="avatar" (click)="openProductDialog(row, 'product')" style="cursor: pointer;"
+                                    onError="this.src='assets/images/iconsForsvg/icon_product.svg'"
+                                    [src]="row?.profilePicture ? row.profilePicture:'assets/images/iconsForsvg/icon_product.svg'">
+                            </div>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Name'|translate}} </th>
+                        <td mat-cell *matCellDef="let row" class="ellipsis" style="cursor: pointer;"
+                            (click)="openProductDialog(row, 'product')">
+                            {{row.productName |titlecase}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="productdescription">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"Product Description"|translate}} </th>
+                        <td mat-cell *matCellDef="let row" class="ellipsis">
+                            {{row.productDescription|titlecase}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="productReference">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Product Reference'|translate}} </th>
+                        <td mat-cell *matCellDef="let row" class="ellipsis">
+                            {{row.productReference|titlecase}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="creator">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"Creator Name"|translate}} </th>
+                        <td mat-cell *matCellDef="let row" class="ellipsis">
+                            {{row.creatorFirstName|titlecase}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="stockQuantity">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Stock Quantity'|translate}} </th>
+                        <td mat-cell *matCellDef="let row"> {{row. stockQuantity+' '+row.measureName}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="stockTotalPrice">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{"Stock Total Price"|translate}}</th>
+                        <td mat-cell *matCellDef="let row"> {{transform(row. stockTotalPrice)+' '+row.currenyName}}
+                        </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="productColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: productColumns;" (mouseover)="activeIndex = row.id">
+                    </tr>
+                </table>
+            </div>
+
+            <div class="table-container mat-elevation-z2" *ngIf="isMobileView">
+                <div class="row" style="margin-top: 10px;margin-bottom: 10px;" *ngIf="showicon">
+                    <h3 style="margin-top: 10px;margin-bottom: 10px;">Search Results Of :</h3>
+                    <span class="keywordsearch" *ngFor="let x of SearchResult; let index=index;">
+                        <span style="margin: 10px;">
+                        <span class="keywordvalue">{{x}}</span>
+                        <span> <mat-icon class="keywordremove" (click)="removeSearch(x,index)">cancel</mat-icon></span>
+                        </span>
+                    </span>
+                </div>
+                <div class="row" *ngIf="showicon" style="background-color: #fffde3;padding: 10px;">
+                  <div class="col-12">
+                      <span class="fs-16" style="font-weight: 700;">No of Records : </span> 
+                      <span class="fs-16" style="font-weight: 700;color: blue;">{{userDataLength}}</span>
+                  </div>
+                  <div class="col-12 mt-2 ">
+                      <span class="fs-16 " style="font-weight: 700;">Total Quantity : </span> 
+                      <span class="fs-16" style="font-weight: 700;color: blue;">{{StockQuantity}}</span>
+                  </div>
+                  <div class="col-12 mt-2">
+                      <span class="fs-16" style="font-weight: 700;">Total Final Price : </span> 
+                      <span class="fs-16" style="font-weight: 700;color: blue;">{{transform(StockTotalPrice)}} &euro;</span>
+                  </div>
+                  <div class="col-12 mt-2">
+                      <span class="fs-16" style="font-weight: 700;">Average Amount : </span> 
+                      <span class="fs-16" style="font-weight: 700;color: blue;">{{RoundAmount(StockTotalPrice / userDataLength)}} &euro;</span>
+                  </div>
+              </div>
+                <table mat-table [dataSource]="productDataSource" matSort class="table"
+                    (mouseleave)="activeIndex = undefined" id="manage-user-data">
+                    <ng-container matColumnDef="select">
+                        <th mat-header-cell *matHeaderCellDef>
+                            <mat-checkbox class="b-blue" (change)="$event ? masterToggle() : null"
+                                [checked]="productSelection.hasValue() && isAllProductsSelected()"
+                                [indeterminate]="productSelection.hasValue() && !isAllProductsSelected()">
+                            </mat-checkbox>
+                        </th>
+                        <td mat-cell *matCellDef="let row">
+                            <mat-checkbox class="b-blue" (click)="$event.stopPropagation()"
+                                (change)="$event ? productSelection.toggle(row) : null"
+                                [checked]="productSelection.isSelected(row)">
+                            </mat-checkbox>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="Product">
+                        <th mat-header-cell *matHeaderCellDef> <strong>{{"Product Details"|translate}}</strong> </th>
+                        <td mat-cell *matCellDef="let row">
+                            <div class="d-flex align-items-center" style="width: 300px !important;">
+                                <div class="avatar">
+                                    <img class="avatar" (click)="openProductDialog(row, 'product')" style="cursor: pointer;"
+                                    onError="this.src='assets/images/iconsForsvg/icon_product.svg'"
+                                    [src]="row?.profilePicture ? row.profilePicture:'assets/images/iconsForsvg/icon_product.svg'">
+                                </div>
+                                <div class="user-name w-100">
+                                    <p>{{row.productName|titlecase}}</p>
+                                    <p><mat-icon class="icon-options">error_outline</mat-icon> {{' '+row.productDescription|titlecase}}</p>
+                                    <p><b>{{'Stock Quantity'|translate}}</b>{{' '+row. stockQuantity+' '+row.measureName}}</p>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="options">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-right"> </th>
+                        <td mat-cell *matCellDef="let row">
+                            <div *ngIf="row.id === activeIndex" class="text-right">
+                                <button mat-icon-button *ngIf="(AdminStatus=='true'||row?.isCreator==true)"
+                                 (click)="updateproductDialog(row)">
+                                    <mat-icon class="icon-options">edit</mat-icon>
+                                </button>
+                                <button mat-icon-button *ngIf="(AdminStatus=='true'||row?.isCreator==true)"
+                                 (click)="deleteDialogConfirmation(row,'deleteProduct')">
+                                    <mat-icon class="icon-options">delete</mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="navigate">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="text-right"> </th>
+                        <td mat-cell *matCellDef="let row">
+                            <div class="text-right">
+                                <button mat-icon-button (click)="openProductDialog(row, 'product')">
+                                    <mat-icon class="icon-options">keyboard_arrow_right</mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="productColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: productColumns;" (mouseover)="activeIndex = row.id">
+                    </tr>
+                </table>
+            </div>
+            <span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+                <button id="add-button3" mat-fab (click)="exportData()">
+                    <mat-icon style="color: white;"> import_export</mat-icon>
+                </button><br><br>
+                <button matTooltip="Advance Search" id="add-button1" mat-fab (click)="AdvanceSearchSingle()">
+                    <mat-icon style="color: white;">search</mat-icon>
+                </button><br><br>
+                <button id="add-button2" *ngIf="AdminStatus=='true'||ProductCreationStatus=='true'" mat-fab
+                    (click)="openCreateProduct()">
+                    <mat-icon style="color: white;">add</mat-icon>
+                </button><br><br>
+                <button *ngIf="showicon" matTooltip="delete Search" id="add-button1" mat-fab
+                    (click)="closesearch('single')">
+                    <mat-icon style="color: white;">delete_forever</mat-icon>
+                </button>
+            </span>
+
+            <mat-paginator [pageSize]="20" [length]="userDataLength" (page)="next($event,'single')"></mat-paginator>
+        </div>
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tabclas">
+                <mat-icon [ngClass]="{
+                    'btn-blue': tabnumber == 1
+                  }">people</mat-icon>
+                <span>{{'Product Groups'|translate}}</span>
+            </div>
+        </ng-template>
+        <div class="tab-container mt-2">
+            <div class="row" style="margin-top: 10px;margin-bottom: 10px;" *ngIf="showicon">
+                <h3 style="margin-top: 10px;margin-bottom: 10px;">Search Results Of :</h3>
+                <span class="keywordsearch" *ngFor="let x of SearchResult; let index=index;">
+                    <span style="margin: 10px;">
+                        <span class="keywordvalue">{{x}}</span>
+                        <span> <mat-icon class="keywordremove" (click)="removeSearch(x,index)">cancel</mat-icon></span>
+                    </span>
+                </span>
+            </div>
+            <div class="row" *ngIf="showicon" style="background-color: #fffde3;padding: 10px;">
+                <div class="col-md-3 col-lg-3 col-sm-12">
+                    <span class="fs-16" style="font-weight: 700;">No of Records : </span>
+                    <span class="fs-16" style="font-weight: 700;color: blue;">{{siteDataLength}}</span>
+                </div>
+            </div>
+            <mat-accordion>
+                <mat-expansion-panel *ngFor="let group of productGroups; let index=index;"
+                    (mouseenter)="activeIndex = index">
+                    <mat-expansion-panel-header style="height:60px;" (click)="showproductList(group)">
+                        <mat-panel-title>
+                            <div id="main">
+                                <div>
+                                    <mat-icon style="margin-top:15px;" [matBadge]="group.productsCount"
+                                        matBadgeColor="warn"
+                                        [ngStyle]="{'color':(group.dynamicGroupId ==null)?'red':'blue'}">group</mat-icon>
+                                </div>
+                                <div>
+                                    <div>
+                                        <span class="ml-4 fw-600">{{ group.productGroupName|titlecase}}</span>
+                                        <span>{{' '+group.description|titlecase}}</span>
+                                    </div>
+                                    <div *ngIf="group?.getKeyword!=null"><span class="ml-4 mt-2 ">
+                                            <span *ngFor="let x of group?.getKeyword ;let i=index">
+                                                <button
+                                                    style="border: none; border-radius:20px; background-color: rgb(228, 223, 223); padding: 5px 25px;">
+                                                    <span>{{x|titlecase}}</span>
+                                                </button>
+                                            </span>
+                                        </span></div>
+                                </div>
+                            </div>
+                        </mat-panel-title>
+                        <mat-panel-description class="d-flex flex-row justify-content-end">
+                            <div *ngIf="index === activeIndex" class="hover-options-grp">
+                                <button style="margin-top: 18px;" mat-icon-button matTooltipPosition="above"
+                                    [matMenuTriggerFor]="moreMenu">
+                                    <mat-icon class="icon-options">more_vert</mat-icon>
+                                </button>
+                                <mat-menu #moreMenu="matMenu" class="eventlist">
+                                    <ng-template matMenuContent>
+                                        <button class="fw-600" mat-menu-item (click)="editProductGroup(group)">
+                                            <mat-icon class="icon-options">edit</mat-icon>
+                                            <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item
+                                            (click)="deleteDialogConfirmation(group,'deleteProductGroup')">
+                                            <mat-icon class="icon-options">delete
+                                            </mat-icon>
+                                            <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item (click)="openAddEventDialog()">
+                                            <mat-icon>event</mat-icon>
+                                            <span class="fw-600 color_black">{{"Create an Event"|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item (click)="ActivityReport(group,false)">
+                                            <mat-icon style="color:green">bar_chart</mat-icon>
+                                            <span class="fw-600 color_black">{{"Create an Activity Report"|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item (click)="CreateStratergy()">
+                                            <mat-icon>wb_incandescent</mat-icon>
+                                            <span class="fw-600 color_black">{{'Create Stratergy'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item
+                                            (click)="createTarget(group,'Products','Group','Create')">
+                                            <mat-icon>track_changes</mat-icon>
+                                            <span class="fw-600 color_black">{{"Create Target"|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item (click)="AddFile(group,'group')">
+                                            <mat-icon style="color:rgb(66,135,245) ;">
+                                                insert_drive_file</mat-icon>
+                                            <span class="fw-600 color_black">{{'Add File'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item (click)="AddNote(group,'group')">
+                                            <mat-icon style="color:rgb(255,193,111) ;">
+                                                speaker_notes </mat-icon>
+                                            <span class="fw-600 color_black"> {{"Add Note"|translate}}</span>
+                                        </button>
+                                        <button class="fw-600 " mat-menu-item (click)="GroupShare(group,'Products')">
+                                            <img src="../../../../assets/images/iconsForsvg/share-square-1.svg" alt="">
+                                            <span class="fw-600 color_black" style="margin-left:24px;">
+                                                {{'Group Share'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600 " mat-menu-item
+                                            (click)="AddDiscount(group,'ProductsGroup','group')">
+                                            <mat-icon class="green">loyalty</mat-icon>
+                                            <span class="fw-600 color_black">{{'Apply Discount'|translate}}</span>
+                                        </button>
+                                    </ng-template>
+                                </mat-menu>
+                            </div>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <mat-list>
+                        <!-- <div mat-subheader>Products</div> -->
+                        <div class="f-weight" mat-subheader *ngFor="let user of userList">
+                            <div class="row justify-content-start">
+                                <div class="col-8">
+                                    <div class="row" (click)="openProductDialog(user, 'product')" style="cursor: pointer;">
+                                        <div class="col-2">
+                                            <div class="row justify-content-center">
+                                                <span *ngIf="user.hasPrivateDiscount ==true">
+                                                    <img style="border-radius: 50%;"
+                                                        (click)="ViewListOfDiscount(user,'Products')"
+                                                        src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                                </span>
+                                                <span *ngIf="user.hasPublicDiscount ==true">
+                                                    <img style="border-radius: 50%;"
+                                                        (click)="ViewListOfDiscount(user,'Products')"
+                                                        src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-1">
+                                            <img class="avatar-profile"
+                                                [src]="user?. profile ? user. profile:'assets/images/iconsForsvg/icon_product.svg '"
+                                                onError="this.src='assets/images/iconsForsvg/icon_product.svg '">
+                                        </div>
+                                        <div class="col-9">
+                                            <h3 class="fw-600 color_black">{{user.productName|titlecase|slice:0:50}}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <mat-selection-list [multiple]="false">
+                            <mat-list-option *ngFor="let product of group.contacts"
+                                (click)="openProductDialog(product, 'productgroup')">
+                                <span class="d-flex flex-row align-items-center">
+                                    <div class="avatar">
+                                        <img src="assets/avatar.svg" />
+                                    </div>
+                                    <span>{{product.contactName|titlecase|slice:0:30}}</span>
+                                </span>
+                                <mat-divider></mat-divider>
+                            </mat-list-option>
+                        </mat-selection-list>
+                    </mat-list>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+                <button id="add-button1" mat-fab>
+                    <mat-icon style="color: white;" (click)="AdvanceSearchgroup()">search</mat-icon>
+                </button><br><br>
+                <button id="add-button2" mat-fab (click)="selactOptionGroup(showGroup)">
+                    <mat-icon style="color: white;">add</mat-icon>
+                </button><br><br>
+                <button *ngIf="showicon" matTooltip="delete Search" id="add-button1" mat-fab
+                    (click)="closesearch('multiple')">
+                    <mat-icon style="color: white;">delete_forever</mat-icon>
+                </button>
+            </span>
+
+            <mat-paginator [pageSize]="10" [length]="siteDataLength" (page)="next($event,'multiple')"></mat-paginator>
+        </div>
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tabclas">
+                <mat-icon [ngClass]="{
+                    'btn-blue': tabnumber == 2 
+                  }">track_changes</mat-icon>
+                <span>{{"Target"|translate}}</span>
+            </div>
+        </ng-template>
+        <div class="tab-container mt-2">
+            <div class="table-container mat-elevation-z2" *ngIf="!isMobileView">
+                <div class="row" style="margin-top: 10px;margin-bottom: 10px;" *ngIf="showicon">
+                    <h3 style="margin-top:10px;">Search Results of :</h3>
+                    <!-- Container for the keyword items -->
+                    <div style="display: flex; flex-wrap: wrap; align-items: flex-start;">
+    
+                        <!-- Left arrow to navigate to previous items -->
+                        <div style="cursor: pointer;" *ngIf="startIndex > 0">
+                            <mat-icon (click)="navigateItems('left')"
+                                style="padding: 8px;font-size: 35px;margin-right: 10px;">keyboard_arrow_left</mat-icon>
+                        </div>
+    
+                        <!-- Show the items in a row -->
+                        <ng-container *ngFor="let x of displayedItems; let index = index;">
+                            <span class="keywordsearch" style="margin: 10px;">
+                                <ng-container *ngIf="x?.name=='Entity'"><span
+                                        class="keywordvalue">Products</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsGroup'"><span class="keywordvalue">Product
+                                        Groups</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsPublic'"><span
+                                        class="keywordvalue">Public</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsPrivate'"><span
+                                        class="keywordvalue">Private</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsDelegate'"><span
+                                        class="keywordvalue">Delegate</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsAchieved'"><span
+                                        class="keywordvalue">Achieved</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsNotAchieved'"><span
+                                        class="keywordvalue">NotAchieved</span></ng-container>
+                                <ng-container *ngIf="x?.name=='StatusOfTransaction'">
+                                    <span class="keywordvalue">Status Of Transaction
+                                        :{{x?.value==0?'Pending':x?.value==1?'Validated': 'None'}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='TargetType'">
+                                    <span class="keywordvalue">Target Type:
+                                        {{x?.value==1?'Orders':x?.value==2?'Events':x?.value==3?'Tasks':'Initiatives'}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='ValueType'">
+                                    <span class="keywordvalue">Value Type:
+                                        {{x?.value==1?'Amount':x?.value==2?'Count':'Duration'}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='Condition'">
+                                    <span class="keywordvalue">Condition: {{x?.value}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='Value'">
+                                    <span class="keywordvalue">Target Value : {{x?.value}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='Duration'">
+                                    <span class="keywordvalue">Target Duration : {{x?.value}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='EndDate' || x?.name=='StartDate'">
+                                    <span class="keywordvalue">{{x?.name+' '}}{{x?.value|date:'dd-MMM-yyyy'}}</span>
+                                </ng-container>
+                                <span><mat-icon class="keywordremove"
+                                        (click)="removekeyword(x, startIndex + index)">cancel</mat-icon></span>
+                            </span>
+                        </ng-container>
+    
+                        <!-- Right arrow to navigate to next items -->
+                        <div style="cursor: pointer;"
+                            *ngIf="ListOftragetfiltervalues.length > 5 && startIndex + displayedItems.length < ListOftragetfiltervalues.length">
+                            <mat-icon (click)="navigateItems('right')"
+                                style="padding: 10px;font-size: 35px;">keyboard_arrow_right</mat-icon>
+                        </div>
+    
+                    </div>
+    
+                </div>
+                  <div class="row" *ngIf="showicon" style="background-color: #fffde3;padding: 10px;">
+                    <div class="col-3">
+                        <span class="fs-16" style="font-weight: 700;">No of Records : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{TargetLength}}</span>
+                    </div>
+                    <div class="col-3 ">
+                        <span class="fs-16 " style="font-weight: 700;">Sum Of Target : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{transform(totalTargetValue)}} &euro;</span>
+                    </div>
+                    <div class="col-3">
+                        <span class="fs-16" style="font-weight: 700;">Achieved Target : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{transform(achivedTargetValue)}} &euro;</span>
+                    </div>
+                    <div class="col-3">
+                        <span class="fs-16" style="font-weight: 700;">Average Target : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{RoundAmount(totalTargetValue / TargetLength)}} &euro;</span>
+                    </div>
+                </div>
+                <table mat-table [dataSource]="productGroupTargetsDataSource" matSort class="table group-data">
+                    <ng-container matColumnDef="options">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                        <td mat-cell *matCellDef="let row;let i = index">
+                            <div id="main">
+                                <div>
+                                    <button mat-icon-button [matMenuTriggerFor]="moremenu">
+                                        <mat-icon class="icon-options">more_vert</mat-icon>
+                                    </button>
+                                </div>
+                                <div>
+                                    <ng-container *ngIf="row.statusOfTransaction=='Pending'">
+                                        <mat-icon style="font-size: 12px;  color:yellow;margin-top:18px;">fiber_manual_record</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="row.statusOfTransaction=='Validated'">
+                                        <mat-icon style="font-size: 12px;  color:blue;margin-top:18px;">fiber_manual_record</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="row.targetTypeName=='Orders'">
+                                        <mat-icon style="color:rgb(100, 149, 237);margin-top:18px;">shopping_cart</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="row.targetTypeName=='Events'">
+                                        <mat-icon style="margin-top:18px;">event</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="row.targetTypeName=='Tasks'">
+                                        <mat-icon style="color:green;margin-top:18px;">assignment_turned_in</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="row.targetTypeName=='Initiatives'">
+                                        <mat-icon style="margin-top:18px;">ballot</mat-icon>
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <mat-menu #moremenu="matMenu" class="eventlist">
+                                <ng-template matMenuContent>
+                                    <button class="fw-600" mat-menu-item
+                                        (click)="viewTarget(row)">
+                                        <mat-icon class="icon-options">visibility</mat-icon>{{'View'|translate}}
+                                    </button>
+                                    <button *ngIf="row.isGroup == true" class="fw-600" mat-menu-item
+                                        (click)="createTarget(row,'Products','Group','Edit')">
+                                        <mat-icon class="icon-options">edit</mat-icon>{{"Edit"|translate}}
+                                    </button>
+                                    <button *ngIf="row.isGroup != true" class="fw-600" mat-menu-item
+                                        (click)="createTarget(row,'Products','Single','Edit')">
+                                        <mat-icon class="icon-options">edit</mat-icon>{{"Edit"|translate}}
+                                    </button>
+                                    <button class="fw-600" mat-menu-item
+                                        (click)="deleteDialogConfirmation(row,'deleteProducttarget')">
+                                        <mat-icon class="icon-options">delete</mat-icon>{{"Delete"|translate}}
+                                    </button>
+                                </ng-template>
+                            </mat-menu>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"Name"|translate}} </th>
+                        <td mat-cell *matCellDef="let row" (click)="viewTarget(row)">
+                            <div class="d-flex flex-column py-2">
+                                <span class="mb-2 f-weight" *ngIf="row.isGroup == true">
+                                    <span *ngIf="row.dynamicGrpId ==null">
+                                        <img style="border-radius: 50%;" width="30" height="30"
+                                           src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                   </span>
+                                   <span *ngIf="row.dynamicGrpId !=null">
+                                       <img style="border-radius: 50%;"width="30" height="30"
+                                           src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                   </span>
+                                    {{row.name|titlecase}}
+                                </span>
+                                <span class="mb-2 mat-body-2 f-weight" *ngIf="row.isGroup == false">
+                                    <img class="avatar" style="border-radius: 50% !important;"
+                                        [src]="row?.profile ? row.profile:'assets/images/iconsForsvg/icon_product.svg'"
+                                        onError="this.src='assets/images/iconsForsvg/icon_product.svg'">
+                                    {{row.name|titlecase}}
+                                </span>
+                                <mat-chip-list>
+                                    <!-- <mat-chip *ngIf="row.monthsTargetDtos && row.monthsTargetDtos.length > 0"
+                                        (click)="openTargetMonths(row)">
+                                        <mat-icon>calendar_today</mat-icon>
+                                        {{"Months"|translate}}
+                                    </mat-chip> -->
+                                    <mat-chip *ngIf="row.isGroup == true" (click)="getProductGroup(row)">
+                                        <mat-icon>calendar_today</mat-icon>
+                                        {{"product"|translate}}
+                                    </mat-chip>
+                                </mat-chip-list>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="CreaterName">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"Creator Name"|translate}} </th>
+                        <td mat-cell *matCellDef="let row" (click)="viewTarget(row)">
+                            <img class="avatar" style="border-radius: 50% !important;"
+                                [src]="row?.creatorProfile ? row.creatorProfile:'assets/avatar.svg'"
+                                onError="this.src='assets/avatar.svg'">{{row.creatorName|slice:0:30}}</td>
+                    </ng-container>
+                    <!-- <ng-container matColumnDef="year">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"Year"|translate}} </th>
+                        <td mat-cell *matCellDef="let row"> {{row.year}} </td>
+                    </ng-container> -->
+                    <ng-container matColumnDef="StartDate">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"Start Date"|translate}} </th>
+                        <td mat-cell *matCellDef="let row" (click)="viewTarget(row)">
+                          {{row.startDate | date}}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="EndDate">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"End Date"|translate}} </th>
+                        <td mat-cell *matCellDef="let row" (click)="viewTarget(row)">
+                            {{row.endDate | date}}
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="target">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"Target"|translate}} </th>
+                        <td mat-cell *matCellDef="let row" (click)="viewTarget(row)">
+                            <div class="d-flex flex-column" *ngIf="row.targetTypeName == 'Orders' || row.isCountTarget == true">
+                                <span>{{transform(row.totalAchievedValue)}} &euro; / {{transform(row.targetValue)}}
+                                    &euro;</span>
+                                    <span style="color: green !important;" *ngIf="row.percentage>99"><b>+{{percentagecalucation(row)}}% PERFORMANCE</b></span>
+                            </div>
+                            <div class="d-flex flex-column" *ngIf="row.targetTypeName != 'Orders' && row.isDurationTarget == true">
+                                <span>{{row.totalAchievedDuration}}  / {{row.targetDuration}}
+                                    </span>
+                                    <span style="color: green !important;" *ngIf="row.percentage>99"><b>+{{percentagecalucation(row)}}% PERFORMANCE</b></span>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="B">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell *matCellDef="let row" style="width: 20px;" (click)="viewTarget(row)">
+                            <div class="row">
+                                <div class="col-4">
+                                    <mat-icon *ngIf="row.isPrivate" style="font-size: 20px;">lock</mat-icon>
+                                    <img *ngIf="row.isPublic" src="../../../../../assets/images/iconsForsvg/Unlock.svg">
+                                    <mat-icon *ngIf="row.isDelegate" class="green"
+                                        style="font-size: 20px;">device_hub</mat-icon>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="progress">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                        <td mat-cell *matCellDef="let row" style="width: 275px;" (click)="viewTarget(row)">
+                            <div class="row justify-content-center">
+                                <div class="col-12" style="text-align: center;">{{row?.percentage?
+                                    row.percentage:0}}{{'%'}}</div>
+                                <div class="col-12">
+                                    <mat-progress-bar class="w-100" [value]="row?.percentage?row.percentage:0"
+                                        [ngClass]="row.cssClass">
+                                    </mat-progress-bar>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+
+
+                    <tr mat-header-row *matHeaderRowDef="productGroupTargetsColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: productGroupTargetsColumns;">
+                    </tr>
+                </table>
+            </div>
+        
+            <div class="table-container mat-elevation-z2" *ngIf="isMobileView">
+                <div class="row" style="margin-top: 10px;margin-bottom: 10px;" *ngIf="showicon">
+                    <h3 style="margin-top:10px;">Search Results of :</h3>
+                    <!-- Container for the keyword items -->
+                    <div style="display: flex; flex-wrap: wrap; align-items: flex-start;">
+    
+                        <!-- Left arrow to navigate to previous items -->
+                        <div style="cursor: pointer;" *ngIf="startIndex > 0">
+                            <mat-icon (click)="navigateItems('left')"
+                                style="padding: 8px;font-size: 35px;margin-right: 10px;">keyboard_arrow_left</mat-icon>
+                        </div>
+    
+                        <!-- Show the items in a row -->
+                        <ng-container *ngFor="let x of displayedItems; let index = index;">
+                            <span class="keywordsearch" style="margin: 10px;">
+                                <ng-container *ngIf="x?.name=='Entity'"><span
+                                        class="keywordvalue">Products</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsGroup'"><span class="keywordvalue">Product
+                                        Groups</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsPublic'"><span
+                                        class="keywordvalue">Public</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsPrivate'"><span
+                                        class="keywordvalue">Private</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsDelegate'"><span
+                                        class="keywordvalue">Delegate</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsAchieved'"><span
+                                        class="keywordvalue">Achieved</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsNotAchieved'"><span
+                                        class="keywordvalue">NotAchieved</span></ng-container>
+                                <ng-container *ngIf="x?.name=='StatusOfTransaction'">
+                                    <span class="keywordvalue">Status Of Transaction
+                                        :{{x?.value==0?'Pending':x?.value==1?'Validated': 'None'}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='TargetType'">
+                                    <span class="keywordvalue">Target Type:
+                                        {{x?.value==1?'Orders':x?.value==2?'Events':x?.value==3?'Tasks':'Initiatives'}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='ValueType'">
+                                    <span class="keywordvalue">Value Type:
+                                        {{x?.value==1?'Amount':x?.value==2?'Count':'Duration'}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='Condition'">
+                                    <span class="keywordvalue">Condition: {{x?.value}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='Value'">
+                                    <span class="keywordvalue">Target Value : {{x?.value}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='Duration'">
+                                    <span class="keywordvalue">Target Duration : {{x?.value}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='EndDate' || x?.name=='StartDate'">
+                                    <span class="keywordvalue">{{x?.name+' '}}{{x?.value|date:'dd-MMM-yyyy'}}</span>
+                                </ng-container>
+                                <span><mat-icon class="keywordremove"
+                                        (click)="removekeyword(x, startIndex + index)">cancel</mat-icon></span>
+                            </span>
+                        </ng-container>
+    
+                        <!-- Right arrow to navigate to next items -->
+                        <div style="cursor: pointer;"
+                            *ngIf="ListOftragetfiltervalues.length > 1 && startIndex + displayedItems.length < ListOftragetfiltervalues.length">
+                            <mat-icon (click)="navigateItems('right')"
+                                style="padding: 10px;font-size: 35px;">keyboard_arrow_right</mat-icon>
+                        </div>
+    
+                    </div>
+    
+                </div>
+                  <div class="row" *ngIf="showicon" style="background-color: #fffde3;padding: 10px;">
+                    <div class="col-12">
+                        <span class="fs-16" style="font-weight: 700;">No of Records : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{TargetLength}}</span>
+                    </div>
+                    <div class="col-12 mt-2 ">
+                        <span class="fs-16 " style="font-weight: 700;">Total Target : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{transform(totalTargetValue)}} &euro;</span>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <span class="fs-16" style="font-weight: 700;">Achieved Target : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{transform(achivedTargetValue)}} &euro;</span>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <span class="fs-16" style="font-weight: 700;">Average Target : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{RoundAmount(totalTargetValue / TargetLength)}} &euro;</span>
+                    </div>
+                </div>
+                <table mat-table [dataSource]="productGroupTargetsDataSource" matSort class="table group-data">
+                    <ng-container matColumnDef="options">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                        <td mat-cell *matCellDef="let row;let i = index">
+                            <div id="main">
+                                <div>
+                                    <button mat-icon-button [matMenuTriggerFor]="moremenu">
+                                        <mat-icon class="icon-options">more_vert</mat-icon>
+                                    </button>
+                                </div>
+                                <div>
+                                    <ng-container *ngIf="row.statusOfTransaction=='Pending'">
+                                        <mat-icon style="font-size: 12px;  color:yellow;margin-top:18px;">fiber_manual_record</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="row.statusOfTransaction=='Validated'">
+                                        <mat-icon style="font-size: 12px;  color:blue;margin-top:18px;">fiber_manual_record</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="row.targetTypeName=='Orders'">
+                                        <mat-icon style="color:rgb(100, 149, 237);margin-top:18px;">shopping_cart</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="row.targetTypeName=='Events'">
+                                        <mat-icon style="margin-top:18px;">event</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="row.targetTypeName=='Tasks'">
+                                        <mat-icon style="color:green;margin-top:18px;">assignment_turned_in</mat-icon>
+                                    </ng-container>
+                                    <ng-container *ngIf="row.targetTypeName=='Initiatives'">
+                                        <mat-icon style="margin-top:18px;">ballot</mat-icon>
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <mat-menu #moremenu="matMenu" class="eventlist">
+                                <ng-template matMenuContent>
+                                    <button class="fw-600" mat-menu-item
+                                        (click)="viewTarget(row)">
+                                        <mat-icon class="icon-options">visibility</mat-icon>{{'View'|translate}}
+                                    </button>
+                                    <button *ngIf="row.isGroup == true" class="fw-600" mat-menu-item
+                                        (click)="createTarget(row,'Products','Group','Edit')">
+                                        <mat-icon class="icon-options">edit</mat-icon>{{"Edit"|translate}}
+                                    </button>
+                                    <button *ngIf="row.isGroup != true" class="fw-600" mat-menu-item
+                                        (click)="createTarget(row,'Products','Single','Edit')">
+                                        <mat-icon class="icon-options">edit</mat-icon>{{"Edit"|translate}}
+                                    </button>
+                                    <button class="fw-600" mat-menu-item
+                                        (click)="deleteDialogConfirmation(row,'deleteProducttarget')">
+                                        <mat-icon class="icon-options">delete</mat-icon>{{"Delete"|translate}}
+                                    </button>
+                                </ng-template>
+                            </mat-menu>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{"Target Details"|translate}} </th>
+                        <td mat-cell *matCellDef="let row">
+                            <div class="d-flex flex-column py-2">
+                                <span class="mb-2 f-weight" *ngIf="row.isGroup == true" style="margin-left: 20px;">
+                                    <span *ngIf="row.dynamicGrpId ==null">
+                                        <img style="border-radius: 50%;" width="30" height="30"
+                                           src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                   </span>
+                                   <span *ngIf="row.dynamicGrpId !=null">
+                                       <img style="border-radius: 50%;"width="30" height="30"
+                                           src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                   </span>
+                                    <b style="margin-left:8px">{{row.name|titlecase}}</b>
+                                </span>
+                                <span class="mb-2 mat-body-2 f-weight" *ngIf="row.isGroup == false" style="margin-left:20px">
+                                    <img class="avatar" style="border-radius: 50% !important;"
+                                        [src]="row?.profile ? row.profile:'assets/images/iconsForsvg/icon_product.svg'"
+                                        onError="this.src='assets/images/iconsForsvg/icon_product.svg'">
+                                    <b style="margin-left:8px">{{' '+row.name|titlecase}}</b>
+                                </span>
+                                <div class="row">
+                                    <div class="col-2"></div>
+                                    <div class="col-10"><h4 style="text-align: start;width: 100%;"> <b>StartDate :</b> {{row.startDate | date}}</h4></div>
+                                    
+                                </div>
+                                <div class="row">
+                                    <div class="col-2"></div>
+                                    <div class="col-10"><h4 style="text-align: start;width: 100%;"> <b>EndDate :</b> {{row.endDate | date}}</h4></div>
+                                    
+                                </div>
+                                <div class="row justify-content-center">
+                                    <div class="col-2">
+                                        <mat-icon *ngIf="row.isPrivate" style="font-size: 20px;margin-top: 16px;">lock</mat-icon>
+                                        <img *ngIf="row.isPublic" style="font-size: 20px;margin-top: 16px;" src="../../../../../assets/images/iconsForsvg/Unlock.svg">
+                                        <mat-icon *ngIf="row.isDelegate" class="green"
+                                            style="font-size: 20px;margin-top: 16px;">device_hub</mat-icon>
+                                    </div>
+                                    <div class="col-10">
+                                        <div style="text-align: center;">{{row.percentage+'%'}}</div>
+                                        <mat-progress-bar class="w-100" [value]="row.percentage" [ngClass]="row.cssClass">
+                                        </mat-progress-bar>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="row.targetTypeName == 'Orders' && row.isCountTarget != true">
+                                    <h4 style="text-align: center;width: 100%;"> <b>{{transform(row.totalAchievedValue)}} &euro; / {{transform(row.targetValue)}} &euro; </b></h4>
+                                    <h4  style="text-align: center;width: 100%;color: green !important;"*ngIf="row.percentage>99"><b>+{{percentagecalucation(row)}}% PERFORMANCE</b></h4>
+                                </div>
+                                <div class="row" *ngIf="row.targetTypeName == 'Orders' && row.isCountTarget == true">
+                                    <h4 style="text-align: center;width: 100%;"> <b>{{transform(row.totalAchievedValue)}}  / {{transform(row.targetValue)}}</b></h4>
+                                    <h4  style="text-align: center;width: 100%;color: green !important;"*ngIf="row.percentage>99"><b>+{{percentagecalucation(row)}}% PERFORMANCE</b></h4>
+                                </div>
+                                <div class="row" *ngIf="row.targetTypeName != 'Orders'">
+                                    <h4 style="text-align: center;width: 100%;"> <b>{{transform(row.totalAchievedValue)}} / {{transform(row.targetValue)}}</b></h4>
+                                    <h4  style="text-align: center;width: 100%;color: green !important;"*ngIf="row.percentage>99"><b>+{{percentagecalucation(row)}}% PERFORMANCE</b></h4>
+                                </div>
+                                <div class="row">
+                                    <div class="col-2">
+                                        <mat-icon class="btn-blue v-align">edit</mat-icon>
+                                    </div>
+                                    <div class="col-3">
+                                        <img class="avatar" style="border-radius: 50% !important;"
+                                        [src]="row?.creatorProfile ? row.creatorProfile:'assets/avatar.svg'"
+                                        onError="this.src='assets/avatar.svg'">
+                                    </div>
+                                    <div class="col-6">
+                                        <span>{{row.creatorName}}<br><span style="font-style: italic;">(Creator)</span></span>
+                                    </div>
+                                </div>
+                                <mat-chip-list>
+                                    <!-- <mat-chip *ngIf="row.monthsTargetDtos && row.monthsTargetDtos.length > 0"
+                                        (click)="openTargetMonths(row)">
+                                        <mat-icon>calendar_today</mat-icon>
+                                        {{"Months"|translate}}
+                                    </mat-chip> -->
+                                    <mat-chip *ngIf="row.isGroup == true" (click)="openTargetProducts(row)">
+                                        <mat-icon>calendar_today</mat-icon>
+                                        {{"product"|translate}}
+                                    </mat-chip>
+                                </mat-chip-list>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="productGroupTargetsColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: productGroupTargetsColumns;">
+                    </tr>
+                </table>
+            </div>
+
+
+            <span mat-fab style="background-color: transparent !important;margin-bottom: 50px;" class="fab-table-group bottom_fab_2">
+                <button id="add-button1" mat-fab (click)="searchboxTraget()">
+                    <mat-icon style="color: white;">search</mat-icon>
+                </button><br><br>
+                <button id="add-button2" mat-fab (click)="createTarget('','Products','Single','Create')">
+                    <mat-icon style="color: white;">add</mat-icon>
+                </button><br><br>
+                <button *ngIf="showicon" matTooltip="delete Search" id="add-button1" mat-fab
+                    (click)="closesearch('target')">
+                    <mat-icon style="color: white;">delete_forever</mat-icon>
+                </button>
+            </span>
+            <mat-paginator *ngIf="!this.showicon" [pageSize]="10" [length]="productTargetlength" (page)="nextt($event)"></mat-paginator>
+            <mat-paginator *ngIf="this.showicon" [pageSize]="10" [length]="TargetLength" (page)="nexttAdvanceTarget($event)"></mat-paginator>
+        </div>
+    </mat-tab>
+
+</mat-tab-group>
+<div class="overlay" *ngIf="spinner.isVisible() | async">
+    <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+    </mat-progress-spinner>
+</div>
+
+<ng-template #showGroup>
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"Create Group"|translate}}</h2>
+        <mat-icon (click)="closedialogbox()">close</mat-icon>
+    </div>
+    <div class="container">
+        <div class="row justify-content-start">
+            <div class="col-12 p-2">
+                <button class="fw-600" mat-menu-item (click)="radioChange('StaticGroup')">
+                    <mat-icon style="color: red;">group</mat-icon>{{"Static Group"|translate}}
+                </button>
+                <button class="fw-600" mat-menu-item (click)="radioChange('DynamicGroup')">
+                    <mat-icon style="color: blue;">group</mat-icon>{{"Dynamic Group"|translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-template>

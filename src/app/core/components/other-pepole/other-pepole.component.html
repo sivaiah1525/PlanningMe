@@ -1,0 +1,54 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 *ngIf="screenType=='Planning'" mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;">event</mat-icon>
+        Other User Planning
+    </h2>
+    <h2 *ngIf="screenType=='Map'" mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;">map</mat-icon>
+        Other User Map
+    </h2>
+    <mat-icon matDialogClose>close</mat-icon>
+</div>
+
+<mat-dialog-content class="mr-0 ml-0">
+    <form [formGroup]="otherPepoleform">
+        <div class="row mt-2"> 
+            <div class="col-12  col-sm-12  col-md-12 col-lg-6 col-xl-6 ">
+                <mat-form-field class="w-100">
+                    <mat-label>Search</mat-label>
+                    <input matInput type="text" (ngModelChange)="filterSearch($event)" placeholder="Search"
+                        formControlName="search">
+                </mat-form-field>
+            </div>
+            <div *ngIf="showicon" class="col-3">
+                <button mat-raised-button class="b-blue" (click)="closesearch()">Remove
+                    Filter</button>
+            </div>
+        </div>
+
+        <div class="row m-t-10">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6  p-2" *ngFor="let data of AllUsersdata">
+                <mat-radio-button [value]="data.id" class="example-margin" (change)="checkBoxSelact(data)">
+                    <img class="avatar" [src]="data?.profilePicture ? data.profilePicture:'assets/avatar.svg'"
+                        onError="this.src='assets/avatar.svg'">
+                    {{data.firstName|titlecase}} {{data.lastName|titlecase}}
+                </mat-radio-button>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+
+
+<div class="row mt-2 justify-content-end" style="margin-bottom: 8px;">
+    <div class="col-4">
+        <button mat-raised-button mat-dialog-close>Cancel</button>
+    </div>
+    <div class="col-4">
+        <button mat-raised-button class="b-blue m-l-10" (click)="GetData()">Apply</button>
+    </div>
+</div>
+
+<!-- <div class="overlay" *ngIf="spinner.isVisible() | async">
+    <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+    </mat-progress-spinner>
+</div> -->

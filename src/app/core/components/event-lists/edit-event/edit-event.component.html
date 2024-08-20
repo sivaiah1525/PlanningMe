@@ -1,0 +1,436 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;"> event</mat-icon>
+        {{'Update Event'|translate}}
+    </h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+    <mat-dialog-content class="mr-0 ml-0">
+        <form [formGroup]="editform" novalidate id="create-event-form">
+        <!-- Title  -->
+        <div class="row">
+            <mat-form-field class="w-100">
+                <mat-label>{{'Title'|translate}}</mat-label>
+                <input matInput type="text" placeholder="Title" id="Title" formControlName="Title">
+            </mat-form-field>
+        </div>
+        <!-- Start Date & Time   -->
+        <div class="row firstAndLastName">
+            <div class="col-12 col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{'Start Date'|translate}}</mat-label>
+                    <input matInput [matDatepicker]="startdatepicker1" style="color: black;" placeholder="Start Date"
+                        formControlName="StartDate">
+                    <mat-datepicker-toggle matSuffix [for]="startdatepicker1"></mat-datepicker-toggle>
+                    <mat-datepicker #startdatepicker1></mat-datepicker>
+                    <mat-error *ngIf="editform.controls['StartDate'].hasError('required')">
+                        {{'Start Date is'|translate}} <strong>{{'required'|translate}}</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{'Start Time'|translate}} <span class="danger">* </span></mat-label>
+                    <mat-select formControlName="StartTime">
+                        <mat-option *ngFor="let time of timeList" [value]="time">
+                            {{ time }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="editform.controls['StartTime'].hasError('required')">
+                        {{'Start Time is'|translate}} <strong>{{'required'|translate}}</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- End Date & Time -->
+        <div class="row firstAndLastName">
+            <div class="col-12 col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{'End Date'|translate}}</mat-label>
+                    <input matInput [matDatepicker]="enddatepicker1" style="color: black;" placeholder="End Date"
+                        formControlName="EndDate">
+                    <mat-datepicker-toggle matSuffix [for]="enddatepicker1"></mat-datepicker-toggle>
+                    <mat-datepicker #enddatepicker1></mat-datepicker>
+                    <mat-error *ngIf="editform.controls['EndDate'].hasError('required')">
+                        {{'End Date is'|translate}} <strong>{{'required'|translate}}</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>̉
+            <div class="col-12 col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{'End Time'|translate}} <span class="danger">* </span></mat-label>
+                    <mat-select formControlName="EndTime">
+                        <mat-option *ngFor="let time of timeList" [value]="time">
+                            {{ time }}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="editform.controls['EndTime'].hasError('required')">
+                        {{'End Time is'|translate}} <strong>{{'required'|translate}}</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- Sites  -->
+        <div class="row">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>{{'Sites'|translate}}</mat-label>
+                <mat-select placeholder="Sites" id="SiteId" formControlName="SiteId"
+                    (selectionChange)="updateAddress($event.value)">
+                    <mat-option [value]="site.id" *ngFor="let site of sites$ | async">{{site.companyName}}{{site.id}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <!-- Address  -->
+        <div class="row">
+            <div class="col-12">
+                <mat-form-field class="w-100">
+                    <mat-label>{{'Main Address'|translate}}</mat-label>
+                    <input ngx-google-places-autocomplete [options]='options' #placesRef="ngx-places"
+                        (onAddressChange)="handleAddressChange($event)" matInput type="text" placeholder="Main Address "
+                        formControlName="Address">
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- City Country Zipcode -->
+        <div class="row countryCityZipCode">
+            <div class="col-12 col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4">
+                <mat-form-field class="w-100">
+                    <mat-label>{{'City'|translate}}</mat-label>
+                    <input matInput type="text" placeholder="City" id="City" formControlName="City">
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4">
+                <mat-form-field class="w-100">
+                    <mat-label>{{'Country'|translate}}</mat-label>
+                    <input matInput type="text" placeholder="Country" id="Country" formControlName="Country">
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4">
+                <mat-form-field class="w-100">
+                    <mat-label>{{'ZipCode'|translate}}</mat-label>
+                    <input matInput type="text" placeholder="Zipcode" id="ZipCode" formControlName="ZipCode">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- --------------  -->
+        <!-- Users  -->
+        <div class="row">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>{{'Users'|translate}}</mat-label>
+                <mat-select placeholder="Users" multiple id="UserId" formControlName="UserId">
+                    <mat-select-filter [placeholder]="'Filter'" [displayMember]="'firstName'" [array]="users"
+                        (filteredReturn)="users =$event"></mat-select-filter>
+                    <mat-option [value]="user.id" *ngFor="let user of users">
+                        <span>
+                            <img style="border-radius: 50%;" width="30" height="30"
+                                [src]="user?.profile ? user.profile:'assets/avatar.svg'">
+                        </span> {{user.firstName + ' ' +user.lastName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <!-- User Group  -->
+        <div class="row">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>{{'User Group'|translate}}</mat-label>
+                <mat-select id="userGroupName" multiple formControlName="UserGroupsId">
+                    <mat-select-filter [placeholder]="'Filter'" [displayMember]="'name'" [array]="userGroups$"
+                        (filteredReturn)="filteredList4 =$event"></mat-select-filter>
+                    <mat-option [value]="userGroup.id" *ngFor="let userGroup of filteredList4">
+                        <mat-icon style="margin-right: 0px;">group</mat-icon> {{userGroup.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <!-- -------------------  -->
+        <!-- Contact -->
+        <div class="row">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>{{'Contact'|translate}}</mat-label>
+                <mat-select placeholder="Contact" multiple id="ContactId" formControlName="ContactId">
+                    <mat-select-filter [placeholder]="'Filter'" [displayMember]="'firstName'" [array]="contacts$"
+                        (filteredReturn)="contacts$ =$event"></mat-select-filter>
+                    <mat-option [value]="contact.id" *ngFor="let contact of contacts$ | async">
+                        <img style="border-radius: 50%;" width="30" height="30"
+                            [src]="contact?.profilePicture ? contact.profilePicture:'assets/avatar.svg'">
+                        {{contact.firstName + ' ' +contact.lastName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <!-- Contact Group  -->
+        <div class="row">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>{{'Contact Group'|translate}}</mat-label>
+                <mat-select id="contactGroupName" formControlName="ContactGroupsId" multiple>
+                    <mat-select-filter [placeholder]="'Filter'" [displayMember]="'contactGroupName'"
+                        [array]="contactGroups$" (filteredReturn)="filteredList5 =$event"></mat-select-filter>
+                    <mat-option [value]="contactGroup.id" *ngFor="let contactGroup of filteredList5">
+                        <mat-icon style="margin-right: 0px;">group</mat-icon>{{contactGroup.contactGroupName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <!-- -----------------  -->
+
+        <!-- Category  -->
+        <div class="row p-0">
+            <div class="col-11 p-0">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{'Category'|translate}}</mat-label>
+                    <mat-select placeholder="Category" id="CategoryId" formControlName="CategoryId">
+                        <mat-option [value]="category.id" *ngFor="let category of categories">
+                            {{category.categoryName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-1 pointer">
+                <mat-icon *ngIf="showcreate == 0 && totalitems < 4" (click)="createcategory()"
+                    matTooltip="create category" class="danger">
+                    add</mat-icon>
+                <mat-icon *ngIf="showcreate == 1 && totalitems < 4" (click)="closecategory()" matTooltip="close"
+                    class="danger">close
+                </mat-icon>
+            </div>
+        </div>
+
+
+        <!-- Categoryname  -->
+        <div class="row">
+            <mat-label *ngIf="totalitems < 4 && category">{{'Create Category'|translate}}</mat-label>
+            <div class="row" *ngIf="totalitems < 4 && category">
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{'Categoryname'|translate}} <span class="danger">* </span></mat-label>
+                        <input matInput formControlName="categoryname">
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <mat-label>{{'Category Color'|translate}} <span class="danger">* </span></mat-label>
+                    <input [style.background]="color1" [(colorPicker)]="color1"
+                        (colorPickerOpen)="onEventLog('colorPickerOpen', $event)"
+                        (colorPickerClose)="onEventLog('colorPickerClose', $event)" />
+                </div>
+            </div>
+        </div>
+
+
+        <!-- -------------  -->
+        <div class="row firstAndLastName">
+            <!-- Critic Level  -->
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{'Critic Level'|translate}}</mat-label>
+                    <mat-select placeholder="Critic Level" id="CriticityId" formControlName="CriticityId">
+                        <mat-option [value]="criticity.criticityId" *ngFor="let criticity of CriticityId$ | async">
+                            {{criticity.criticityName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <!-- Periodicity  -->
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label> {{'Periodicity'|translate}} <span class="danger">* </span></mat-label>
+                    <mat-select placeholder="Select Periodicity" id="SelectPeriodicity" formControlName="PeriodicityId">
+                        <mat-option (click)="radioChange(period)" [value]="period.id"
+                            *ngFor="let period of periodicity">
+                            {{period.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- -------------- -->
+
+        <!-- Filter Periodicity  -->
+        <div *ngIf="showPeriodDate">
+            <div class="row firstAndLastName">
+                <div class="col-12  col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{'Periodicity End Date '|translate}}<span class="danger">* </span></mat-label>
+                        <input matInput [matDatepicker]="PeriodicityEndDate" style="color: black;"
+                            placeholder="Periodicity End Date" formControlName="PeriodicityEndDate">
+                        <mat-datepicker-toggle matSuffix [for]="PeriodicityEndDate"></mat-datepicker-toggle>
+                        <mat-datepicker #PeriodicityEndDate></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="col-12  col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{'Start Time'|translate}}<span class="danger">* </span></mat-label>
+                        <mat-select formControlName="PeriodicityTime">
+                            <mat-option *ngFor="let time of timeList" [value]="time">
+                                {{ time }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Filter Days  -->
+        <section *ngIf="showFilterDay == true">
+            <ng-container *ngFor="let day of days; let i = index">
+                <label class="btn btn-filter">
+                    <mat-checkbox class="example-margin" [checked]="day.isChecked"
+                        (change)="getdays(day.label , i,$event.checked)">{{day.label|translate}}</mat-checkbox>
+                </label>&nbsp;
+            </ng-container>
+        </section>
+
+
+        <!-- Private  -->
+        <div class="row">
+            <div class="col-12 col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4">
+                <mat-list-item>
+                    <mat-checkbox formControlName="isPublic">
+                        <mat-icon class="lock" style="position: relative;top:3px; left: 3px;">lock</mat-icon>
+                        {{'Private'|translate}}</mat-checkbox>
+                </mat-list-item>
+            </div>
+            <div class="col-12 col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4" style="margin:5px;">
+                <mat-list-item>
+                    <mat-checkbox formControlName="IsOnlineEvent">
+                        <img src="../../../../assets/images/iconsForsvg/phone-call.svg" alt="">
+                        {{'Online'|translate}}</mat-checkbox>
+                </mat-list-item>
+            </div>
+        </div>
+
+
+
+
+
+        <!-- Keywords  -->
+        <div class="row">
+            <mat-form-field class="example-chip-list">
+                <mat-label>{{'keyword'|translate}}</mat-label><br>
+                <mat-chip-list #chipGridforkeyword aria-label="Fruit selection" style="margin-top: 10px !important;">
+                    <mat-chip-row style="margin-top:5px !important; margin-bottom:6px !important;"
+                        *ngFor="let keyword of keywordlist">
+                        <button style="border: none; border-radius:20px; background-color: rgb(228, 223, 223);">
+                            <span style="position: relative;  left: 3px;">{{keyword}}</span>
+                            <mat-icon
+                                style="cursor: pointer; position: relative; top:2px;left: 7px; font-size: 20px; color: rgb(158, 154, 154);"
+                                (click)="remove(keyword)">cancel</mat-icon></button>
+                    </mat-chip-row>
+                </mat-chip-list>
+                <input formControlName="keyword" [matChipInputFor]="chipGridforkeyword"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="add($event)" />
+            </mat-form-field>
+        </div>
+        <!-- Description  -->
+        <div class="row">
+            <mat-form-field class="w-100">
+                <mat-label>{{'Description'|translate}}</mat-label>
+                <textarea matInput placeholder="Description" formControlName="Description"></textarea>
+            </mat-form-field>
+        </div>
+        <!-- -----------------  -->
+        <div>
+            <!-- Attachment  -->
+            <div class="row mt-3">
+                <span class="fw-600 pointer">{{'Files & Notes'|translate}}</span><mat-icon
+                    (click)="addNewFileAndNote()">add_box</mat-icon>
+            </div>
+            <!-- file list  -->
+            <div class="row mt-3">
+                <div class="col-3 fw-600">
+                    <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon> {{'Files'|translate}} :
+                </div>
+                <div class="col-9">
+                    <span class=" fw-600   pointer"
+                        [ngClass]="{'color_grey': filesCount > 0,'name_red': filesCount == 0 }"
+                        (click)="findfilesLinked()">{{filesCount+' '}}{{filesCount> 0 ? 'Files' : 'File'}}</span>
+                </div>
+            </div>
+            <!-- ShowAttachmentFile  -->
+            <ng-comtainer *ngIf="ShowAttachmentFile">
+                <div class="row mt-4 pointer" *ngFor=" let x of AttachmentFileList">
+                    <div class="col-8 pointer">
+                        <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                        <mat-icon class="lock" *ngIf="x.isPrivate">lock</mat-icon>
+                        <img class="lock" *ngIf="!x.isPrivate" src="../../../../assets/images/iconsForsvg/Unlock.svg"
+                            alt="">
+                        <span (click)="ViewLink('File',x.id)">
+                            {{x.title|titlecase}}
+
+                        </span>
+                    </div>
+                    <div class="col-1">
+                        <mat-icon (click)="Downloadfile(x)" class="vertical-bottom">download</mat-icon>
+                    </div>
+                    <div class="col-1">
+                        <mat-icon (click)="sharefileAndNote('File',x)" class="vertical-bottom">share</mat-icon>
+                    </div>
+                    <div class="col-1">
+                        <mat-icon (click)="EditfileAndNote('File',x.id)" class="vertical-bottom">edit</mat-icon>
+                    </div>
+                    <div class="col-1">
+                        <mat-icon (click)="deleteDialogConfirmation(x,'deletefileAndNote')"
+                            class="vertical-bottom">delete</mat-icon>
+                    </div>
+                </div>
+            </ng-comtainer>
+
+
+            <!-- note list  -->
+            <div class="row mt-3">
+                <div class="col-3 fw-600">
+                    <mat-icon style="color:rgb(255,193,111) ;">speaker_notes </mat-icon> {{'Notes'|translate}} :
+                </div>
+                <div class="col-9">
+                    <span class=" fw-600   pointer"
+                        [ngClass]="{'color_grey': notesCount > 0,'name_red': notesCount == 0 }"
+                        (click)="findnotesLinked()">{{notesCount+' '}}{{notesCount> 0 ? 'Notes' : 'Note'}}</span>
+                </div>
+            </div>
+            <ng-container *ngIf="ShowAttachmentNotes">
+                <div class="row mt-4" *ngFor=" let x of AttachmentNotesList">
+                    <div class="col-8 pointer">
+                        <mat-icon style="color:rgb(255,193,111) ;">speaker_notes
+                        </mat-icon>
+                        <mat-icon class="lock" *ngIf="x.isPrivate">lock</mat-icon>
+                        <img class="lock" *ngIf="!x.isPrivate" src="../../../../assets/images/iconsForsvg/Unlock.svg"
+                            alt="">
+                        <span (click)="ViewLink('Note',x.id)">
+                            {{x.title|titlecase}}
+                        </span>
+                    </div>
+                    <div class="col-1">
+                        <mat-icon (click)="ViewNoteContent(x)" class="vertical-bottom">remove_red_eye</mat-icon>
+                    </div>
+                    <div class="col-1">
+                        <mat-icon (click)="sharefileAndNote('Note',x)" class="vertical-bottom">share</mat-icon>
+                    </div>
+                    <div class="col-1">
+                        <mat-icon (click)="EditfileAndNote('Note',x.id)" class="vertical-bottom">edit</mat-icon>
+                    </div>
+                    <div class="col-1">
+                        <mat-icon (click)="deleteDialogConfirmation(x,'deletefileAndNote')"
+                            class="vertical-bottom">delete</mat-icon>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+
+    </form>
+        <!-- ---------------------  -->
+        <div class="row mt-3">
+            <mat-dialog-actions align="end">
+                    <div class="row justify-content-end">
+                        <div class="col-5">
+                            <button mat-raised-button mat-dialog-close  class="W-blue" >{{'Cancel'|translate}}</button>
+                        </div>
+                        <div class="col-5">
+                            <button mat-raised-button class="b-blue" (click)="onSubmit()">{{'Update'|translate}}</button>
+                        </div>
+                    </div>
+            </mat-dialog-actions>
+        </div>
+</mat-dialog-content>

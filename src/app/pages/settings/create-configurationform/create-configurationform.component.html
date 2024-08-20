@@ -1,0 +1,242 @@
+<div class="d-flex flex-row  modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Create Configuration</h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+<mat-dialog-content class="mr-0 ml-0">
+    <mat-tab-group (selectedTabChange)="tabChanged($event)" [selectedIndex]="tabindex">
+        <!-- ------------------------1111111111111111  -->
+        <mat-tab label="ApiKey">
+            <form [formGroup]="CreateConfiguration">
+                <div class="row mt-2 mb-2">
+                    <mat-radio-group>
+                        <mat-radio-button value="Import">Import</mat-radio-button>
+                        <mat-radio-button value="Export">Export</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div class="row mt-2">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>Select Entity</mat-label>
+                        <mat-select placeholder="Attachment Level" formControlName="Entity">
+                            <mat-option [value]="type" *ngFor="let type of managementType"
+                                (click)="SelectEntity(type)">{{type|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <div class="col-10 p-0">
+                        <mat-form-field appearance="fill" class="w-100 m-t-10">
+                            <mat-label>Application Name</mat-label>
+                            <mat-select formControlName="applicationname">
+                                <mat-option *ngFor="let app of applicationname" [value]="app.applicationName"
+                                    (click)="Selactapplication(app)">
+                                    {{app.applicationName|titlecase}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-2">
+                        <mat-icon style="position: relative; top:20px;" (click)="CreateApplication()">add_box</mat-icon>
+                    </div>
+                </div>
+                <div class="row">
+                    <mat-form-field class="w-100">
+                        <input matInput type="text" placeholder="Configuration Name"
+                            formControlName="configurationName">
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <mat-form-field class="w-100">
+                        <input matInput type="text" placeholder="Configuration Description "
+                            formControlName="configurationDescription">
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <mat-form-field class="w-100">
+                        <input matInput type="text" placeholder="Url" (change)="onSelectForapikeyorURL()"
+                            formControlName="url">
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <mat-form-field class="w-100">
+                        <input matInput type="text" (change)="onSelectForapikeyorURL()" placeholder="Api Key"
+                            formControlName="apiKey">
+                    </mat-form-field>
+                </div>
+
+                <div class="row p-0 m-b-10">
+                    <ckeditor [(ngModel)]="editorData" (change)="onSelectFortextarea()"
+                        formControlName="textareahtmlcontent">
+                    </ckeditor>
+                </div>
+
+
+
+                <ng-container *ngIf="Textareamapping">
+                    <div class="row" formArrayName="Textareamapping">
+                        <div class="row p-2 justify-content-around"
+                            style="color: white; background-color:#f6272e; font-weight: 600;">
+                            <div class="col-6">Create New Mapping</div>
+                            <div class="col-2">
+                                <mat-icon style="color: white;" (click)="addConditionalBody()">add_box</mat-icon>
+                            </div>
+                        </div>
+                        <div class="row m-t-10 m-b-10 "
+                            *ngFor="let conditionsBodyGroup of getTextareamappingBody().controls; let i=index"
+                            [formGroupName]="i">
+                            <div class="row m-l-10 textareaclass">
+                                <div class="col-5">
+                                    <mat-form-field class="w-100">
+                                        <input matInput type="text" placeholder="value" formControlName="replaceValue">
+                                    </mat-form-field>
+                                    <!-- <mat-form-field class="w-100 ">
+                                        <mat-label>Values</mat-label>
+                                        <mat-select formControlName="replaceValue">
+                                            <mat-option *ngFor="let plan of replaceValue" [value]="plan">
+                                                {{plan|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field> -->
+                                </div>
+                                <div class="col-5">
+                                    <mat-form-field class="w-100 ">
+                                        <mat-label>Planning & Me</mat-label>
+                                        <mat-select formControlName="PnMColumn">
+                                            <mat-option *ngFor="let plan of PlanningAndMecolumns" [value]="plan.name">
+                                                {{plan.name|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-2">
+                                    <mat-icon style="position: relative; top: 10px;"
+                                        (click)="removeConditiona(i)">delete</mat-icon>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </form>
+            <ng-container *ngIf="manuvallmappingcol">
+                <div class="row" *ngFor="let col of mappingcol">
+                    <div class="col-5 m-t-14">
+                        <div class="row m-t-10">
+                            <mat-checkbox [(ngModel)]="col.isChecked" [ngModelOptions]="{standalone: true}">
+                                {{col.fileColumnName|titlecase}}
+                            </mat-checkbox>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <mat-form-field class="w-100 ">
+                            <mat-label>Planning & Me</mat-label>
+                            <mat-select [(ngModel)]="col.entityFieldName" name="col.planningAndMeMColumn">
+                                <mat-option *ngFor="let plan of PlanningAndMecolumns" [value]="plan.name">
+                                    {{plan.name|titlecase}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-3">
+                        <mat-form-field class="w-100 ">
+                            <mat-label>dataType</mat-label>
+                            <mat-select [(ngModel)]="col.dataType" name="col.planningAndMeMColumn">
+                                <mat-option *ngFor="let Type of dataType" [value]="Type">
+                                    {{Type|titlecase}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </ng-container>
+        </mat-tab>
+        <!-- --------------------- 00000000000000000  -->
+        <mat-tab label="File">
+            <form [formGroup]="CreateConfiguration">
+                <div class="row mt-2">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>Select Entity</mat-label>
+                        <mat-select placeholder="Attachment Level" formControlName="Entity">
+                            <mat-option [value]="type" *ngFor="let type of managementType"
+                                (click)="SelectEntity(type)">{{type|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <div class="col-10 p-0">
+                        <mat-form-field appearance="fill" class="w-100 m-t-10">
+                            <mat-label>Application Name</mat-label>
+                            <mat-select formControlName="applicationname">
+                                <mat-option *ngFor="let app of applicationname" [value]="app.applicationName"
+                                    (click)="Selactapplication(app)">
+                                    {{app.applicationName|titlecase}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-2">
+                        <mat-icon style="position: relative; top:20px;" (click)="CreateApplication()">add_box</mat-icon>
+                    </div>
+                </div>
+                <div class="row">
+                    <mat-form-field class="w-100">
+                        <input matInput type="text" placeholder="Configuration Name"
+                            formControlName="configurationName">
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <mat-form-field class="w-100">
+                        <input matInput type="text" placeholder="Configuration Description "
+                            formControlName="configurationDescription">
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        Import File
+                    </div>
+                    <div class="col-9">
+                        <input type="file" (change)="onSelectforfile($event)" placeholder="Select fichiers">
+                    </div>
+                </div>
+            </form>
+
+            <div class="row" *ngFor="let col of mappingcol">
+                <div class="col-5 m-t-14">
+                    <div class="row m-t-10">
+                        <mat-checkbox [(ngModel)]="col.isChecked" [ngModelOptions]="{standalone: true}">
+                            {{col.fileColumnName|titlecase}}
+                        </mat-checkbox>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <mat-form-field class="w-100 ">
+                        <mat-label>Planning & Me</mat-label>
+                        <mat-select [(ngModel)]="col.entityFieldName" name="col.planningAndMeMColumn">
+                            <mat-option *ngFor="let plan of PlanningAndMecolumns" [value]="plan.name">
+                                <span [(ngModel)]="col.isTag==plan.isTag">{{plan.name|titlecase}}</span>
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-3">
+                    <mat-form-field class="w-100 ">
+                        <mat-label>dataType</mat-label>
+                        <mat-select [(ngModel)]="col.dataType" name="col.planningAndMeMColumn">
+                            <mat-option *ngFor="let Type of dataType" [value]="Type">
+                                {{Type|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</mat-dialog-content>
+
+<div class="row mt-2 justify-content-center">
+    <div class="col-4">
+        <button mat-raised-button mat-dialog-close>Cancel</button>    </div>
+    <div class="col-4">
+        <button mat-raised-button class="b-blue" (click)="savemapping()">Apply</button>
+    </div>
+</div>

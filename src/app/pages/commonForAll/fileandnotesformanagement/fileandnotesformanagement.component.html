@@ -1,0 +1,16 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">File And Notes</h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+<div class="container">
+    <div class="row justify-content-start">
+        <div class="col-6 p-2">
+            <button class="fw-600" mat-menu-item (click)="radioChange('note')">
+                <mat-icon style="color:rgb(255,193,111) ;">speaker_notes</mat-icon>Add a Note
+            </button>
+            <button class="fw-600" mat-menu-item (click)="radioChange('file')">
+                <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>Add a File
+            </button>
+        </div>
+    </div>
+</div>

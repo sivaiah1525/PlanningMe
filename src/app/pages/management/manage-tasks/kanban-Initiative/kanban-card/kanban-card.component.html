@@ -1,0 +1,118 @@
+<div class="kanban-card" [ngStyle]="{'background-color':(card.isExpired ==true)?'#FFCFCF':(card.isThreeDaysLeft ==true)?'#FFCFCF':(card.isApproved ==true)?'#D8F4F5':'#fff'}">
+    <div class="kanban-card-header">
+      <span class="kanban-card-title" ><p>{{ card.title|titlecase}}</p></span>
+      <div class="btn-container">
+          <mat-icon [matMenuTriggerFor]="moreMenu" class="icon-options">more_vert</mat-icon>
+      <mat-menu #moreMenu="matMenu" class="eventlist">
+        <ng-template matMenuContent>
+            <button class="fw-600" mat-menu-item (click)="showinitiativesdetails(Initiative)">
+                <mat-icon class="icon-options">visibility</mat-icon>
+                <span class="fw-600 color_black">{{'View'|translate}}</span>
+            </button>
+            <button class="fw-600" mat-menu-item (click)="onEditClick()">
+                <mat-icon class="icon-options">edit</mat-icon>
+                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+            </button>
+            <button class="fw-600" mat-menu-item (click)="onDeleteClick()">
+                <mat-icon class="icon-options">delete</mat-icon>
+                <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+            </button>
+            <button class="fw-600" mat-menu-item>
+                <mat-icon>group</mat-icon>
+                <span class="fw-600 color_black"> {{'Add to Group'|translate}}</span>
+            </button>
+            <button class="fw-600" mat-menu-item>
+                <mat-icon>event</mat-icon>
+                <span class="fw-600 color_black"> {{'Create an Event'|translate}}</span>
+            </button>
+
+            <button class="fw-600" mat-menu-item>
+                <mat-icon style="color:green">bar_chart</mat-icon>
+                <span class="fw-600 color_black">{{'Create an Activity Report'|translate}}</span>
+            </button>
+            <button class="fw-600" mat-menu-item>
+                <mat-icon>wb_incandescent</mat-icon>
+                <span class="fw-600 color_black">{{'Create Stratergy'|translate}}</span>
+            </button>
+            <button class="fw-600" mat-menu-item>
+                <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                <span class="fw-600 color_black"> {{'Add File'|translate}}</span>
+
+            </button>
+            <button class="fw-600" mat-menu-item>
+                <mat-icon style="color:rgb(255,193,111) ;">speaker_notes </mat-icon>
+                <span class="fw-600 color_black"> {{'Add Note'|translate}}</span>
+
+            </button>
+            <button class="fw-600" mat-menu-item>
+                <mat-icon>vpn_key</mat-icon>
+                <span class="fw-600 color_black">{{'Edit Permission'|translate}}</span>
+            </button>
+            <button class="fw-600" mat-menu-item>
+                <mat-icon>track_changes</mat-icon>
+                <span class="fw-600 color_black">{{'Create Target'|translate}}</span>
+            </button>
+        </ng-template>
+    </mat-menu>
+
+      </div>
+    </div>
+    <div style="background-color: red;width: 100%;margin: 0 !important;height: 3px;"></div>
+    <div class="kanban-card-content">
+      <p style="color: gray !important;font-weight: 900;margin-top:5px" >{{ card.description|titlecase}}</p>
+      <div class="row mt-2 mb-2">
+        <div class="col-5 p-0">
+            <span [ngClass]="getStatusColorClass(card.status)"
+            style="padding: 5px;border-radius: 50px;">{{card.status}}</span>
+        </div>
+        <div class="col-7 p-0"> 
+            <span style="font-size: 13px;font-weight: 900;color: black;"> <b>End Date : </b></span>
+            <span style="font-size: 13px;font-weight: 900;color: gray;">{{card.endDate| date:'dd-MMM-yyyy'}}</span>
+        </div>
+      </div>
+      <div style="display: flex;justify-content: space-between;">
+     <div>
+        <img style="width:33px;height:33px;border-radius: 50%;margin: 10px;"
+        [src]="card.creatorProfile ? card.creatorProfile:'assets/avatar.svg'"
+        onError="this.src='assets/avatar.svg'">
+        <span style="position: relative;top:3px;margin: 10px;"><b>{{card.creatorFirstName|titlecase}} {{card.creatorLastName|titlecase}} </b></span>
+     </div>
+        <div class="circular-progress-bar">
+          <svg viewBox="0 0 100 100">
+              <circle
+                  class="progress-bar-background" 
+                  [attr.cx]="50"
+                  [attr.cy]="50"
+                  [attr.r]="radius">
+              </circle>
+              <circle 
+                  class="progress-bar-Send"
+                  [attr.cx]="50"
+                  [attr.cy]="50"
+                  [attr.r]="radius"
+                  [attr.stroke-dasharray]="circumference"
+                  [attr.stroke-dashoffset]="calculateDashoffset(card.progress)">
+              </circle>
+              <text x="50" y="40" text-anchor="middle" dominant-baseline="central">
+                  <tspan x="50" dy="0.5em">{{ temformat(card.progress ) }}</tspan>
+          </text>
+          </svg>
+      </div>
+      </div>
+        <div style="display: flex;margin-top: 10px; margin-bottom: 5px;justify-content: space-around;">
+        <div style="float: left;">
+            <span *ngIf="transform(card.budget)!=0&&transform(card.budget)!='0'" style="font-weight: 900;color: gray;">{{transform(card.budget)}}€</span>
+        </div>
+        <div >
+            <mat-icon *ngIf="card.isApproved" style="color: #0023F5;">thumb_up_alt</mat-icon>
+            <mat-icon *ngIf="card.isExpired||card.isThreeDaysLeft" style="color: red;">warning</mat-icon>
+        </div> 
+        <div style="float: right;">
+            <span style="margin: 5px;" *ngFor="let x of card.getKeywords">
+                <span class="keywords">#{{x | titlecase}}</span>
+            </span> 
+        </div>
+        </div>
+    </div>
+  </div>
+  

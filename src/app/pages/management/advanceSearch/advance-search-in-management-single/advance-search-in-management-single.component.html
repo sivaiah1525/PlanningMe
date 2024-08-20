@@ -1,0 +1,206 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;">search</mat-icon>{{'Advance Search'|translate}}
+    </h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+
+
+
+<mat-dialog-content style="padding: 0px  !important; margin: 0px !important; overflow: auto">
+    <form [formGroup]="ListSearch">
+        <div class="row justify-content-center mt-3" *ngIf="this.data.type !='Sites'">
+            <div class="col-12">
+                <mat-form-field class="w-100">
+                    <mat-label>{{"Name"|translate}}</mat-label>
+                    <input matInput type="text" id="Name" formControlName="Name">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-3" *ngIf="this.data.type =='Sites'">
+            <div class="col-12">
+                <mat-form-field class="w-100">
+                    <mat-label>{{"Company Name"|translate}}</mat-label>
+                    <input matInput type="text" id="companyName" formControlName="companyName">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row justify-content-center" *ngIf="this.data.type !='Products'">
+            <div class="col-12">
+                <mat-form-field class="w-100">
+                    <mat-label>{{"Email"|translate}}</mat-label>
+                    <input matInput type="text" id="Email" formControlName="Email">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row" *ngIf="this.data.type =='Users' || this.data.type =='Contacts'">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Gender </mat-label>
+                    <mat-select formControlName="gender">
+                        <mat-option value="1">Male</mat-option>
+                        <mat-option value="2">Female</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Position </mat-label>
+                    <input matInput type="text" id="Position" formControlName="Position">
+                </mat-form-field>
+            </div>
+        </div>
+       
+        <div class="row p-2 justify-content-around" style="color: white; background-color:#f6272e; font-weight: 600;margin-left: 15px !important;margin-right:15px !important">
+            <div class="col-6">{{'Tags'|translate}} </div>
+            <div class="col-2">
+                <mat-icon style="color: white;" (click)="Addcondictuon()">add_box</mat-icon>
+            </div>
+        </div>
+        <div formArrayName="strategyConditions" style="margin-left: 15px;margin-right:15px;margin-bottom:10px;"> 
+            <div style="border: 1px solid gray;padding:10px;" class="row" *ngFor="let file of strategyConditions().controls; let i=index" [formGroupName]="i">
+              <div class="row p-2 justify-content-around"
+              style="color: white; background-color:#818582; font-weight: 600;">
+              <div class="col-6"> {{'Tag'|translate}}-{{i+1}}</div>
+              <div class="col-2">
+                <mat-icon *ngIf="i!=0" (click)="Removecondictuon(i)">delete</mat-icon>
+              </div>
+          </div>
+              <div class="row strategycondictions">
+                <div class="col-4">
+                  <!-- UsersValue -->
+                  <ng-container>
+                    <mat-form-field  class="w-100">
+                        <mat-label>{{'Parameter'|translate}}</mat-label>
+                        <mat-select formControlName="conditionParameter">
+                            <mat-option [value]="x.id" *ngFor="let x of Tags"
+                                (click)="selactdatatype(x,i)">
+                                {{x.name|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+      
+                </ng-container>
+                </div>
+                <div class="col-4">
+                     <!-- AllOption  -->
+                     <ng-container>
+                     <mat-form-field  class="w-100">
+                         <mat-label>{{'Comparison'|translate}}</mat-label>
+                         <mat-select formControlName="conditionComparison">
+                             <mat-option [value]="x.v1" *ngFor="let x of AllOption">
+                                 {{x.v2|translate}}
+                             </mat-option>
+                         </mat-select>
+                     </mat-form-field>
+                 </ng-container>
+                </div>
+                <div class="col-4" >
+                  <mat-form-field style="width: 90% !important;">
+                    <input matInput type="tel" placeholder="value" formControlName="value">
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </div>
+        <div class="row" *ngIf="this.data.type !='Users'">
+            <div class="col-12">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{"Linked By Users"|translate}} </mat-label>
+                    <mat-select multiple (openedChange)="filterOptions('','users')" #select formControlName="UsersId">
+                        <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'users')"
+                            placeholder="Filter" />
+                        <mat-option *ngFor="let user of filteredusers" [value]="user.id">
+                            <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                [src]="user?.profilePicture ? user.profilePicture:'assets/avatar.svg'"
+                                onError="this.src='assets/avatar.svg'">
+                            {{ user.firstName| titlecase}} {{user.lastName|titlecase}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row" *ngIf="this.data.type !='Contacts'">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-12 col-xl-12">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{"Linked By Contacts "|translate}} </mat-label>
+                    <mat-select multiple (openedChange)="filterOptions('','contacts')" #select
+                        formControlName="ContactsId">
+                        <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'contact')"
+                            placeholder="Filter" />
+                        <mat-option *ngFor="let contact of filteredContacts" [value]="contact.id">
+                            <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                [src]="contact?.profilePicture ? contact.profilePicture:'assets/avatar.svg'"
+                                onError="this.src='assets/avatar.svg'">
+                            {{ contact.firstName| titlecase}} {{contact.lastName|titlecase}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row" *ngIf="this.data.type !='Sites'">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-12 col-xl-12">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{"Linked By Sites "|translate}} </mat-label>
+                    <mat-select multiple (openedChange)="filterOptions('','sites')" #select formControlName="SitesId">
+                        <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'site')"
+                            placeholder="Filter" />
+                        <mat-option *ngFor="let site of filteredSites" [value]="site.id">
+                            <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                [src]="site?.profilePicture ? site.profilePicture : 'assets/images/iconsForsvg/Site_Icon.svg'"
+                                onError="this.src='assets/images/iconsForsvg/Site_Icon.svg'">
+                            {{ site.companyName| titlecase}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row" *ngIf="this.data.type !='Products'">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-12 col-xl-12">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{"Linked By Products "|translate}} </mat-label>
+                    <mat-select multiple (openedChange)="filterOptions('','contacts')" #select
+                        formControlName="ProductsId">
+                        <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'contact')"
+                            placeholder="Filter" />
+                        <mat-option *ngFor="let product of filteredProducts" [value]="product.id">
+                            <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                [src]="product?.profilePicture ? product.profilePicture:'assets/images/iconsForsvg/icon_product.svg'"
+                                onError="this.src='assets/images/iconsForsvg/icon_product.svg'">
+                            {{ product.productName| titlecase}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row" *ngIf="this.data.type =='Products'">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-12 col-xl-12">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Product Description</mat-label>
+                    <input matInput type="text" id="description" formControlName="description">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row" *ngIf="this.data.type =='Products'">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-12 col-xl-12">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>Product Reference</mat-label>
+                    <input matInput type="text" id="reference" formControlName="reference">
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+
+</mat-dialog-content>
+
+<mat-dialog-actions class="my-3 mb-3 mt-3">
+    <div class="row justify-content-end">
+        <div class="col-4">
+            <button mat-button mat-dialog-close>{{"Cancel"|translate}}</button>
+        </div>
+        <div class="col-4">
+            <button mat-raised-button class="b-blue" (click)="submit()">{{"Apply"|translate}} </button>
+        </div>
+    </div>
+</mat-dialog-actions>

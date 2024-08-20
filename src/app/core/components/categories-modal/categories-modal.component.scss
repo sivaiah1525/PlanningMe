@@ -1,0 +1,25 @@
+ion-item {
+  --padding-start: 0px !important;
+  --inner-padding-end: 0px !important;
+  --background-focused: transparent;
+}
+
+ion-radio {
+  margin-right: 15px !important;
+}
+
+ion-list {
+  padding: var(--ion-no-padding);
+}
+.target-btn{
+  margin-left: 7px;
+    display: inline-block;
+    .mat-raised-button{
+      line-height: 29px;
+    }
+    .mat-button-focus-overlay{
+      background: rgba(255,255,255,.1) !important;
+    }
+    
+}
+

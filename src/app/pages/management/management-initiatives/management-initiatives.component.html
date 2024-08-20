@@ -1,0 +1,1046 @@
+<mat-tab-group mat-align-tabs="center" class="no-bg" (selectedTabChange)="tabChange($event.index)">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tabclas">
+                <mat-icon [ngClass]="{
+                    'btn-blue': tabnumber == 0 
+                  }">ballot</mat-icon>
+                <span>{{'Initiative List'|translate}}</span>
+            </div> 
+        </ng-template>
+        <!-- KanbanView true  -->
+        <ng-container *ngIf="KanbanView">
+            <div class="row mt-4" >
+                <div class="col-8 col-sm-8  col-md-8 col-lg-6 col-xl-6">
+                    <mat-form-field class="w-100" appearance="outline"> 
+                        <mat-label>{{"Select Pipeline"|translate}} *</mat-label> 
+                        <mat-select (selectionChange)="onSelectionChange($event)" [(ngModel)]="selectedOption">
+                            <mat-option [value]="x.id"
+                                *ngFor="let x of listofFindPipelines">{{x.name|translate}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-4 col-sm-4  col-md-4 col-lg-4 col-xl-4">
+                        <mat-icon class="icon-options" style="margin-top: 20px;" [matMenuTriggerFor]="moreMenu0">more_vert</mat-icon>
+                    <mat-menu #moreMenu0="matMenu" class="eventlist">
+                        <ng-template matMenuContent>
+                            <button  class="fw-600" mat-menu-item (click)="updatepipe(selectedOption, 'UpdatePipeline')">
+                                <mat-icon class="icon-options">edit</mat-icon> 
+                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                            </button>
+                            <button class="fw-600" mat-menu-item (click)="deleteDialogConfirmation(selectedOption,'deletepipeforInitiative')">
+                                <mat-icon class="icon-options">delete</mat-icon>
+                                <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                            </button>
+                            </ng-template>
+                            </mat-menu>
+                </div>
+            </div>
+            <app-kanban-view [Initiativescardview]="Initiativescardview" *ngIf="KanbanView"></app-kanban-view>
+        </ng-container>
+
+        <!-- KanbanView false  -->
+         <ng-container *ngIf="!KanbanView">
+            <!-- isMobileView true  -->
+            <ng-container *ngIf="isMobileView">
+                <div>
+                    <!-- 00000000000000  --> 
+                    <!-- Initiatives list  -->
+                    <div style="display: flex;font-weight: 900; margin-top: 15px;margin-bottom: 20px;border-bottom: 1px solid lightgray;">
+                        <div style="width: 30%;"><mat-icon></mat-icon></div>
+                        <div style="width: 70%;text-align: start;">Name</div>
+                    </div>
+                    <div class="accordion">
+                        <div *ngFor="let Initiative of Initiativeslistdata; let index=index;" class="panel">
+                            <div style="display: flex; margin-top: 15px;margin-bottom: 20px;border-bottom: 1px solid lightgray;">
+                                <div style="width: 30%;">
+                                    <div style="display: flex;">
+                                        <div>
+                                            <mat-icon (click)="togglePanel(Initiative,index)" style="color: black;position: relative;top: 10px;" *ngIf="Initiative?.expanded">expand_less</mat-icon>
+                                            <mat-icon (click)="togglePanel(Initiative,index)" style="color: black;position: relative;top: 10px;"  *ngIf="!Initiative?.expanded">expand_more</mat-icon>
+                                        </div>
+                                        <div>
+                                            <div *ngIf="Initiative.isPrivate==false">
+                                            <img style="position: relative;top: 9px; left: 5px;" 
+                                            src="../../../../assets/images/iconsForsvg/Unlock.svg">
+                                            </div> 
+                                            <div *ngIf="Initiative.isPrivate==true">
+                                                <mat-icon style="font-size: 15px; position: relative;top: 12px;left: 10px;">lock</mat-icon>
+                                        </div>
+                                        </div>
+                                        <div>
+                                            <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                                                <mat-icon  class="icon-options">more_vert</mat-icon>
+                                                </button>
+                                        </div>
+                                      </div>
+                                      <mat-menu #moreMenu="matMenu" class="eventlist">
+                                        <ng-template matMenuContent>
+                                            <button class="fw-600" mat-menu-item (click)="showinitiativesdetails(Initiative)">
+                                                <mat-icon class="icon-options">visibility</mat-icon>
+                                                <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item  (click)="createInitiatives(Initiative, 'Update')">
+                                                <mat-icon class="icon-options">edit</mat-icon>
+                                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item (click)="deleteDialogConfirmation(Initiative,'deleteInitiatives')">
+                                                <mat-icon class="icon-options">delete</mat-icon>
+                                                <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item (click)="showGanttView(Initiative)">
+                                                <img style="width: 25px;height: 25px;margin: 10px;"
+                                                    src="../../../../assets/images/iconsForsvg/chart-gantt-svgrepo-com.svg">
+                                                <span class="fw-600 color_black">{{' Gantt View'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item >
+                                                <mat-icon>group</mat-icon>
+                                                <span class="fw-600 color_black">{{'Task Kanban View'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>group</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add to Group'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>event</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Create an Event'|translate}}</span>
+                                            </button>
+                
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:green">bar_chart</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create an Activity Report'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>wb_incandescent</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create Stratergy'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add File'|translate}}</span>
+                
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:rgb(255,193,111) ;">speaker_notes </mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add Note'|translate}}</span>
+                
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>vpn_key</mat-icon>
+                                                <span class="fw-600 color_black">{{'Edit Permission'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>track_changes</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create Target'|translate}}</span>
+                                            </button>
+                                        </ng-template>
+                                    </mat-menu>
+                                </div>
+                                <div style="width: 70%;font-weight: 900;text-align: start;" (click)="showinitiativesdetails(Initiative)">
+                                    <b>{{get30TenCharacters(Initiative?.title)}}</b><br>
+                                    <span style="color: gray;font-weight: 900;">{{get30TenCharacters(Initiative?.stepDto?.currentStepName)}}</span>    
+                                </div>
+                            </div>
+                 
+                            <!-- 11111111111111  -->
+                            <!-- StepsList  -->
+                            <!-- 000000000  -->
+                            <div *ngIf="Initiative?.expanded" class="panel-content p-0">
+                          <ng-container *ngIf="Initiative?.hasStep">
+                              <div class="accordion mt-2 stepandtasktable">
+                        <div *ngFor="let Steps of StepsList[index]; let index=index;" class="panel">             
+                            <div style="display: flex; padding: 15px;padding: 20px;background-color: #F5F5F5;">
+                                <div style="width: 30%;">
+                                    <div style="display: flex;">
+                                        <div>
+                                            <mat-icon (click)="StepsPanel(Steps,index)" style="color: black;position: relative;top: 10px;" *ngIf="Steps?.expanded">expand_less</mat-icon>
+                                            <mat-icon (click)="StepsPanel(Steps,index)" style="color: black;position: relative;top: 10px;"  *ngIf="!Steps?.expanded">expand_more</mat-icon>
+                                        </div>
+                                        <div>
+                                            <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                                                <mat-icon class="icon-options">more_vert</mat-icon>
+                                            </button>
+                                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                                <ng-template matMenuContent>
+                                                    <button class="fw-600" mat-menu-item>
+                                                        <mat-icon class="icon-options">edit</mat-icon>
+                                                        <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                                    </button>
+                                                    <button class="fw-600" mat-menu-item>
+                                                        <mat-icon class="icon-options">delete</mat-icon>
+                                                        <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                                    </button>
+                                                </ng-template>
+                                            </mat-menu>
+                                        </div>
+                                        <div>
+                                            <mat-icon style="position: relative;">linear_scale</mat-icon>
+                                        </div>
+                                      </div>
+                                </div>
+                                <div style="width: 70%;text-align: start;font-weight: 900;">
+                                    <b>{{get50Characters(Steps?.name)}}</b>
+                                </div>
+                            </div>
+                
+                            <!-- 2222222222222  -->
+                            <!-- TaskList  -->
+                            <div *ngIf="Steps?.expanded" class="panel-content p-0">
+                                <div *ngIf="Steps?.expanded" class="panel-content p-0">
+                                    <div class="accordion mt-2 stepandtasktable" >
+                                        <div *ngFor="let Tasks of TaskList[index]; let index=index;"  class="panel">
+                                            <div style="display: flex; margin-top: 15px;margin-bottom: 20px;">
+                                                <div style="width: 30%;">
+                                                    <div style="display: flex;">
+                                                        <div>
+                                                            <mat-icon *ngIf="Tasks?.subTaskCount==0"></mat-icon>
+                                                            <span *ngIf="Tasks?.subTaskCount!=0" >
+                                                                <mat-icon (click)="TasksPanel(Tasks,index)" style="color: black;position: relative;top: 10px;" *ngIf="Tasks?.expanded">expand_less</mat-icon>
+                                                            </span>
+                                                            <span *ngIf="Tasks?.subTaskCount!=0">
+                                                                <mat-icon  (click)="TasksPanel(Tasks,index)" style="color: black;position: relative;top: 10px;"  *ngIf="!Tasks?.expanded">expand_more</mat-icon>
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                                <mat-icon [matMenuTriggerFor]="moreMenu">more_vert</mat-icon>
+                                                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                                                <ng-template matMenuContent>
+                                                                    <button class="fw-600" mat-menu-item (click)="opentaskDialog(Tasks?.id)">
+                                                                        <mat-icon class="icon-options">visibility</mat-icon>
+                                                                        <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                                                    </button>
+                                                                    <button class="fw-600" mat-menu-item (click)="createNewTask(Tasks, 'edit-task')">
+                                                                        <mat-icon class="icon-options">edit</mat-icon>
+                                                                        <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                                                    </button>
+                                                                    <button class="fw-600" mat-menu-item>
+                                                                        <mat-icon class="icon-options">delete</mat-icon>
+                                                                        <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                                                    </button>
+                                                                </ng-template>
+                                                            </mat-menu>
+                                                        </div>
+                                                        <div>
+                                                            <mat-icon  style="color: green;"> assignment_turned_in</mat-icon>
+                                                        </div>
+                                                        <div>
+                                                            <span><img  *ngIf="Tasks?.isparent" src="../../../../../assets/images/iconsForsvg/up_arrow.svg"></span>
+                                                            <span><img   *ngIf="Tasks?.isSuccessortask" src="../../../../../assets/images/iconsForsvg/right-arrow.svg"></span>
+                                                            <span><img   *ngIf="Tasks?.isPredecessortask" src="../../../../../assets/images/iconsForsvg/left-arrow.svg"></span>
+                                                        </div>
+                                                      </div>
+                                                </div>
+                                                <div style="width: 70%;text-align: start;font-weight: 900;" (click)="opentaskDialog(Tasks?.id)">
+                                                    <b>{{get30TenCharacters(Tasks?.title)}}</b>
+                                                </div>
+                                            </div>
+                
+                                            <div *ngIf="Tasks?.expanded" class="panel-content p-0">
+                                                <div class="accordion mt-2 stepandtasktable" >
+                                                    <div *ngFor="let subtask of subtasklist[index]; let index=index;"  class="panel">
+                                                        <div style="display: flex;font-weight: 900; margin-top: 15px;margin-bottom: 20px;border-bottom: 1px solid lightgray;">
+                                                            <div style="width: 30%;">
+                                                                <div style="display: flex;">
+                                                                    <div>
+                                                                        <mat-icon  style="color: green;" > assignment_turned_in</mat-icon>
+                                                                    </div>
+                                                                        <div>
+                                                                            <span><img *ngIf="subtask?.isparent" src="../../../../../assets/images/iconsForsvg/up_arrow.svg"></span>
+                                                                            <span><img  *ngIf="subtask?.isSuccessortask" src="../../../../../assets/images/iconsForsvg/right-arrow.svg"></span>
+                                                                            <span><img  *ngIf="subtask?.isPredecessortask" src="../../../../../assets/images/iconsForsvg/left-arrow.svg"></span>
+                                                                        </div>
+                                                                   </div>
+                                                            </div>
+                                                            <div style="width: 70%;text-align: start;" (click)="opentaskDialog(subtask?.id)">
+                                                                <b>{{get30TenCharacters(subtask?.title)}}</b>
+                                                            </div>
+                                                        </div>
+                                                        <div *ngIf="subtask?.expanded" class="panel-content p-0">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                          </ng-container>
+                          <!-- 000000000000  -->
+                        <ng-container *ngIf="!Initiative?.hasStep">
+                         <div class="accordion mt-2 stepandtasktable" >
+                        <div *ngFor="let Tasks of TaskList[index]; let index=index;"  class="panel">
+                            <div style="display: flex; margin-top: 15px;margin-bottom: 20px;">
+                                <div style="width: 30%;">
+                                    <div style="display: flex;">
+                                        <div>
+                                            <mat-icon *ngIf="Tasks?.subTaskCount==0"></mat-icon>
+                                            <span *ngIf="Tasks?.subTaskCount!=0" >
+                                                <mat-icon (click)="TasksPanel(Tasks,index)" style="color: black;position: relative;top: 10px;" *ngIf="Tasks?.expanded">expand_less</mat-icon>
+                                            </span>
+                                            <span *ngIf="Tasks?.subTaskCount!=0">
+                                                <mat-icon  (click)="TasksPanel(Tasks,index)" style="color: black;position: relative;top: 10px;"  *ngIf="!Tasks?.expanded">expand_more</mat-icon>
+                                            </span>
+                                        </div>
+                                        <div>
+                                                <mat-icon [matMenuTriggerFor]="moreMenu">more_vert</mat-icon>
+                                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                                <ng-template matMenuContent>
+                                                    <button class="fw-600" mat-menu-item (click)="opentaskDialog(Tasks?.id)">
+                                                        <mat-icon class="icon-options">visibility</mat-icon>
+                                                        <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                                    </button>
+                                                    <button class="fw-600" mat-menu-item (click)="createNewTask(Tasks, 'edit-task')">
+                                                        <mat-icon class="icon-options">edit</mat-icon>
+                                                        <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                                    </button>
+                                                    <button class="fw-600" mat-menu-item>
+                                                        <mat-icon class="icon-options">delete</mat-icon>
+                                                        <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                                    </button>
+                                                </ng-template>
+                                            </mat-menu>
+                                        </div>
+                                        <div>
+                                            <mat-icon  style="color: green;"> assignment_turned_in</mat-icon>
+                                        </div>
+                                        <div>
+                                            <span><img  *ngIf="Tasks?.isparent" src="../../../../../assets/images/iconsForsvg/up_arrow.svg"></span>
+                                            <span><img   *ngIf="Tasks?.isSuccessortask" src="../../../../../assets/images/iconsForsvg/right-arrow.svg"></span>
+                                            <span><img   *ngIf="Tasks?.isPredecessortask" src="../../../../../assets/images/iconsForsvg/left-arrow.svg"></span>
+                                        </div>
+                                      </div>
+                                </div>
+                                <div style="width: 70%;text-align: start;font-weight: 900;" (click)="opentaskDialog(Tasks?.id)">
+                                    <b>{{get30TenCharacters(Tasks?.title)}}</b>
+                                </div>
+                            </div>
+                
+                            <div *ngIf="Tasks?.expanded" class="panel-content p-0">
+                                <div class="accordion mt-2 stepandtasktable" >
+                                    <div *ngFor="let subtask of subtasklist[index]; let index=index;"  class="panel">
+                                        <div style="display: flex;font-weight: 900; margin-top: 15px;margin-bottom: 20px;border-bottom: 1px solid lightgray;">
+                                            <div style="width: 30%;">
+                                                <div style="display: flex;">
+                                                    <div>
+                                                        <mat-icon  style="color: green;" > assignment_turned_in</mat-icon>
+                                                    </div>
+                                                        <div>
+                                                            <span><img *ngIf="subtask?.isparent" src="../../../../../assets/images/iconsForsvg/up_arrow.svg"></span>
+                                                            <span><img  *ngIf="subtask?.isSuccessortask" src="../../../../../assets/images/iconsForsvg/right-arrow.svg"></span>
+                                                            <span><img  *ngIf="subtask?.isPredecessortask" src="../../../../../assets/images/iconsForsvg/left-arrow.svg"></span>
+                                                        </div>
+                                                   </div>
+                                            </div>
+                                            <div style="width: 70%;text-align: start;" (click)="opentaskDialog(subtask?.id)">
+                                                <b>{{get30TenCharacters(subtask?.title)}}</b>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="subtask?.expanded" class="panel-content p-0">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <!-- isMobileView False  -->
+            <ng-container *ngIf="!isMobileView">
+                <div class="row" style="margin-top: 10px;margin-bottom: 10px;" *ngIf="showicon">
+                    <h3 style="margin-top:10px;">Search Results of :</h3>
+                    <!-- Container for the keyword items -->
+                    <div style="display: flex; flex-wrap: wrap; align-items: flex-start;">
+    
+                        <!-- Left arrow to navigate to previous items -->
+                        <div style="cursor: pointer;" *ngIf="startIndex > 0">
+                            <mat-icon (click)="navigateItems('left')"
+                                style="padding: 8px;font-size: 35px;margin-right: 10px;">keyboard_arrow_left</mat-icon>
+                        </div>
+    
+                        <!-- Show the items in a row -->
+                        <ng-container *ngFor="let x of displayedItems; let index = index;">
+                            <span class="keywordsearch" style="margin: 10px;">
+                                <ng-container *ngIf="x?.name=='Title'"><span
+                                        class="keywordvalue">{{x.value}}</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsPublic'"><span
+                                        class="keywordvalue">Public</span></ng-container>
+                                <ng-container *ngIf="x?.name=='IsPrivate'"><span
+                                        class="keywordvalue">Private</span></ng-container>
+                                <ng-container *ngIf="x?.name=='InitiativeStatus'">
+                                    <span class="keywordvalue">Status
+                                        :{{x?.value}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='CurrencyId'">
+                                    <span class="keywordvalue">Currency : {{x?.value == 1 ? 'Euro' : 'Dollar'}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='budget'">
+                                    <span class="keywordvalue">Budget : {{x?.value}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='Condition'">
+                                    <span class="keywordvalue">Condition : {{x?.value}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="x?.name=='EndDate' || x?.name=='StartDate'">
+                                    <span class="keywordvalue">{{x?.name+' '}}{{x?.value|date:'dd-MMM-yyyy'}}</span>
+                                </ng-container>
+                                <span><mat-icon class="keywordremove"
+                                        (click)="removekeyword(x, startIndex + index)">cancel</mat-icon></span>
+                            </span>
+                        </ng-container>
+    
+                        <!-- Right arrow to navigate to next items -->
+                        <div style="cursor: pointer;"
+                            *ngIf="ListOftragetfiltervalues.length > 5 && startIndex + displayedItems.length < ListOftragetfiltervalues.length">
+                            <mat-icon (click)="navigateItems('right')"
+                                style="padding: 10px;font-size: 35px;">keyboard_arrow_right</mat-icon>
+                        </div>
+    
+                    </div>
+    
+                </div>
+                  <div class="row" *ngIf="showicon" style="background-color: #fffde3;padding: 10px;">
+                    <div class="col-3">
+                        <span class="fs-16" style="font-weight: 700;">No of Records : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{Initiativeslength}}</span>
+                    </div>
+                    <div class="col-3 ">
+                        <span class="fs-16 " style="font-weight: 700;">Total Final Amount : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{transform(totalValue)}}</span>
+                    </div>
+                    <div class="col-3">
+                        <span class="fs-16" style="font-weight: 700;">Average Amount : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{RoundAmount(totalValue / Initiativeslength)}} &euro;</span>
+                    </div>
+                </div>
+                <div>
+                    <!-- 00000000000000  --> 
+                    <!-- Initiatives list  -->
+                    <div style="display: flex;font-weight: 900; margin-top: 15px;margin-bottom: 20px;border-bottom: 1px solid lightgray;">
+                        <div style="width: 10%;"><mat-icon></mat-icon></div>
+                        <div style="width: 20%;text-align: start;">Name</div>
+                        <div style="width: 10%;text-align: center;">End Date </div>
+                        <div style="width: 10%;text-align: center;">Status</div>
+                        <div style="width: 15%;text-align: center;">Progress</div>
+                        <div style="width: 15%;text-align: center;">Amount</div>
+                        <div style="width: 20%;text-align: center;">Keywords</div>
+                    </div>
+                    <div class="accordion">
+                        <div *ngFor="let Initiative of Initiativeslistdata; let index=index;" class="panel">
+                            <div style="display: flex; margin-top: 15px;margin-bottom: 20px;border-bottom: 1px solid lightgray;">
+                                <div style="width: 10%;">
+                                    <div style="display: flex;">
+                                        <div>
+                                            <mat-icon (click)="togglePanel(Initiative,index)" style="color: black;position: relative;top: 10px;" *ngIf="Initiative?.expanded">expand_less</mat-icon>
+                                            <mat-icon (click)="togglePanel(Initiative,index)" style="color: black;position: relative;top: 10px;"  *ngIf="!Initiative?.expanded">expand_more</mat-icon>
+                                        </div>
+                                        <div>
+                                            <div *ngIf="Initiative.isPrivate==false">
+                                            <img style="position: relative;top: 9px; left: 5px;" 
+                                            src="../../../../assets/images/iconsForsvg/Unlock.svg">
+                                            </div> 
+                                            <div *ngIf="Initiative.isPrivate==true">
+                                                <mat-icon style="font-size: 15px; position: relative;top: 12px;left: 10px;">lock</mat-icon>
+                                        </div>
+                                        </div>
+                                        <div>
+                                            <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                                                <mat-icon  class="icon-options">more_vert</mat-icon>
+                                                </button>
+                                        </div>
+                                      </div>
+                                      <mat-menu #moreMenu="matMenu" class="eventlist">
+                                        <ng-template matMenuContent>
+                                            <button class="fw-600" mat-menu-item (click)="showinitiativesdetails(Initiative)">
+                                                <mat-icon class="icon-options">visibility</mat-icon>
+                                                <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item  (click)="createInitiatives(Initiative, 'Update')">
+                                                <mat-icon class="icon-options">edit</mat-icon>
+                                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item (click)="deleteDialogConfirmation(Initiative,'deleteInitiatives')">
+                                                <mat-icon class="icon-options">delete</mat-icon>
+                                                <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item (click)="showGanttView(Initiative)">
+                                                <img style="width: 25px;height: 25px;margin: 10px;"
+                                                    src="../../../../assets/images/iconsForsvg/chart-gantt-svgrepo-com.svg">
+                                                <span class="fw-600 color_black">{{' Gantt View'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item >
+                                                <mat-icon>group</mat-icon>
+                                                <span class="fw-600 color_black">{{'Task Kanban View'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>group</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add to Group'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>event</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Create an Event'|translate}}</span>
+                                            </button>
+                
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:green">bar_chart</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create an Activity Report'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>wb_incandescent</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create Stratergy'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add File'|translate}}</span>
+                
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon style="color:rgb(255,193,111) ;">speaker_notes </mat-icon>
+                                                <span class="fw-600 color_black"> {{'Add Note'|translate}}</span>
+                
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>vpn_key</mat-icon>
+                                                <span class="fw-600 color_black">{{'Edit Permission'|translate}}</span>
+                                            </button>
+                                            <button class="fw-600" mat-menu-item>
+                                                <mat-icon>track_changes</mat-icon>
+                                                <span class="fw-600 color_black">{{'Create Target'|translate}}</span>
+                                            </button>
+                                        </ng-template>
+                                    </mat-menu>
+                                </div>
+                                <div style="width: 20%;font-weight: 900;text-align: start;" (click)="showinitiativesdetails(Initiative)">
+                                    <b>{{get30TenCharacters(Initiative?.title)}}</b><br>
+                                    <span style="color: gray;font-weight: 900;">{{get30TenCharacters(Initiative?.stepDto?.currentStepName)}}</span>    
+                                </div>
+                                <div style="width: 10%;text-align: center;">{{Initiative?.endDate|date:'dd-MMM-yyyy'}} </div>
+                                <div style="width: 10%;text-align: center;">
+                                    <span>
+                                        <span [ngClass]="getStatusColorClass(Initiative?.status)">{{getstatus(Initiative?.status)}}</span> 
+                                    </span>
+                                </div>
+                                <div style="width: 15%;text-align: center;margin-top: -10px;">
+                                        <div class="row justify-content-center mb-2" style="width: 200px;">
+                                            <ng-container *ngIf="Initiative?.status == 'Late'">
+                                                <span style="color: black">No Record</span>
+                                            </ng-container>
+                                            <ng-container *ngIf="Initiative?.status != 'Late'">
+                                                <div class="col-12" style="text-align: center !important;">{{Initiative?.progress+'%'}}</div>
+                                            </ng-container>
+                                            <div class="col-12">
+                                                    <mat-progress-bar class="w-100" [value]="Initiative?.status == 'Late'?0:Initiative?.progress"
+                                                    [ngClass]="assignCssClass(Initiative?.status == 'Late'?0:Initiative?.progress)">
+                                                </mat-progress-bar>
+                    
+                                            </div>
+                                        </div>
+                                </div>
+                                <div style="width: 15%;text-align: center;">
+                                    {{transform(Initiative?.budget==0?'':Initiative?.budget)}}
+                                </div>
+                                <div style="width: 20%;text-align: center;">
+                                    <ng-container *ngIf="Initiative?.getKeywords.length!=0">
+                                        <span style="margin: 5px;" > 
+                                            <span class="keywords">{{'#' + get5TenCharacters(Initiative?.getKeywords[0])}}</span>
+                                            </span>
+                                            <span style="margin: 5px;" *ngIf="Initiative?.getKeywords.length>1">
+                                                <span class="keywords">{{'#' + get5TenCharacters(Initiative?.getKeywords[1])}}</span>
+                                                </span>
+                                      </ng-container>
+                                </div>
+                            </div>
+                 
+                            <!-- 11111111111111  -->
+                            <!-- StepsList  -->
+                            <!-- 000000000  -->
+                            <div *ngIf="Initiative?.expanded" class="panel-content p-0">
+                          <ng-container *ngIf="Initiative?.hasStep">
+                              <div class="accordion mt-2 stepandtasktable">
+                        <div *ngFor="let Steps of StepsList[index]; let index=index;" class="panel"> 
+                
+                            <div style="display: flex; padding: 15px;padding: 20px;background-color: #F5F5F5;">
+                                <div style="width: 10%;">
+                                    <div style="display: flex;">
+                                        <div>
+                                            <mat-icon (click)="StepsPanel(Steps,index)" style="color: black;position: relative;top: 10px;" *ngIf="Steps?.expanded">expand_less</mat-icon>
+                                            <mat-icon (click)="StepsPanel(Steps,index)" style="color: black;position: relative;top: 10px;"  *ngIf="!Steps?.expanded">expand_more</mat-icon>
+                                        </div>
+                                        <div>
+                                            <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                                                <mat-icon class="icon-options">more_vert</mat-icon>
+                                            </button>
+                                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                                <ng-template matMenuContent>
+                                                    <button class="fw-600" mat-menu-item>
+                                                        <mat-icon class="icon-options">edit</mat-icon>
+                                                        <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                                    </button>
+                                                    <button class="fw-600" mat-menu-item>
+                                                        <mat-icon class="icon-options">delete</mat-icon>
+                                                        <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                                    </button>
+                                                </ng-template>
+                                            </mat-menu>
+                                        </div>
+                                        <div>
+                                            <mat-icon style="position: relative;">linear_scale</mat-icon>
+                                        </div>
+                                      </div>
+                                </div>
+                                <div style="width: 20%;text-align: start;font-weight: 900;">
+                                    <b>{{get50Characters(Steps?.name)}}</b>
+                                </div>
+                                <div style="width: 10%;text-align: center;"> </div>
+                                <div style="width: 10%;text-align: center;">
+                                    <span [ngClass]="getStatusColorClass(Steps?.status)">{{getstatus(Steps?.status)}}</span>
+                                </div>
+                                <div style="width: 15%;text-align: center;margin-top: -10px;">
+                                    <div class="row justify-content-center mb-2" style="width: 200px;">
+                                        <div class="col-12" style="text-align: center;">{{Steps?.progress+'%'}}</div>
+                                        <div class="col-12">
+                                            <mat-progress-bar class="w-100" [value]="Steps?.progress"
+                                                [ngClass]="assignCssClass(Steps?.progress)">
+                                            </mat-progress-bar>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="width: 15%;text-align: start;padding-left: 20px;padding-top: 10px;">
+                                    <span *ngIf="Steps?.totalDuration!=0&&Steps?.totalDuration!=''">
+                                        <mat-icon>av_timer</mat-icon> {{Steps?.totalDuration}}
+                                    </span>
+                                </div>
+                                <div style="width: 20%;text-align: center;"></div>
+                            </div>
+                
+                            <!-- 2222222222222  -->
+                            <!-- TaskList  -->
+                            <div *ngIf="Steps?.expanded" class="panel-content p-0">
+                                <div *ngIf="Steps?.expanded" class="panel-content p-0">
+                                    <div class="accordion mt-2 stepandtasktable" >
+                                        <div *ngFor="let Tasks of TaskList[index]; let index=index;"  class="panel">
+                
+                                            <div style="display: flex; margin-top: 15px;margin-bottom: 20px;">
+                                                <div style="width: 10%;">
+                                                    <div style="display: flex;">
+                                                        <div>
+                                                            <mat-icon *ngIf="Tasks?.subTaskCount==0"></mat-icon>
+                                                            <span *ngIf="Tasks?.subTaskCount!=0" >
+                                                                <mat-icon (click)="TasksPanel(Tasks,index)" style="color: black;position: relative;top: 10px;" *ngIf="Tasks?.expanded">expand_less</mat-icon>
+                                                            </span>
+                                                            <span *ngIf="Tasks?.subTaskCount!=0">
+                                                                <mat-icon  (click)="TasksPanel(Tasks,index)" style="color: black;position: relative;top: 10px;"  *ngIf="!Tasks?.expanded">expand_more</mat-icon>
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                                <mat-icon [matMenuTriggerFor]="moreMenu">more_vert</mat-icon>
+                                                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                                                <ng-template matMenuContent>
+                                                                    <button class="fw-600" mat-menu-item (click)="opentaskDialog(Tasks?.id)">
+                                                                        <mat-icon class="icon-options">visibility</mat-icon>
+                                                                        <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                                                    </button>
+                                                                    <button class="fw-600" mat-menu-item (click)="createNewTask(Tasks, 'edit-task')">
+                                                                        <mat-icon class="icon-options">edit</mat-icon>
+                                                                        <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                                                    </button>
+                                                                    <button class="fw-600" mat-menu-item>
+                                                                        <mat-icon class="icon-options">delete</mat-icon>
+                                                                        <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                                                    </button>
+                                                                </ng-template>
+                                                            </mat-menu>
+                                                        </div>
+                                                        <div>
+                                                            <mat-icon  style="color: green;"> assignment_turned_in</mat-icon>
+                                                        </div>
+                                                        <div>
+                                                            <span><img  *ngIf="Tasks?.isparent" src="../../../../../assets/images/iconsForsvg/up_arrow.svg"></span>
+                                                            <span><img   *ngIf="Tasks?.isSuccessortask" src="../../../../../assets/images/iconsForsvg/right-arrow.svg"></span>
+                                                            <span><img   *ngIf="Tasks?.isPredecessortask" src="../../../../../assets/images/iconsForsvg/left-arrow.svg"></span>
+                                                        </div>
+                                                      </div>
+                                                </div>
+                                                <div style="width: 20%;text-align: start;font-weight: 900;" (click)="opentaskDialog(Tasks?.id)">
+                                                    <b>{{get30TenCharacters(Tasks?.title)}}</b>
+                                                </div>
+                                                <div style="width: 10%;text-align: center;">
+                                                    {{Tasks?.endDate|date:'dd-MMM-yyyy'}}
+                                                </div>
+                                                <div style="width: 10%;text-align: center;">
+                                                    <span [ngClass]="getStatusColorClass(Tasks?.status)">{{getstatus(Tasks?.status)}}</span>
+                                                </div>
+                                                <div style="width: 15%;text-align: center;margin-top: -10px;">
+                                                    <div class="row justify-content-center" style="width: 200px;">
+                                                        <div class="col-12" style="text-align: center;">{{Tasks?.progress+'%'}}</div>
+                                                        <div class="col-12">
+                                                            <mat-progress-bar class="w-100" [value]="Tasks?.progress"
+                                                                [ngClass]="assignCssClass(Tasks?.progress)">
+                                                            </mat-progress-bar>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style="width: 15%;text-align: start;padding-left: 20px;padding-top: 10px;">
+                                                    <span *ngIf="Tasks?.duration!=0&&Tasks?.duration!=''">
+                                                        <mat-icon>av_timer</mat-icon> {{Tasks?.duration}}
+                                                    </span>
+                                                </div>
+                                                <div style="width: 20%;text-align: center;">
+                                                    <div *ngFor="let x of Tasks?.assignees" style="display: flex;justify-content: start;">
+                                                        <img class="avatar" style="border-radius: 50%;margin-top:6px"
+                                                        onError="this.src='assets/avatar.svg'" 
+                                                        [src]="x?.profile ? x. profile:'assets/avatar.svg'">
+                                                        <span style="margin-top: 15px; font-weight: 900;">{{x.firstName+' '+x.lastName}}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                
+                                            <div *ngIf="Tasks?.expanded" class="panel-content p-0">
+                                                <div class="accordion mt-2 stepandtasktable" >
+                                                    <div *ngFor="let subtask of subtasklist[index]; let index=index;"  class="panel">
+                                                        <div style="display: flex;font-weight: 900; margin-top: 15px;margin-bottom: 20px;border-bottom: 1px solid lightgray;">
+                                                            <div style="width: 10%;">
+                                                                <div style="display: flex;">
+                                                                    <div>
+                                                                        <mat-icon  style="color: green;" > assignment_turned_in</mat-icon>
+                                                                    </div>
+                                                                        <div>
+                                                                            <span><img *ngIf="subtask?.isparent" src="../../../../../assets/images/iconsForsvg/up_arrow.svg"></span>
+                                                                            <span><img  *ngIf="subtask?.isSuccessortask" src="../../../../../assets/images/iconsForsvg/right-arrow.svg"></span>
+                                                                            <span><img  *ngIf="subtask?.isPredecessortask" src="../../../../../assets/images/iconsForsvg/left-arrow.svg"></span>
+                                                                        </div>
+                                                                   </div>
+                                                            </div>
+                                                            <div style="width: 20%;text-align: start;" (click)="opentaskDialog(subtask?.id)">
+                                                                <b>{{get30TenCharacters(subtask?.title)}}</b>
+                                                            </div>
+                                                            <div style="width: 10%;text-align: center;">
+                                                                {{subtask?.endDate|date:'dd-MMM-yyyy'}}
+                                                            </div>
+                                                            <div style="width: 10%;text-align: center;">
+                                                                <span [ngClass]="getStatusColorClass(subtask?.status)">{{getstatus(subtask?.status)}}</span>
+                                                            </div>
+                                                            <div style="width: 15%;text-align: center;margin-top: -10px;">
+                                                                <div class="row justify-content-center" style="width: 200px;">
+                                                                    <div class="col-12" style="text-align: center;">{{subtask?.progress+'%'}}</div>
+                                                                    <div class="col-12">
+                                                                        <mat-progress-bar class="w-100" [value]="subtask?.progress"
+                                                                            [ngClass]="assignCssClass(subtask?.progress)">
+                                                                        </mat-progress-bar>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div style="width: 15%;text-align: center;padding-left: 20px;padding-top: 10px;">
+                                                                <mat-icon>av_timer</mat-icon>
+                                                                {{subtask?.duration}}
+                                                            </div>
+                                                            <div style="width: 20%;text-align: center;">
+                                                                <div *ngFor="let x of subtask?.assignees" style="display: flex;justify-content: start;">
+                                                                    <img class="avatar" style="border-radius: 50%;margin-top:6px"
+                                                                    onError="this.src='assets/avatar.svg'" 
+                                                                    [src]="x?.profile ? x. profile:'assets/avatar.svg'">
+                                                                    <span style="margin-top: 15px; font-weight: 900;">{{x.firstName+' '+x.lastName}}</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div *ngIf="subtask?.expanded" class="panel-content p-0">
+                                                            <!-- {{ Tasks?.name }} -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                          </ng-container>
+                          <!-- 000000000000  -->
+                        <ng-container *ngIf="!Initiative?.hasStep">
+                         <div class="accordion mt-2 stepandtasktable" >
+                        <div *ngFor="let Tasks of TaskList[index]; let index=index;"  class="panel">
+                            <div style="display: flex; margin-top: 15px;margin-bottom: 20px;">
+                                <div style="width: 10%;">
+                                    <div style="display: flex;">
+                                        <div>
+                                            <mat-icon *ngIf="Tasks?.subTaskCount==0"></mat-icon>
+                                            <span *ngIf="Tasks?.subTaskCount!=0" >
+                                                <mat-icon (click)="TasksPanel(Tasks,index)" style="color: black;position: relative;top: 10px;" *ngIf="Tasks?.expanded">expand_less</mat-icon>
+                                            </span>
+                                            <span *ngIf="Tasks?.subTaskCount!=0">
+                                                <mat-icon  (click)="TasksPanel(Tasks,index)" style="color: black;position: relative;top: 10px;"  *ngIf="!Tasks?.expanded">expand_more</mat-icon>
+                                            </span>
+                                        </div>
+                                        <div>
+                                                <mat-icon [matMenuTriggerFor]="moreMenu">more_vert</mat-icon>
+                                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                                <ng-template matMenuContent>
+                                                    <button class="fw-600" mat-menu-item (click)="opentaskDialog(Tasks?.id)">
+                                                        <mat-icon class="icon-options">visibility</mat-icon>
+                                                        <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                                    </button>
+                                                    <button class="fw-600" mat-menu-item (click)="createNewTask(Tasks, 'edit-task')">
+                                                        <mat-icon class="icon-options">edit</mat-icon>
+                                                        <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                                    </button>
+                                                    <button class="fw-600" mat-menu-item>
+                                                        <mat-icon class="icon-options">delete</mat-icon>
+                                                        <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                                    </button>
+                                                </ng-template>
+                                            </mat-menu>
+                                        </div>
+                                        <div>
+                                            <mat-icon  style="color: green;"> assignment_turned_in</mat-icon>
+                                        </div>
+                                        <div>
+                                            <span><img  *ngIf="Tasks?.isparent" src="../../../../../assets/images/iconsForsvg/up_arrow.svg"></span>
+                                            <span><img   *ngIf="Tasks?.isSuccessortask" src="../../../../../assets/images/iconsForsvg/right-arrow.svg"></span>
+                                            <span><img   *ngIf="Tasks?.isPredecessortask" src="../../../../../assets/images/iconsForsvg/left-arrow.svg"></span>
+                                        </div>
+                                      </div>
+                                </div>
+                                <div style="width: 20%;text-align: start;font-weight: 900;" (click)="opentaskDialog(Tasks?.id)">
+                                    <b>{{get30TenCharacters(Tasks?.title)}}</b>
+                                </div>
+                                <div style="width: 10%;text-align: center;">
+                                    {{Tasks?.endDate|date:'dd-MMM-yyyy'}}
+                                </div>
+                                <div style="width: 10%;text-align: center;">
+                                    <span [ngClass]="getStatusColorClass(Tasks?.status)">{{getstatus(Tasks?.status)}}</span>
+                                </div>
+                                <div style="width: 15%;text-align: center; margin-top: -10px;">
+                                    <div class="row justify-content-center" style="width: 200px;">
+                                        <div class="col-12" style="text-align: center;">{{Tasks?.progress+'%'}}</div>
+                                        <div class="col-12">
+                                            <mat-progress-bar class="w-100" [value]="Tasks?.progress"
+                                                [ngClass]="assignCssClass(Tasks?.progress)">
+                                            </mat-progress-bar>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="width: 15%;text-align: start;padding-left: 20px;padding-top: 10px;">
+                                    <span *ngIf="Tasks?.duration!=0&&Tasks?.duration!=''">
+                                        <mat-icon>av_timer</mat-icon> {{Tasks?.duration}}
+                                    </span>
+                                </div>
+                                <div style="width: 20%;text-align: center;">
+                                    <div *ngFor="let x of Tasks?.assignees" style="display: flex;justify-content: start;">
+                                        <img class="avatar" style="border-radius: 50%;margin-top:6px"
+                                        onError="this.src='assets/avatar.svg'" 
+                                        [src]="x?.profile ? x. profile:'assets/avatar.svg'">
+                                        <span style="margin-top: 15px; font-weight: 900;">{{x.firstName+' '+x.lastName}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                
+                            <div *ngIf="Tasks?.expanded" class="panel-content p-0">
+                                <div class="accordion mt-2 stepandtasktable" >
+                                    <div *ngFor="let subtask of subtasklist[index]; let index=index;"  class="panel">
+                                        <div style="display: flex;font-weight: 900; margin-top: 15px;margin-bottom: 20px;border-bottom: 1px solid lightgray;">
+                                            <div style="width: 10%;">
+                                                <div style="display: flex;">
+                                                    <div>
+                                                        <mat-icon  style="color: green;" > assignment_turned_in</mat-icon>
+                                                    </div>
+                                                        <div>
+                                                            <span><img *ngIf="subtask?.isparent" src="../../../../../assets/images/iconsForsvg/up_arrow.svg"></span>
+                                                            <span><img  *ngIf="subtask?.isSuccessortask" src="../../../../../assets/images/iconsForsvg/right-arrow.svg"></span>
+                                                            <span><img  *ngIf="subtask?.isPredecessortask" src="../../../../../assets/images/iconsForsvg/left-arrow.svg"></span>
+                                                        </div>
+                                                   </div>
+                                            </div>
+                                            <div style="width: 20%;text-align: start;" (click)="opentaskDialog(subtask?.id)">
+                                                <b>{{get30TenCharacters(subtask?.title)}}</b>
+                                            </div>
+                                            <div style="width: 10%;text-align: center;">
+                                                {{subtask?.endDate|date:'dd-MMM-yyyy'}}
+                                            </div>
+                                            <div style="width: 10%;text-align: center;">
+                                                <span [ngClass]="getStatusColorClass(subtask?.status)">{{getstatus(subtask?.status)}}</span>
+                                            </div>
+                                            <div style="width: 15%;text-align: center; margin-top: -10px;">
+                                                <div class="row justify-content-center" style="width: 200px;">
+                                                    <div class="col-12" style="text-align: center;">{{subtask?.progress+'%'}}</div>
+                                                    <div class="col-12">
+                                                        <mat-progress-bar class="w-100" [value]="subtask?.progress"
+                                                            [ngClass]="assignCssClass(subtask?.progress)">
+                                                        </mat-progress-bar>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div style="width: 15%;text-align: center;padding-left: 20px;padding-top: 10px;">
+                                                <mat-icon>av_timer</mat-icon>
+                                                {{subtask?.duration}}
+                                            </div>
+                                            <div style="width: 20%;text-align: center;">
+                                                <div *ngFor="let x of subtask?.assignees" style="display: flex;justify-content: start;">
+                                                    <img class="avatar" style="border-radius: 50%;margin-top:6px"
+                                                    onError="this.src='assets/avatar.svg'" 
+                                                    [src]="x?.profile ? x. profile:'assets/avatar.svg'">
+                                                    <span style="margin-top: 15px; font-weight: 900;">{{x.firstName+' '+x.lastName}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="subtask?.expanded" class="panel-content p-0">
+                                            <!-- {{ Tasks?.name }} -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="!KanbanView" >
+                <div class="row">
+                    <div class="col-11">
+                        <mat-paginator [pageSize]="NumberOfRecord" [length]="Initiativeslength" (page)="next($event)"></mat-paginator> 
+                    </div>
+                </div>
+            </ng-container>
+         </ng-container>
+
+        <span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+            <button  *ngIf="!KanbanView" style="border-radius: 50%;width: 56px; height: 56px;background-color: green;border: none;">
+                <img src="../../../../assets/images/iconsForsvg/view_kanban.svg"(click)="changeKanbanView()"
+             style="width: 30px; height: 30px;border-radius: 50%; object-fit: fill;cursor: pointer;">
+            </button>
+           <button *ngIf="KanbanView" style="border-radius: 50%;width: 56px;height: 56px;background-color: green;border: none;" >
+            <img src="../../../../assets/images/iconsForsvg/list_View.svg"  (click)="changeKanbanView()"
+            style="width: 30px; height: 30px;border-radius: 50%; object-fit: fill;cursor: pointer;">
+           </button><br><br> 
+            <button *ngIf="!KanbanView" matTooltip="searchandfiltrer" (click)="searchandfiltrer()" id="add-button1" mat-fab>
+                <mat-icon style="color: white;">search</mat-icon>
+            </button><br *ngIf="!KanbanView"><br *ngIf="!KanbanView">
+            <button *ngIf="KanbanView" matTooltip="searchandfiltrer" (click)="searchInitiativeKanban()" id="add-button1" mat-fab>
+                <mat-icon style="color: white;">search</mat-icon>
+            </button><br *ngIf="KanbanView"><br *ngIf="KanbanView">
+            <button matTooltip="Add Initiatives" (click)="createInitiatives('','Create')" id="add-button2" mat-fab>
+                <mat-icon style="color: white;">add</mat-icon>
+            </button><br><br>
+            <button *ngIf="showicon" matTooltip="delete Search" id="add-button1" mat-fab
+                (click)="closesearch('single')">
+                <mat-icon style="color: white;">delete_forever</mat-icon>
+            </button>
+
+        </span>
+    </mat-tab>
+
+   <!-- user groups  -->
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tabclas">
+                <mat-icon [ngClass]="{
+                    'btn-blue': tabnumber == 1 
+                  }">people</mat-icon>
+                <span>{{'Groups'|translate}}</span>
+            </div>
+        </ng-template>
+        <div class="tab-container  p-2 mt-2">
+            <mat-accordion>
+                <mat-expansion-panel *ngFor="let group of userData; let index=index;" hideToggle>
+                    <mat-expansion-panel-header style="height:60px;">
+                        <mat-panel-title>
+                            <div id="main" style="margin: 10px;">
+                                <div>
+                                    <mat-icon style="margin-top:10px;" [matBadge]="group.usersCount"
+                                        matBadgeColor="warn"
+                                        [ngStyle]="{'color':(group.dynamicGroupId ==null)?'red':'blue'}">group</mat-icon>
+                                </div>
+                                <div>
+                                    <div style="margin-top:12px">
+                                        <span class="ml-4 fw-600">{{ group.name|titlecase}}</span>
+                                        <span>{{' '+group.position|titlecase}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-panel-title>
+                        <mat-panel-description class="d-flex flex-row justify-content-end">
+                            <div>
+                                <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                                    <mat-icon class="icon-options">more_vert</mat-icon>
+                                </button>
+                                <mat-menu #moreMenu="matMenu" class="eventlist">
+                                    <ng-template matMenuContent>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon class="icon-options">edit</mat-icon>
+                                            <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon class="icon-options">delete</mat-icon>
+                                            <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon>event</mat-icon>
+                                            <span class="fw-600 color_black">{{'Create an Event'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon style="color:green">bar_chart</mat-icon>
+                                            <span class="fw-600 color_black">{{'Create an Activity Report'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon>wb_incandescent</mat-icon>
+                                            <span class="fw-600 color_black">{{'Create Stratergy'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon>track_changes</mat-icon>
+                                            <span class="fw-600 color_black">{{'Create Target'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon style="color:rgb(66,135,245) ;">
+                                                insert_drive_file</mat-icon>
+                                            <span class="fw-600 color_black">{{'Add File'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600" mat-menu-item>
+                                            <mat-icon style="color:rgb(255,193,111) ;"> speaker_notes </mat-icon>
+                                            <span class="fw-600 color_black">{{'Add Note'|translate}}</span>
+                                        </button>
+                                        <button class="fw-600 " mat-menu-item>
+                                            <img src="../../../../assets/images/iconsForsvg/share-square-1.svg" alt="">
+                                            <span class="fw-600 color_black" style="margin-left:24px;">
+                                                {{'Group Share'|translate}}</span>
+                                        </button>
+                                    </ng-template>
+                                </mat-menu>
+                            </div>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <mat-list>
+                        <div class="f-weight" mat-subheader *ngFor="let user of userData">
+                            <div class="avatar" style="cursor: pointer;">
+                                <img class="avatar" onError="this.src='assets/avatar.svg'"
+                                    [src]="user?.profile ? user. profile:'assets/avatar.svg'">
+                            </div><span style="cursor: pointer;">{{user.name |titlecase}} </span>
+                        </div>
+                    </mat-list>
+                </mat-expansion-panel>
+            </mat-accordion>
+            <span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+                <button id="add-button1" mat-fab>
+                    <mat-icon style="color: white;">search</mat-icon>
+                </button><br><br>
+                <button id="add-button2" mat-fab>
+                    <mat-icon style="color: white;">add</mat-icon>
+                </button><br><br>
+                <button *ngIf="showicon" matTooltip="delete Search" id="add-button1" mat-fab>
+                    <mat-icon style="color: white;">delete_forever</mat-icon>
+                </button>
+            </span>
+        </div>
+    </mat-tab>
+
+</mat-tab-group>
+
+<div class="overlay" *ngIf="loader">
+    <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+    </mat-progress-spinner>
+</div>

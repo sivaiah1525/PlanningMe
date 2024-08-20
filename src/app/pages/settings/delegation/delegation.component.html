@@ -1,0 +1,70 @@
+<div class="row mt-2 ">
+    <div class=" p-2 col-xl-3 col-lg-3 col-md-3 col-sm-3 ">
+        <div class="row p-2 pointer" [ngClass]="{'grey' : list.id == id, 'white' :list.id != id}"
+            *ngFor="let list of listDetails">
+            <button class="sideMenu" (click)="getListDetails(list.id);">{{list.rightsName|translate}}</button>
+        </div>
+    </div>
+
+    <!-- Search Remove Filter  -->
+    <mat-divider [vertical]="true"></mat-divider>
+    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8" style="overflow-y: scroll;" [style.height.px]="Height">
+        <div class="row">
+            <div class="col-9 col-sm-9  col-md-9 col-lg-8 col-xl-8">
+                <mat-form-field class="w-100">
+                    <input matInput [(ngModel)]="singleSearchValue" placeholder="Search">
+                    <mat-icon matSuffix class="pointer searchicon"
+                        (click)="applyFilter(singleSearchValue)">search</mat-icon>
+                </mat-form-field>
+            </div>
+            <div class="col-4" *ngIf="showicon == true">
+                <button mat-raised-button class="b-blue" (click)="closesearch('single')">{{"Remove Filter"|translate}}</button>
+            </div>
+            <div class="col-3 col-sm-3  col-md-3 col-lg-4 col-xl-4">
+                <button mat-raised-button class="b-blue" (click)="applyDelegation()">
+                    {{"Apply"|translate}}
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <!-- -------------  -->
+            <div class="row" *ngIf="Discountshow == false">
+                <div class=" col-12 col-xl-6 col-lg-6 col-md-6 col-sm-6" *ngFor="let list of users; let i = index">
+                    <div class="row pointer">
+                        <mat-checkbox class="m-t-14" (change)="getuserid($event, list)" [checked]="list.isDelegated">
+                            <div class="avatar f-weight">
+                                <img class="avatar"
+                                    [src]="list?.profilePicture ? list.profilePicture:'assets/avatar.svg'"
+                                    onError="this.src='assets/avatar.svg'">
+                                <span>{{list.firstName+' '+list.lastName|titlecase}}</span>
+                            </div>
+                        </mat-checkbox>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="Discountshow == true">
+                <div class="col-12 col-xl-6 col-lg-6 col-md-6 col-sm-6" *ngFor="let list of users; let i = index">
+                    <div class="row pointer">
+                        <div class="col-12">
+                            <b class="m-t-19 w-100">
+                                <img class="avatar f-weight" [src]="list?.profile ? list.profile:'assets/avatar.svg'"
+                                    style="border-radius: 16px;" onError="this.src='assets/avatar.svg'">
+                                <span>{{list.firstName+' '+list.lastName|titlecase}}</span>
+                            </b>
+                        </div>
+                        <div class="col-12">
+                            <div class="row">
+                                <mat-form-field>
+                                    <input matInput type="number" min="0" max="100"
+                                        placeholder="Discount Percentage (%)" [ngModelOptions]="{standalone: true}"
+                                        [(ngModel)]="list.discount">
+                                </mat-form-field>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

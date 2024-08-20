@@ -1,0 +1,94 @@
+<div class="row m-2 p-2 cardbody" id="strategy">
+  <div class="col-12  col-sm-12 col-md-6 col-lg-6 col-xl-4 pr-0 pl-0 p-1" *ngFor="let r of result; let i =index">
+    <mat-card class="cardsize">
+      <mat-card-header>
+        <mat-card-title>
+          <p class="m-t-5 f-weight">{{r.name | titlecase }}</p>
+          <mat-divider class="divider"></mat-divider><br>
+          <p class="color f-weight">{{"Description"|titlecase}} : {{r.description | titlecase }} </p>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="row">
+          <div class="col-10">
+            <mat-list>
+              <mat-chip-list>
+                <mat-chip class="chip" *ngIf="r.conditionCount > 1">{{r.conditionCount}} {{"Conditions"|titlecase}}</mat-chip>
+                <mat-chip class="chip" *ngIf="r.conditionCount == 1">{{r.conditionCount}} {{"Condition"|titlecase}}</mat-chip>
+              </mat-chip-list>
+            </mat-list>
+          </div>
+          <div class="col-2">
+            <mat-icon [matMenuTriggerFor]="moreMenu">more_vert</mat-icon>
+            <mat-menu #moreMenu="matMenu" class="eventlist">
+              <ng-template matMenuContent>
+                <button mat-menu-item (click)="editstratergy(r)">
+                  <mat-icon class="icon-options">edit</mat-icon> <b>{{"Edit"|titlecase}}</b>
+                </button>
+                <button mat-menu-item (click)="deleteDialogConfirmation(r,'deletestategy')">
+                  <mat-icon class="icon-options">delete</mat-icon><b>{{"Delete"|titlecase}}</b>
+                </button>
+              </ng-template>
+            </mat-menu>
+          </div>
+        </div>
+
+        <div class=" mt-2 height-116">
+          <div class="row m-t-5" >
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Parameter</th>
+                  <th scope="col">Comparator</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let condition of r.strategyCondition">
+                  <td>{{condition.conditionDropDownList}}</td>
+                  <td>{{condition.conditionParameter}}</td>
+                  <td style="text-align: center !important;">{{condition.conditionComparison}}</td>
+                  <td>{{condition.value}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row m-t-5  width-100">
+          <span class="strategy-list m-l-12 "
+            [ngClass]="{'grey' : r.sendAnEmail === false, 'secondary' : r.sendAnEmail === true}">{{"Email"|titlecase}}</span>
+          <span class="strategy-list primary m-l-12">{{r.strategyTypeName}}</span>
+          <span class="strategy-list secondary m-l-12"
+            [ngClass]="{'grey' :  r.notification === false, 'tertiary' : r.notification === true}"
+            r.notification>{{"Notification"|titlecase}}</span>
+        </div>
+        <div class="row m-t-10  width-100" >
+          <span class="strategy-list m-l-12 "
+            [ngClass]="{'grey' : r.isCreateAlert === true, 'secondary' : r.isCreateAlert === false}">{{"Create"|titlecase}}</span>
+            <span class="strategy-list m-l-12 "
+            [ngClass]="{'primary' : r.isUpdateAlert === true, 'secondary' : r.isUpdateAlert === false}">{{"Update"|titlecase}}</span>
+            <span class="strategy-list m-l-12 "
+            [ngClass]="{'danger' : r.isDeleteAlert === true, 'secondary' : r.isDeleteAlert === true}">{{"Delete"|titlecase}}</span>
+       
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+
+
+
+
+
+<button mat-fab color="primary" class="fab-table-group" (click)="createStrategyDialog()">
+  <mat-icon style="color: white;">add</mat-icon>
+</button>
+<footer>
+  <mat-paginator #paginator [length]="length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+    (page)="onPageChange($event)">
+  </mat-paginator>
+</footer>
+
+

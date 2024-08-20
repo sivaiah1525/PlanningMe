@@ -1,0 +1,337 @@
+<div class="d-flex flex-row align-items-center modal-header">
+  <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Confirmation</h2>
+</div>
+<mat-dialog-content class="mr-0 ml-0" style="width: 400px;">
+
+  <ng-container *ngIf="!DemoOrganation">
+    <div class="row mt-2">
+      <h3 style="text-align: center;">Are you sure you want to delete?</h3>
+    </div>
+    <ng-container *ngIf="type=='deleteorder'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteorder()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deleteTransation'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteTransation()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deletediscount'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deletediscount()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deleteContact'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteContact()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deleteContactGroup'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteContactGroup()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+  
+    <ng-container *ngIf="type=='deleteSite'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteSite()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deleteSiteGroup'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteSiteGroup()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+  
+    <ng-container *ngIf="type=='deleteProduct'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteProduct()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deleteProductGroup'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteProductGroup()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <!-- deleteUserTarget  -->
+    <ng-container *ngIf="type=='deleteUserTarget'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="DeleteTarget()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <!-- deleteContacttarget -->
+    <ng-container *ngIf="type=='deleteContacttarget'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="DeleteTarget()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <!-- deleteSitetarget  -->
+    <ng-container *ngIf="type=='deleteSitetarget'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="DeleteTarget()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <!-- deleteProducttarget  -->
+    <ng-container *ngIf="type=='deleteProducttarget'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="DeleteTarget()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deleteUser'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteUser()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deleteUserGroup'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteUserGroup()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+  
+    <ng-container *ngIf="type=='DiscountFromManagement'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="DiscountFromManagement()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deleteEvent'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteEvent()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deletefileAndNote'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deletefileAndNote()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deletecategroy'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deletecategroy()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deletestategy'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deletestategy()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='removetag'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="removetag()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deleteChart'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteChart()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+  
+    <ng-container *ngIf="type=='DeleteSubNote'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="DeleteSubNote()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deleteconfiguration'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteconfiguration()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deletedynamickeywords'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deletedynamickeyword()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='Deletesuycaccount'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="Deletesuycaccount()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="type=='deleteTask'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteTask()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="type=='deleteInitiatives'">
+      <div class="row mb-2 justify-content-center">
+        <div class="col-4">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="R-blue" (click)="deleteInitiatives()">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngIf="type=='deletepipeforInitiative'">
+    <div class="row mb-2 justify-content-center">
+      <div class="col-4">
+        <button mat-raised-button mat-dialog-close>Cancel</button>
+      </div>
+      <div class="col-4">
+        <button mat-raised-button class="R-blue" (click)="deletepipeforInitiative()">Delete</button>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="type=='deletepipeforTask'">
+    <div class="row mb-2 justify-content-center">
+      <div class="col-4">
+        <button mat-raised-button mat-dialog-close>Cancel</button>
+      </div>
+      <div class="col-4">
+        <button mat-raised-button class="R-blue" (click)="deletepipeforTask()">Delete</button>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="DemoOrganation">
+    <div class="row mt-2">
+      <h3 style="text-align: center;">Are you sure you want to delete?</h3>
+    </div>
+  
+    <div class="row mb-2 justify-content-center">
+      <div class="col-4">
+        <button mat-raised-button mat-dialog-close>Cancel</button>
+      </div>
+      <div class="col-4">
+        <button mat-raised-button class="R-blue"
+          (click)="popupforerrormessage('This button allows  to Delete',type)">Delete</button>
+      </div>
+    </div>
+  </ng-container>
+
+</mat-dialog-content>

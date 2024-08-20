@@ -1,0 +1,227 @@
+<div class="container">
+    <mat-card class="mat-elevation-z0">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+            <mat-card-content class="m-0">
+                <div class="row justify-content-center">
+                    <!-- 11111111  -->
+                    <div class="col-3 mt-4 justify-content-start">
+                        <button mat-raised-button class="B-blue" (click)="shownotifications()">{{'Notifications'|translate}}</button>
+                       </div>
+                       <!-- 222222222  -->
+                    <div class="col-2">
+                        <div class="avatar">
+                            <img class="imgclass"
+                                [src]="user?.profilePicture ?user?.profilePicture:'assets/avatar.svg'">
+                        </div>
+                        <span style="bottom: -10px;position: relative;left: 90px;">
+                            <mat-icon class="icon-options" [matMenuTriggerFor]="menu">more_vert</mat-icon>
+                        </span>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item>
+                            <mat-icon class="icon-options"> edit </mat-icon> <span class="fw-600 color_black">{{"Update"|translate}}</span> 
+                            <input class="editfileselaction" (change)="onFileChange($event,chooseOption)" type="file" />
+                        </button>
+                        <button mat-menu-item>  
+                            <mat-icon class="icon-options"> delete </mat-icon>
+                            <span class="fw-600 color_black">{{"Delete"|translate}}</span>
+                        </button>
+                      </mat-menu>
+                    </div>
+                    <!-- 333333333  -->
+                    <div class="col-3 mt-4 justify-content-start">
+                        <button mat-raised-button class="B-blue" (click)="updatePassword()">{{'Update Password'|translate}}</button>
+                       </div>
+                </div>
+                <!-- 000000000000000  -->
+                <div class="row m-t-74">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                        <mat-form-field appearance="legacy" class="w-100">
+                            <mat-label>{{'First Name'|translate}}</mat-label>
+                            <input matInput type="text"  formControlName="firstName">
+                            <mat-error *ngIf="form.controls['firstName'].hasError('required')">
+                                {{"First Name is required"|translate}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                        <mat-form-field appearance="legacy" class="w-100">
+                            <mat-label>{{"Last Name"|translate}}</mat-label>
+                            <input matInput type="text"  formControlName="lastName">
+                            <mat-error *ngIf="form.controls['lastName'].hasError('required')">
+                                {{"Last Name is required"|translate}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <!-- 1111111111111  -->
+                <div class="row">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                        <mat-form-field appearance="legacy" class="w-100">
+                            <mat-label>{{"Position"|translate}}</mat-label>
+                            <input matInput type="text" formControlName="fonction">
+                            <mat-error *ngIf="form.controls['fonction'].hasError('required')">
+                                {{"Position is required"|translate}}
+                            </mat-error>
+                        </mat-form-field>
+
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                        <mat-form-field appearance="legacy" class="w-100">
+                            <mat-label>{{"Email"|translate}}</mat-label>
+                            <input readonly matInput type="text"  formControlName="email">
+                            <mat-error *ngIf="form.controls['email'].hasError('required')">
+                                {{"Email is required"|translate}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- 22222222222222  -->
+                <div class="row">
+                    <div class="col-12">
+                        <mat-form-field appearance="legacy" class="w-100">
+                            <mat-label>{{"Phone Number"|translate}}</mat-label>
+                            <input matInput type="text" formControlName="phoneNumber">
+                            <mat-error *ngIf="form.controls['phoneNumber'].hasError('required')">
+                                {{'Phone Number is required'|translate}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>{{"Address"|translate}}</mat-label>
+                            <input ngx-google-places-autocomplete [options]='options' #placesRef="ngx-places"
+                                (onAddressChange)="handleAddressChange($event)" matInput type="text"
+                               formControlName="address">
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- 3333333333333333  -->
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>{{"Country"|translate}}</mat-label>
+                            <mat-select formControlName="country">
+                                <div class="mat-filter-field">
+                                    <input class="mat-filter-input-search" matInput placeholder="filter"
+                                        (input)="filterCountry($event.target.value)">
+                                </div>
+                                <div>
+                                    <mat-option [value]="country.name" (click)="selactcountry(country.code)"
+                                        *ngFor="let country of listofcountry$">
+                                        {{country.name|titlecase}}
+                                    </mat-option>
+                                </div>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                        <mat-form-field appearance="legacy" class="w-100">
+                            <mat-label>{{"City"|translate}}</mat-label>
+                            <input matInput type="text"  formControlName="city">
+                            <mat-error *ngIf="form.controls['city'].hasError('required')">
+                                {{'City is required'|translate}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12">
+                        <mat-form-field appearance="legacy" class="w-100">
+                            <mat-label>{{'Zip Code'|translate}}</mat-label>
+                            <input matInput type="text"  formControlName="zipCode">
+                            <mat-error *ngIf="form.controls['zipCode'].hasError('required')">
+                                {{'Zip Code is required'|translate}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                        <mat-form-field class="w-100">
+                            <mat-label>{{'Time zone'|translate}}</mat-label>
+                            <input matInput formControlName="timezone" >
+                        </mat-form-field>
+                    </div>
+                    <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                        <mat-form-field class="w-100" appearance="outline">
+                            <mat-label>{{'API KEY'|translate}}</mat-label>
+                            <input matInput readonly="true" [value]="APIKEY" >
+                            <mat-icon matSuffix>
+                                    <mat-icon (click)="ShowApiKeyWithPassword(chooseOptionforpassword)" *ngIf="ShowLock">lock</mat-icon>
+                                    <mat-icon *ngIf="!ShowLock" style="color: #528bf1;"(click)="copyMessage(APIKEY)">file_copy</mat-icon>
+                                </mat-icon>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </mat-card-content>
+            <mat-card-actions align="end">
+                <div class="row justify-content-center">
+                    <div class="col-4">
+                        <button mat-raised-button class="R-blue" >{{"Cancel Subscription"|translate}}</button>
+                    </div>
+                    <div class="col-4">
+                        <button mat-raised-button class="b-blue" (click)="updateuser()">{{'Update'|translate}}</button>
+                    </div>
+                </div>
+            </mat-card-actions>
+        </form>
+    </mat-card>
+</div>
+
+
+<ng-template #chooseOption>
+    <div class="d-flex flex-row align-items-center modal-header">
+        <mat-icon mat-dialog-close (click)="closedialogbox()">keyboard_backspace</mat-icon>
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{'Confirmation'|translate}}</h2>
+        <mat-icon mat-dialog-close (click)="closedialogbox()">close</mat-icon>
+    </div>
+        <div class="container">
+            <div class="row mt-2 mb-2 justify-content-start">
+                <div class="col-10">
+                    <h4>{{"Update Profile Image"|translate}}</h4>
+                </div>
+            </div>
+            <div class="row mb-2 justify-content-end">
+                <div class="col-4">
+                    <button mat-button mat-dialog-close (click)="closedialogbox()">{{"Cancel"|translate}}</button>
+                </div>
+                <div class="col-4">
+                    <button mat-raised-button class="b-blue" 
+                        (click)="uploadpicture()">{{"Apply"|translate}}</button>
+                </div>
+            </div>
+        </div>
+</ng-template>
+
+
+
+<ng-template #chooseOptionforpassword>
+    <div class="d-flex flex-row align-items-center modal-header">
+        <mat-icon mat-dialog-close (click)="closedialogbox()">keyboard_backspace</mat-icon>
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"Confirmation"|translate}}</h2>
+        <mat-icon mat-dialog-close (click)="closedialogbox()">close</mat-icon>
+    </div>
+        <div class="container">
+            <div class="row mt-2 mb-2 justify-content-start">
+                <div class="col-10">
+                        <mat-form-field class="w-100" class="example-full-width">
+                          <mat-label>{{"Password"|translate}}</mat-label>
+                          <input [(ngModel)]="password" matInput >
+                        </mat-form-field>
+                         </div>
+            </div>
+            <div class="row mb-2 justify-content-end">
+                <div class="col-4">
+                    <button mat-button mat-dialog-close (click)="closedialogbox()">{{"Cancel"|translate}}</button>
+                </div>
+                <div class="col-4">
+                    <button mat-raised-button class="b-blue" (click)="PasswordCheck()">{{'Apply'|translate}}</button>
+                </div>
+            </div>
+        </div>
+</ng-template>
+

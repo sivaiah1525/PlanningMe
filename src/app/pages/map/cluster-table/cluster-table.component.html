@@ -1,0 +1,33 @@
+<div>
+    <mat-dialog-content class="mr-0 ml-0 p-0">
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Type</th>
+                <th scope="col">Name</th>
+                <th scope="col">city</th>
+                <th scope="col">Country</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let x of ClusterTabledata">
+                <td (click)="showmapclickdetails(x)">
+                  <span *ngIf="x.type == 'Contacts'">
+                    <mat-icon role="img" class="mat-icon notranslate  mr-2 material-icons mat-icon-no-color color_blue"
+                      aria-hidden="true" >contacts</mat-icon>
+                  </span>
+                  <span *ngIf="x.type == 'Users'">
+                    <mat-icon role="img" class="mat-icon notranslate  mr-2 material-icons mat-icon-no-color "
+                      aria-hidden="true" >person</mat-icon>
+                  </span>
+                  <span *ngIf="x.type == 'Sites'">
+                    <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                  </span>
+              </td > 
+                <td (click)="showmapclickdetails(x)">{{x.title}}</td>
+                <td (click)="showmapclickdetails(x)">{{x.city}}</td>
+                <td>{{x.country}}</td>
+              </tr>
+            </tbody>
+          </table>
+    </mat-dialog-content>

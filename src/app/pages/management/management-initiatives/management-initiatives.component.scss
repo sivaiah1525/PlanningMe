@@ -1,0 +1,49 @@
+
+.arrow {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.up {
+  border-bottom: 5px solid black;
+    position: relative;
+    top: 30px;
+    left: 10px;
+
+}
+
+.down {
+  border-top: 5px solid black;
+  position: relative;
+  top: 50px;
+  left: 10px;
+
+}
+  
+  .panel-content {
+    display: none;
+  }
+  
+  .panel-content.ng-star-inserted {
+    display: block;
+  }
+
+  .table {
+    width: 100%;
+    margin-bottom: 0 !important; 
+    color: #212529;
+}
+
+
+
+
+
+
+.keywords{
+  background-color: lightgray;
+    padding: 5px 10px;
+    border-radius: 50px;
+}
+  

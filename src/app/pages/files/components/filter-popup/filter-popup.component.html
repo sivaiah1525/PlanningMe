@@ -1,0 +1,153 @@
+<div class="d-flex flex-row align-items-center modal-header">
+  <h2 mat-dialog-title class="m-0 dialog-title w-100">{{"Filter Files & Notes"|translate}}</h2>
+</div>
+<form [formGroup]="filterForm" class="margin-20">
+  <mat-dialog-content>
+    <div class="row">
+      <mat-radio-group formControlName="options">
+        <mat-radio-button checked="true" value="1">{{"Filter in My Files & Notes"|translate}}</mat-radio-button>
+        <mat-radio-button value="2">{{"Filter in My Organization"|translate}}</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <mat-form-field appearance="legacy" class="w-100">
+      <mat-label>{{"Title"|translate}}</mat-label>
+      <input matInput formControlName="title" />
+    </mat-form-field>
+
+    <section>
+      <mat-checkbox class="chck" formControlName="isFile">{{"File"|translate}}</mat-checkbox>
+    </section>
+
+    <section>
+      <mat-checkbox class="chck" formControlName="isNote">{{"Notes"|translate}}</mat-checkbox>
+    </section>
+
+    <mat-form-field appearance="fill" class="w-100 blue_bg">
+      <mat-label>{{"Attachment Level"|translate}}</mat-label>
+      <mat-select
+        formControlName="attachmentLevel"
+        (selectionChange)="onChanged($event)">
+        <mat-option *ngFor="let type of managementType" [value]="type.name">
+          {{ type.name|translate}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <ng-container *ngIf="selectedMgmt === 'user'">
+      <mat-form-field appearance="fill" class="w-80">
+        <mat-label>{{"Users"|translate}}</mat-label>
+        <mat-select
+          multiple
+          id="UserId"
+          formControlName="selectId">
+          <mat-select-filter
+            [placeholder]="'Filter'"
+            [displayMember]="'firstName'"
+            [array]="users$"
+            (filteredReturn)="filteredList1 = $event"></mat-select-filter>
+          <mat-option [value]="user.id" *ngFor="let user of filteredList1">
+            <img
+              style="border-radius: 50%"
+              width="30"
+              height="30"
+              [src]="
+                user.profilePicture != null
+                  ? user.profilePicture
+                  : 'assets/avatar.svg'
+              " />
+            {{ user.firstName + " " + user.lastName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+
+    <div *ngIf="selectedMgmt == 'sites'">
+      <mat-form-field appearance="fill" class="w-80">
+        <mat-label>{{"Sites"|translate}}</mat-label>
+        <mat-select
+          id="SiteId"
+          formControlName="selectId"
+          multiple>
+          <mat-select-filter
+            [placeholder]="'Filter'"
+            [displayMember]="'companyName'"
+            [array]="sites$"
+            (filteredReturn)="filteredList3 = $event"></mat-select-filter>
+          <mat-option [value]="site.id" *ngFor="let site of filteredList3">{{
+            site.companyName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div *ngIf="selectedMgmt == 'contacts'">
+      <mat-form-field appearance="fill" class="w-80">
+        <mat-label>{{"Contact"|translate}}</mat-label>
+        <mat-select
+          multiple
+          id="ContactId"
+          formControlName="selectId">
+          <mat-select-filter
+            [placeholder]="'Filter'"
+            [displayMember]="'firstName'"
+            [array]="contacts$"
+            (filteredReturn)="filteredList2 = $event"></mat-select-filter>
+          <mat-option
+            [value]="contact.id"
+            *ngFor="let contact of filteredList2">
+            <img
+              style="border-radius: 50%"
+              width="30"
+              height="30"
+              [src]="
+                contact.profilePicture != null
+                  ? contact.profilePicture
+                  : 'assets/avatar.svg'
+              " />
+            {{ contact.firstName + " " + contact.lastName }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="legacy" class="w-100">
+      <mat-label>{{"Start Date"|translate}}</mat-label>
+      <input
+        matInput
+        [matDatepicker]="startdatepicker1"
+        formControlName="startDate" />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="startdatepicker1"></mat-datepicker-toggle>
+      <mat-datepicker #startdatepicker1></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="legacy" class="w-100">
+      <mat-label>{{"End Date"|translate}}</mat-label>
+      <input
+        matInput
+        [matDatepicker]="enddatepicker"
+        formControlName="endDate" />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="enddatepicker"></mat-datepicker-toggle>
+      <mat-datepicker #enddatepicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="legacy" class="w-100">
+      <mat-label>{{"KeyWord"|translate}}</mat-label>
+      <input matInput  formControlName="keyWord" />
+    </mat-form-field>
+
+  </mat-dialog-content>
+  <mat-dialog-actions align="end" class="my-1">
+    <button mat-button mat-dialog-close>{{"Cancel"|translate}}</button>
+    <button
+      mat-raised-button
+      cdkFocusInitial
+      color="primary"
+      (click)="submit()">
+      {{"Apply"|translate}}
+    </button>
+  </mat-dialog-actions>
+</form>

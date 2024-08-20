@@ -1,0 +1,31 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"Synchronization"|translate}}</h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+
+<mat-dialog-content class="mr-0 ml-0">
+    <div class="row mt-3">
+        <div class="col-8">
+            <img  src="../../../../assets/images/iconsForsvg/google-calendar-svgrepo-com.svg"> 
+            <span style="margin-left: 5px;"><b>{{"Google Calender"|translate}}</b></span></div>
+        <div class="col-4">
+            <button mat-raised-button class="b-blue" (click)="GoogleCalenders()">
+             {{"Sync"|translate}}</button>
+        </div>
+    </div>
+    <div class="row mt-3 mb-4">
+        <div class="col-8">
+            <img  src="../../../../assets/images/iconsForsvg/icons8-outlook-calendar-96.svg">    
+             <span style="margin-left: 5px;"><b>{{"OutLook Calender"|translate}}</b></span></div>
+        <div class="col-4">
+            <button mat-raised-button class="b-blue" (click)="OutLookCalender()">
+                 {{"Sync "|translate}}</button>
+        </div>
+    </div>
+</mat-dialog-content>
+
+
+<div class="overlay" *ngIf="spinner">
+    <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+    </mat-progress-spinner>
+</div>

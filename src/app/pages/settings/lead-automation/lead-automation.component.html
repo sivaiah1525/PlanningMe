@@ -1,0 +1,50 @@
+<!-- 11111111  -->
+<!-- work flow  -->
+<section>
+	<div class="row m-0" style="height: 85vh !important;">
+		<div class="svg-area">
+			<svg class="full-screen">
+				<path *ngFor="let path of paths" class="svg-path" stroke-dasharray="7, 5" [attr.d]="getD(path)" />
+			</svg>
+				<div class="node" *ngFor="let node of nodes" cdkDrag  (cdkDragMoved)="handleDragMoved($event,node)" [cdkDragFreeDragPosition]="node.initialPosition">
+					<div class="circle">
+					<div style="color: white;" [ngStyle]="{'background-color': node.color}">
+						<div class="row p-1">
+							<div class="col-2">
+								<img *ngIf="node.type=='CreatePlan'" style="color: white !important;" class="titleimagestyle" src="../../../../assets/images/iconsForsvg/plan.svg" >
+								<img *ngIf="node.type=='CreateContiction'" class="titleimagestyle" src="../../../../assets/images/iconsForsvg/condition.svg" >
+								<img *ngIf="node.type=='CreateAction'" class="titleimagestyle" src="../../../../assets/images/iconsForsvg/Action.svg" >
+								</div>
+							<div class="col-8">
+								<input type="text" placeholder="Title" style="display: flex;width:99%;border: none;font-size:16px;background-color: transparent;color: white !important;" [(ngModel)]="node.data.Name"[value]="node.data.Name">
+							</div>
+							<div class="col-2">
+									<mat-icon style="color: white;" [matMenuTriggerFor]="menu">more_vert</mat-icon>
+							</div>
+						</div>
+					</div><br>
+						<div class="row p-1 m-1">
+								<input type="text" placeholder="Objective" style="display: flex;width: 99%;border: none;font-size:18px;background-color: transparent;" [(ngModel)]="node.data.Description"[value]="node.data.Description">
+						</div>
+					</div>
+					<mat-menu #menu="matMenu">
+						<button mat-menu-item #fileInput1 (click)="openPopup(node,'CreateContiction')">add Condition</button>
+						<button mat-menu-item #fileInput1 (click)="openPopup(node,'CreateAction')">add Action</button>
+						<button mat-menu-item (click)="Updatenodepotiont(node)">Update</button>
+						<button mat-menu-item (click)="Deletenodepotiont(node)">Delete</button>
+					</mat-menu>
+				</div>
+			</div>
+	</div>
+	</section>
+<!-- 22222222  -->
+<!-- apply button  -->
+
+<span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+	<button *ngIf="nodes.length!=0" id="add-button1" mat-fab (click)="getFinalflowchart()">
+		Save
+	</button><br>
+	<button *ngIf="nodes.length==0" id="add-button2" mat-fab (click)="startworkflow()">
+		<mat-icon style="color: white;">add</mat-icon>
+	</button>
+</span>

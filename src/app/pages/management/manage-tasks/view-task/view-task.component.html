@@ -1,0 +1,522 @@
+<div class="d-flex flex-row align-items-center modal-header">
+  <h2 *ngIf="!taskData?.isMileStone" mat-dialog-title
+    class="m-0 dialog-title text-center w-100">
+    <mat-icon style="position: relative;right: 10px;">
+      assignment_turned_in</mat-icon>
+    {{'Task Details'|translate}}
+  </h2>
+  <h2 *ngIf="taskData?.isMileStone" mat-dialog-title
+    class="m-0 dialog-title text-center w-100">
+    <img style="margin-right: 12px;"
+      src="../../../../../assets/images/iconsForsvg/nearby_white.svg">
+    {{'MileStone Details'|translate}}
+  </h2>
+  <mat-icon class="pointer" (click)="closepopup()">close</mat-icon>
+</div>
+<mat-dialog-content class="mr-0 ml-0">
+  <div class="row mt-2 mb-2">
+    <div class="col-5">
+    </div>
+    <div class="col-2" *ngIf="!taskData?.isMileStone">
+      <div style="display: flex;">
+        <img style="width: 40px;height: 50px;"
+          *ngIf="taskData?.isConvertedtoEvent"
+          src="../../../../../../assets/images/iconsForsvg/event_upcoming.svg">
+        <mat-icon style="font-size: 50px;color: green !important;">
+          assignment_turned_in</mat-icon>
+      </div>
+    </div>
+    <div class="col-2" *ngIf="taskData?.isMileStone">
+      <img style="margin-right: 12px;width:50px"
+        src="../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg">
+    </div>
+    <div class="col-5">
+      <button 
+        style="display: flex;justify-content: end;position: relative;left: 50px;"
+        [matMenuTriggerFor]="beforeMenu" class="mr-1 b-color">
+        <mat-icon class="icon-options">more_vert</mat-icon>
+      </button>
+
+      <mat-menu #beforeMenu="matMenu" xPosition="before">
+        <button mat-menu-item (click)="openEditdEventDialog(taskData?.id)">
+          <mat-icon>edit</mat-icon> {{'Edit'|translate}}
+        </button>
+        <button mat-menu-item
+          (click)="deleteDialogConfirmation(taskData,'deleteEvent')">
+          <mat-icon>delete</mat-icon> {{'Delete'|translate}}
+        </button>
+      </mat-menu>
+      <!-- </span> -->
+    </div>
+  </div>
+  <h2
+    style="text-align: center; align-items: center;margin-top: 20px !important; padding: 0 !important;">
+    <span> {{taskData?.title|titlecase}}</span>
+  </h2><br>
+
+  <section class="detail-wrapper" style="font-size: 16px !important;">
+    <mat-list-item
+      *ngIf="taskData?.status == 'Assigned'||taskData?.status == 'Completed'">
+      <div class="fw-600 row">{{'Progress'|translate}} :
+        <span class="ml-3 mb-2 fw-600 color_grey" style="width: 300px;">
+          <div class="row justify-content-center"
+            style="position: relative;top:-16px;">
+            <div class="col-12"
+              style="text-align: center;">{{taskData?.progress+'%'}}</div>
+            <div class="col-12">
+              <mat-progress-bar class="w-100" [value]="taskData?.progress"
+                [ngClass]="assignCssClass(taskData?.progress)">
+              </mat-progress-bar>
+            </div>
+          </div>
+        </span></div>
+    </mat-list-item>
+    <ng-container
+      *ngIf="taskData?.status=='Assigned'&& taskData?.hasStep==false">
+      <mat-list-item class="mt-4">
+        <mat-slide-toggle [checked]="taskData?.status == 'Completed'"
+          (change)="toggleTaskCompletion(taskData, '3')"
+          style="margin-bottom: 25px;">
+          <ng-container *ngIf="!taskData?.isMileStone">
+            <span
+              [ngClass]="{'border-box': taskData?.status != 'Completed', 'border-box-complete': taskData?.status == 'Completed'}">
+              {{ taskData?.status == 'Completed' ? 'Completed' :
+              'Complete The Task' }}
+            </span>
+          </ng-container>
+          <ng-container *ngIf="taskData?.isMileStone">
+            <span
+              [ngClass]="{'border-box': taskData?.status != 'Completed', 'border-box-complete': taskData?.status == 'Completed'}">
+              {{ taskData?.status == 'Completed' ? 'Completed' :
+              'Complete The MileStone' }}
+            </span>
+          </ng-container>
+        </mat-slide-toggle>
+      </mat-list-item>
+    </ng-container>
+
+    <ng-container *ngIf="taskData?.stepsCount!=0&& taskData?.hasStep==true">
+      <div>
+        <mat-form-field class="w-100">
+          <mat-label style="color: black !important;"><b>Update Step
+              Status</b></mat-label>
+          <mat-select>
+            <mat-option *ngFor="let steps of taskData?.stepsDto; let i = index"
+              [disabled]="steps.isDone"
+              (click)="Updatestepstatus(steps.id)" [value]="steps.id">
+              <span>{{steps.name}}</span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </ng-container>
+    <mat-list-item
+      *ngIf="taskData?.startDate!=null && taskData?.isMileStone != true">
+      <div class="fw-600"><b><mat-icon>event</mat-icon>
+          {{'Start date'|translate}} :</b>
+        <span class="ml-3 fw-600 color_grey"
+          *ngIf="taskData?.isConvertedtoEvent==true">{{taskData?.startDate|
+          date:'dd-MMM-yyyy H:mm'}}</span>
+        <span class="ml-3 fw-600 color_grey"
+          *ngIf="taskData?.isConvertedtoEvent==false">{{taskData?.startDate|
+          date:'dd-MMM-yyyy'}}</span>
+      </div><br>
+    </mat-list-item>
+
+    <mat-list-item
+      *ngIf="taskData?.endDate!=null || taskData?.isMileStone == true">
+      <div class="fw-600"><b><mat-icon>event</mat-icon> {{'End date'|translate}}
+          :</b>
+        <span class="ml-3 fw-600 color_grey"
+          *ngIf="taskData?.isConvertedtoEvent==true"> {{taskData?.endDate|
+          date:'dd-MMM-yyyy H:mm'}}</span>
+        <span class="ml-3 fw-600 color_grey"
+          *ngIf="taskData?.isConvertedtoEvent==false"> {{taskData?.endDate|
+          date:'dd-MMM-yyyy'}}</span>
+      </div><br>
+    </mat-list-item>
+
+    <mat-list-item
+      *ngIf="taskData?.endTime!=null && taskData?.isMileStone == true">
+      <div class="fw-600"><b><mat-icon>event</mat-icon> {{'End Time'|translate}}
+          :</b>
+        <span class="ml-3 fw-600 color_grey">{{taskData?.endTime}}</span>
+      </div>
+      <br>
+    </mat-list-item>
+
+    <mat-list-item>
+      <div class="fw-600"><b> <mat-icon
+            style="color: green;">group</mat-icon>{{'Public'|translate}}:</b>
+        <span class="ml-3 fw-600 color_grey">
+          <span *ngIf="taskData?.isPublic==true">{{'Yes'|translate}}</span>
+          <span *ngIf="taskData?.isPublic==false">{{'No'|translate}}</span>
+        </span>
+      </div><br>
+    </mat-list-item>
+
+    <mat-list-item *ngIf="taskData?.duration && taskData?.isMileStone != true">
+      <tr class="mt-2">
+        <td><b
+            class="fw-600 align_items_icon">{{'Duration'|translate}}:</b></td>
+        <td class="fw-600 color_grey">
+          <span>{{taskData?.duration}}</span>
+        </td>
+      </tr><br>
+    </mat-list-item>
+    <mat-list-item>
+      <tr class="mt-2">
+        <td><b class="fw-600 align_items_icon">{{'Status'|translate}}:</b></td>
+        <td>
+          <div style="display: flex;">
+            <div>
+              <span
+                [ngClass]="getStatusColorClass(taskData?.status)">{{getstatus(taskData?.status)}}</span>
+            </div>
+            <div>
+              <span style="position: relative;left: 10px;"
+                *ngIf="taskData?.status=='Completed'">
+                <mat-icon style="cursor: pointer;"
+                  (click)="toggleTaskCompletion(taskData, '1')">cached</mat-icon>
+                <span style="font-weight: 400px !important;position: relative;
+                  left: 10px;cursor: pointer;">{{taskData?.isMileStone==true?'Revert a MileStone Status':'Revert a Task Status'}}
+                </span>
+              </span>
+            </div>
+          </div>
+        </td>
+      </tr><br>
+    </mat-list-item>
+
+    <mat-list-item>
+      <tr class="mt-2">
+        <td><b
+            class="fw-600 align_items_icon">{{'Category'|translate}}:</b></td>
+        <td class="fw-600 color_grey">
+          <button [ngStyle]="{'background':taskData?.color}"
+            class="Categorystyle">
+            <span> {{taskData?.categoryName|titlecase}}</span></button>
+        </td>
+      </tr><br>
+    </mat-list-item>
+    <mat-list-item *ngIf="taskData?.hasStep&&taskData?.pipelineName">
+      <tr class="mt-2">
+        <td><b
+            class="fw-600 align_items_icon">{{'pipelineName'|translate}}:</b></td>
+        <td class="fw-600 color_grey">
+          <span>{{taskData?.pipelineName}}</span>
+        </td>
+      </tr><br>
+    </mat-list-item>
+
+    <mat-list-item>
+      <tr class="mt-2">
+        <td><b
+            class="fw-600 align_items_icon">{{'Critic level'|translate}}:</b></td>
+        <td class="fw-600 color_grey">{{taskData?.criticityName|titlecase}}</td>
+      </tr><br *ngIf="taskData?.getKeyword != '' ">
+    </mat-list-item>
+    <div *ngIf="taskData?.getKeyword != '' ">
+      <div><b class="fw-600 align_items_icon">{{'keywords'|translate}}:</b>
+        <span class="fw-600 color_grey ml-3"
+          *ngFor="let x of taskData?.keywords ;let i=index">
+          <button class="normalkeyword">
+            <span>{{'#'+' '+x|titlecase}}</span>
+          </button>
+        </span>
+
+      </div>
+
+    </div><br>
+    <mat-list-item *ngIf="taskData?.description != ''">
+      <tr>
+        <td><b>{{'Description'|translate}}:</b></td>
+        <td class="fw-600 color_grey"><span
+            class="formatTextLine">{{taskData?.description}}</span></td>
+      </tr><br>
+    </mat-list-item>
+    <mat-list-item>
+      <tr>
+        <td><b>
+            <mat-icon>ballot</mat-icon> {{'Initiatives'|translate}} :</b></td>
+        <td class="pointer fw-600 color_grey" (click)="findInitiativeLinked(taskData?.initiativeCount)">
+          {{taskData?.initiativeCount}} {{"Initiatives" | translate}}</td>
+      </tr><br>
+    </mat-list-item>
+    <div *ngIf="showinitiative"
+        [ngClass]="{'auto_height': taskData?.initiativeCount > 4,'overflow': taskData?.initiativeCount < 4 }">
+        <div class="row float-l pointer fw-600 color_grey" *ngFor="let initiative of assignedInitiatives">
+          <div style="width: 200px; margin: 0 !important;">
+            <span class="m-l-28" (click)="openInitiativeDialog(initiative, 'initiative')">
+              <img style="border-radius: 50%;" width="30" height="30"
+                [src]="initiative.profile ? initiative.profile :'assets/avatar.svg'"></span>
+            <span style="padding-left:10px" (click)="openInitiativeDialog(initiative, 'initiative')">
+              {{initiative.name|titlecase}}
+            </span>
+          </div>
+        </div>
+      </div>
+    <mat-list-item>
+      <tr>
+        <td><b>
+            <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+            {{' Site'|translate}} :</b></td>
+        <td class="pointer fw-600 color_grey"
+          (click)="openSiteDialog(taskData?.siteId, 'site')">
+          {{taskData?.siteName!=null ? taskData?.siteName
+          : '-' |titlecase}}</td>
+      </tr><br>
+    </mat-list-item>
+    <mat-list-item>
+      <tr>
+        <td><b>
+            <mat-icon>people</mat-icon> {{'Team'|translate}} :</b></td>
+        <td class="pointer fw-600 color_grey"
+          (click)="findUserLinked(taskData?.usersCount)">{{taskData?.usersCount+1}}
+          {{"Users" | translate}}</td>
+      </tr><br>
+    </mat-list-item> 
+    <div *ngIf="showusers"
+      [ngClass]="{'auto_height': taskData?.usersCount > 4,'overflow': taskData?.usersCount < 4 }">
+      <!-- creater  -->
+      <div class="row  m-t-10 m-b-10 600 color_grey"*ngIf="taskData?.taskCreatorId!=null ">
+        <span class="m-l-28">
+          <img style="border-radius: 50%; cursor: pointer;" width="30"
+            height="30" onError="this.src='assets/avatar.svg'"
+            [src]="taskData?.taskCreatorProfile ? taskData?.taskCreatorProfile :'assets/avatar.svg'">
+        </span>
+        <span class="p-l-10 fw-600 color_grey"style="cursor: pointer;font-size: 16px;">
+          {{taskData?.taskCreatorFirstName+' '+taskData?.taskCreatorLastName}}
+          <span class="border-box1">Creator</span>
+        </span>
+      </div>
+
+      <!-- user list  -->
+        <div class="row  m-t-10 m-b-10 600 color_grey" *ngFor="let user of assignedUser">
+          <span class="m-l-28">
+            <img style="border-radius: 50%; cursor: pointer;" width="30" height="30" onError="this.src='assets/avatar.svg'"
+              (click)="openUserDialog(user, 'user')"  [src]="user?.profile ? user?.profile :'assets/avatar.svg'">
+            </span>
+          <span class="p-l-10 fw-600 color_grey" style="cursor: pointer;font-size: 16px;"
+            (click)="openUserDialog(user, 'user')">
+            {{user?.firstName|titlecase}} {{user?.lastName|titlecase}}</span><span class="border-box">Assignee</span>
+        </div>
+    </div>
+      <mat-list-item>
+        <tr>
+          <td><b>
+              <mat-icon style="color: #6495ed;">contacts</mat-icon> {{'Contacts'|translate}} :</b></td>
+          <td class="pointer fw-600 color_grey" (click)="findContactLinked(taskData?.contactsCount)">
+            {{taskData?.contactsCount}} {{"Contacts" | translate}}</td>
+        </tr><br>
+      </mat-list-item>
+      <div *ngIf="showcontact"
+          [ngClass]="{'auto_height': taskData?.contactsCount > 4,'overflow': taskData?.contactsCount < 4 }">
+          <div class="row float-l pointer fw-600 color_grey" *ngFor="let contact of assignedContact">
+            <div style="width: 200px; margin: 0 !important;">
+              <span class="m-l-28" (click)="openContactDialog(contact, 'contact')">
+                <img style="border-radius: 50%;" width="30" height="30"
+                  [src]="contact.profile ? contact.profile :'assets/avatar.svg'"></span>
+              <span style="padding-left:10px" (click)="openContactDialog(contact, 'contact')">
+                {{contact.firstName|titlecase}} {{contact.lastName|titlecase}}
+              </span>
+            </div>
+          </div>
+        </div>
+      <mat-list-item>
+        <tr class="mt-2">
+          <td><b>
+              <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon> {{'Files'|translate}}:</b></td>
+              <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+              [ngClass]="{'color_grey': taskData?.filesCount > 0,'name_red': taskData?.filesCount == 0 }">
+              {{taskData?.filesCount}}
+              {{taskData?.filesCount > 1 ? 'Files' : 'File'}}</span>
+        </tr><br>
+      </mat-list-item>
+      <mat-list-item>
+        <tr class="mt-2">
+          <td><b>
+              <mat-icon style="color:rgb(255,193,111) ;">speaker_notes</mat-icon> {{'Notes'|translate}}:
+            </b></td>
+            <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+            [ngClass]="{'color_grey': taskData?.notesCount > 0,'name_red': taskData?.notesCount == 0 }">
+            {{taskData?.notesCount}}
+            {{taskData?.notesCount > 1 ? 'Notes' : 'Note'}}</span>
+        </tr><br>
+      </mat-list-item>
+      <!-- <mat-list-item>
+        <tr class="mt-2">
+          <td><b>
+              <mat-icon style="color: red ;">event</mat-icon> {{'Events'|translate}}:</b></td>
+              <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+              [ngClass]="{'color_grey': taskData?.eventsCount > 0,'name_red': taskData?.eventsCount == 0 }">
+              {{taskData?.eventsCount}}
+              {{taskData?.eventsCount > 1 ? 'Events' : 'Event'}}</span>
+        </tr><br>
+      </mat-list-item> -->
+      <!-- predecessor  -->
+      <mat-list-item *ngIf="taskData?.predecessorTaskcount!=0">
+        <tr class="mt-2">
+          <td><b>
+              <span><img
+                  src="../../../../../assets/images/iconsForsvg/left-arrow.svg"></span>
+              {{'predecessor'|translate}}:</b></td>
+          <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+            (click)="getlinkedpredecessor(taskData)"
+            [ngClass]="{'color_grey': taskData?.predecessorTaskcount > 0,'name_red': taskData?.predecessorTaskcount == 0 }">
+            {{taskData?.predecessorTaskcount}}
+            {{taskData?.predecessorTaskcount > 1 ? 'predecessors' :
+            'predecessor'}}</span>
+        </tr><br>
+      </mat-list-item>
+
+      <div class="col-12 pointer mb-2" *ngIf="showpredecessor"
+        [ngClass]="{'auto_height': taskData?.predecessorTaskcount > 4, 'overflow': taskData?.predecessorTaskcount < 4}">
+        <div *ngFor="let predecessor of predecessorlist; let i = index">
+          <div style="display: flex;margin-bottom: 5px;">
+            <div style="width: 60%;">
+              <div style="display: flex">
+                <div>
+                  <mat-icon *ngIf="!predecessor?.isMilesStone"
+                    style="color: green !important;">
+                    assignment_turned_in</mat-icon>
+                  <img *ngIf="predecessor?.isMilesStone"
+                    style="margin-right: 12px;width:50px"
+                    src="../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg">
+                </div>
+                <div>
+                  <span class="fw-600 color_grey"
+                    (click)="opentaskDialog(predecessor.taskId)">
+                    {{ get50TenCharacters(predecessor.title)}}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- successor  -->
+      <mat-list-item *ngIf="taskData?.successorTaskCount!=0">
+        <tr class="mt-2">
+          <td><b>
+              <span><img
+                  src="../../../../../assets/images/iconsForsvg/right-arrow.svg"></span>
+              {{'successor'|translate}}:</b></td>
+          <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+            (click)="getlinkedsuccessor(taskData)"
+            [ngClass]="{'color_grey': taskData?.successorTaskCount > 0,'name_red': taskData?.successorTaskCount == 0 }">
+            {{taskData?.successorTaskCount}}
+            {{taskData?.successorTaskCount > 1 ? 'successors' :
+            'successor'}}</span>
+        </tr><br>
+      </mat-list-item>
+
+      <div class="col-12 pointer mb-1" *ngIf="showsuccessor"
+        [ngClass]="{'auto_height': taskData?.successorTaskcount > 4, 'overflow': taskData?.successorTaskcount < 4}">
+        <div *ngFor="let successor of successorlist; let i = index">
+          <div style="display: flex;margin-bottom: 5px;">
+            <div style="width: 60%;">
+              <div style="display: flex;">
+                <div>
+                  <mat-icon *ngIf="!successor?.isMilesStone"
+                    style="color: green !important;">
+                    assignment_turned_in</mat-icon>
+                  <img *ngIf="successor?.isMilesStone"
+                    style="margin-right: 12px;width:50px"
+                    src="../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg">
+                </div>
+                <div>
+                  <span class="fw-600 color_grey"
+                    (click)="opentaskDialog(successor.taskId)">
+                    {{ get50TenCharacters(successor.title)}}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- steps -->
+      <ng-container *ngIf="taskData?.hasStep&&taskData?.stepsCount!=0">
+        <mat-list-item>
+          <div class="fw-600">
+            <mat-icon class="vertical-bottom">linear_scale</mat-icon>
+            {{'Steps'}} : <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+              [ngClass]="{'color_grey': taskData?.stepsCount > 0,'name_red': taskData?.stepsCount == 0 }"
+              (click)="findstepsLinked()">{{taskData?.stepsCount}}
+              {{taskData?.stepsCount > 1 ? 'Steps' : 'Step'}}</span>
+          </div>
+        </mat-list-item>
+        <div class="col-12 pointer mb-2" *ngIf="showsteps"
+          [ngClass]="{'auto_height': taskData?.stepsCount > 4, 'overflow': taskData?.stepsCount < 4}">
+          <div *ngFor="let steps of taskData?.stepsDto; let i = index">
+            <div style="display: flex;margin-bottom: 5px;">
+              <div style="width: 60%;">
+                <div style="display: flex;margin-top: 10px;">
+                  <div>
+                    <mat-icon class="vertical-bottom">linear_scale</mat-icon>
+                  </div>
+                  <div>
+                    <span class="fw-600 color_grey">
+                      {{ get50TenCharacters(steps.name)}}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div style="width: 40%;">
+                <div class="circular-progress-bar">
+                  <svg viewBox="0 0 100 100">
+                    <circle
+                      class="progress-bar-background"
+                      [attr.cx]="50"
+                      [attr.cy]="50"
+                      [attr.r]="radius">
+                    </circle>
+                    <circle
+                      [ngClass]="assignCssClass1(steps.progress)"
+                      [attr.cx]="50"
+                      [attr.cy]="50"
+                      [attr.r]="radius"
+                      [attr.stroke-dasharray]="circumference"
+                      [attr.stroke-dashoffset]="calculateDashoffset(steps.progress)">
+                    </circle>
+                    <text x="50" y="40" text-anchor="middle"
+                      dominant-baseline="central">
+                      <tspan x="50" dy="0.5em">{{ temformat(steps.progress )
+                        }}</tspan>
+                    </text>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="taskData?.tagViewModels.length!=0">
+        <div class="row m-t-10 m-b-10"
+          *ngFor="let tags of taskData?.tagViewModels">
+          <ng-container
+            *ngIf="tags.fieldValue != ''&&tags.fieldValue !=null&&tags.fieldValue !='null'">
+            <div id="main" class="fw-600" style="font-size:16px;">
+              <div>{{tags.fieldName|titlecase}}: </div>
+              <div class=" fw-600 color_grey"
+                style="font-size:16px; text-align: center;"
+                *ngIf="tags.fieldValue != ''">
+                {{tags.fieldValue}}</div>
+              <div class="fw-600 color_grey"
+                style="font-size:16px; text-align: center;"
+                *ngIf="tags.fieldValue != ''">
+                {{tags.dropdownValues}}</div>
+            </div>
+          </ng-container>
+        </div>
+      </ng-container>
+    </section>
+    <div class="overlay" *ngIf="loader">
+      <mat-progress-spinner class="spinner" [color]="color" [mode]="mode"
+        [value]="value">
+      </mat-progress-spinner>
+    </div>
+  </mat-dialog-content>

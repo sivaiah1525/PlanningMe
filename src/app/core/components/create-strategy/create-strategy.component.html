@@ -1,0 +1,248 @@
+<div class="d-flex flex-row align-items-center modal-header">
+  <h2 *ngIf="ScreenType == 'CreateStrategy'" mat-dialog-title class="m-0 dialog-title text-center w-100">{{'Create Alert'|translate}}
+  </h2>
+  <h2 *ngIf="ScreenType == 'editstratergy'" mat-dialog-title class="m-0 dialog-title text-center w-100">{{'Update Alert'|translate}}
+  </h2>
+  <mat-icon mat-dialog-close >close</mat-icon>
+</div>
+
+<mat-dialog-content id="create-strategy">
+  <form [formGroup]="firstFormGroup">
+      <div class="row mb-2">
+          <mat-form-field appearance="legacy" class="w-100" style="width:100% !important;">
+            <mat-label>{{"Choose Entity"|translate}}</mat-label>
+            <mat-select formControlName="strategyTypeName" >
+                <mat-option [value]="type" *ngFor="let type of managementType" (click)="GetstrategyTypeName(type)">
+                    {{type|translate}}
+                </mat-option>
+            </mat-select> 
+        </mat-form-field>
+      </div>
+      <h4><b>Choose Trigger</b></h4>
+      <div class="row mb-2">
+        <div class="col-4"><mat-checkbox formControlName="Mail">{{'Mail'|translate}}</mat-checkbox></div>
+        <div class="col-4"><mat-checkbox formControlName="Notification">{{'Notification'|translate}}</mat-checkbox></div>
+      </div>
+      <h4><b>Choose Alert Type</b></h4>
+      <div class="row mb-2">
+        <div class="col-4"><mat-checkbox formControlName="isCreateAlert">{{'Create'|translate}}</mat-checkbox></div>
+        <div class="col-4"><mat-checkbox formControlName="isUpdateAlert">{{'Update'|translate}}</mat-checkbox></div>
+        <div class="col-4"><mat-checkbox formControlName="isDeleteAlert">{{'Delete'|translate}}</mat-checkbox></div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-12">
+          <section>
+            <mat-slide-toggle formControlName="Activate">{{'Activate'|translate}} (Yes/No)</mat-slide-toggle>
+          </section>
+        </div>
+      </div>
+
+    <div class="row">
+      <mat-form-field appearance="legacy" class="w-100">
+        <mat-label>{{'Alert Name'|translate}}<span class="danger">* </span></mat-label>
+        <input matInput type="text" placeholder="Alert Name" formControlName="nameOfStrategy">
+      </mat-form-field>
+    </div>
+    <div class="row">
+      <mat-form-field appearance="legacy" class="w-100">
+        <mat-label>{{'Description'|translate}} <span class="danger">* </span></mat-label>
+        <textarea matInput formControlName="description"></textarea>
+      </mat-form-field>
+    </div> 
+    <div class="row p-2 justify-content-around"
+    style="color: white; background-color:#f6272e; font-weight: 600;">
+    <div class="col-6">{{' Alert Conditions'|translate}} </div>
+    <div class="col-2">
+        <mat-icon style="color: white;" (click)="Addcondictuon()">add_box</mat-icon>
+    </div>
+</div>
+    <div formArrayName="strategyConditions"> 
+      <div style="border: 1px solid gray;padding:10px;" class="row" *ngFor="let file of strategyConditions().controls; let i=index" [formGroupName]="i">
+        <div class="row p-2 justify-content-around"
+        style="color: white; background-color:#818582; font-weight: 600;">
+        <div class="col-6"> {{'Condition'|translate}}-{{i+1}}</div>
+        <div class="col-2">
+          <mat-icon *ngIf="i!=0" (click)="Removecondictuon(i)">delete</mat-icon>
+        </div>
+    </div>
+        <div class="row">
+            <ng-container *ngIf="getentityvalue()=='Transactions'">
+              <div class="row ">
+                  <div class="col-12">
+                      <mat-form-field  class="w-100 ">
+                          <mat-label>{{'Select Entity'|translate}}</mat-label>
+                          <mat-select formControlName="conditionDropDownList">
+                              <mat-option [value]="selactValue" *ngFor="let selactValue of selactValues5"
+                                  (change)="finddropdownname(selactValue)">
+                                  {{selactValue|titlecase}}
+                              </mat-option>
+                          </mat-select>
+                      </mat-form-field>
+                  </div>
+              </div>
+          </ng-container>
+          <ng-container *ngIf="getentityvalue()=='Events'">
+            <div class="row ">
+                <div class="col-12">
+                    <mat-form-field  class="w-100 ">
+                        <mat-label>{{'Select Entity'|translate}}</mat-label>
+                        <mat-select formControlName="conditionDropDownList">
+                            <mat-option [value]="selactValue" *ngFor="let selactValue of selactValues4"
+                                (change)="finddropdownname(selactValue)">
+                                {{selactValue|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </ng-container>
+        </div>
+        <div class="row strategycondictions">
+          <div class="col-4">
+            <!-- UsersValue -->
+            <ng-container *ngIf="getconditionDropDownListvalue(i)=='Users'">
+              <mat-form-field  class="w-100">
+                  <mat-label>{{'Parameter'|translate}}</mat-label>
+                  <mat-select formControlName="conditionParameter">
+                      <mat-option [value]="x.columnName" *ngFor="let x of UsersValue"
+                          (click)="selactdatatype(x,i)">
+                          {{x.columnName|titlecase}}
+                      </mat-option>
+                  </mat-select>
+              </mat-form-field>
+
+          </ng-container>
+          <!-- ContactsValue -->
+          <ng-container *ngIf="getconditionDropDownListvalue(i)=='Contacts'">
+              <mat-form-field  class="w-100">
+                  <mat-label>{{'Parameter'|translate}}</mat-label>
+                  <mat-select formControlName="conditionParameter">
+                      <mat-option [value]="x.columnName" *ngFor="let x of ContactsValue"
+                          (click)="selactdatatype(x,i)">
+                          {{x.columnName|titlecase}}
+                      </mat-option>
+                  </mat-select>
+              </mat-form-field>
+          </ng-container>
+          <!-- Products  -->
+          <ng-container *ngIf="getconditionDropDownListvalue(i)=='Products'">
+              <mat-form-field  class="w-100">
+                  <mat-label>{{'Parameter'|translate}}</mat-label>
+                  <mat-select formControlName="conditionParameter">
+                      <mat-option [value]="x.columnName" *ngFor="let x of ProductsValue"
+                          (click)="selactdatatype(x,i)">
+                          {{x.columnName|titlecase}}
+                      </mat-option>
+                  </mat-select>
+              </mat-form-field>
+          </ng-container>
+          <!-- Sites  -->
+          <ng-container *ngIf="getconditionDropDownListvalue(i)=='Sites'">
+              <mat-form-field  class="w-100">
+                  <mat-label>{{'Parameter'|translate}}</mat-label>
+                  <mat-select formControlName="conditionParameter">
+                      <mat-option [value]="x.columnName" *ngFor="let x of SitesValue"
+                          (click)="selactdatatype(x,i)">
+                          {{x.columnName|titlecase}}
+                      </mat-option>
+                  </mat-select>
+              </mat-form-field>
+          </ng-container>
+          <!-- TransationValue  -->
+          <ng-container *ngIf="getconditionDropDownListvalue(i)=='Transactions'">
+              <mat-form-field  class="w-100">
+                  <mat-label>{{'Parameter'|translate}}</mat-label>
+                  <mat-select formControlName="conditionParameter">
+                      <mat-option [value]="x.columnName" *ngFor="let x of TransationValue"
+                          (click)="selactdatatype(x,i)">
+                          {{x.columnName|titlecase}}
+                      </mat-option>
+                  </mat-select>
+              </mat-form-field>
+          </ng-container>
+          <!-- EventsValue  -->
+          <ng-container *ngIf="getconditionDropDownListvalue(i)=='Events'">
+              <mat-form-field  class="w-100">
+                  <mat-label>{{'Parameter'|translate}}</mat-label>
+                  <mat-select formControlName="conditionParameter">
+                      <mat-option [value]="x.columnName" *ngFor="let x of EventsValue"
+                          (click)="selactdatatype(x,i)">
+                          {{x.columnName|titlecase}}
+                      </mat-option>
+                  </mat-select>
+              </mat-form-field>
+          </ng-container>
+
+          </div>
+          <div class="col-4">
+               <!-- AllOption  -->
+               <ng-container
+               *ngIf="getdataType(i)!='string'&&getdataType(i)!='String' && getdataType(i)!='number'&&getdataType(i)!='Number'
+                    && getdataType(i)!='bool' &&getdataType(i)!='boolean'&&getdataType(i)!='Boolean'&&getdataType(i)!='Bool' &&getdataType(i)!='text' &&getdataType(i)!='Text'">
+               <mat-form-field  class="w-100">
+                   <mat-label>{{'Comparison'|translate}}</mat-label>
+                   <mat-select formControlName="conditionComparison">
+                       <mat-option [value]="x.v1" *ngFor="let x of AllOption">
+                           {{x.v2|translate}}
+                       </mat-option>
+                   </mat-select>
+               </mat-form-field>
+           </ng-container>
+           <!-- string -->
+           <ng-container
+               *ngIf="getdataType(i)=='string' || getdataType(i)=='String' || getdataType(i)=='text'|| getdataType(i)=='Text'">
+               <mat-form-field  class="w-100">
+                   <mat-label>{{'Comparison'|translate}}</mat-label>
+                   <mat-select formControlName="conditionComparison">
+                       <mat-option [value]="x.v1" *ngFor="let x of stringoptions">
+                           {{x.v2|translate}}
+                       </mat-option>
+                   </mat-select>
+               </mat-form-field>
+           </ng-container>
+           <!-- number  -->
+           <ng-container *ngIf="getdataType(i)=='number' || getdataType(i)=='Number'">
+               <mat-form-field  class="w-100">
+                   <mat-label>{{'Comparison'|translate}}</mat-label>
+                   <mat-select formControlName="conditionComparison">
+                       <mat-option [value]="x.v1" *ngFor="let x of numberoptions">
+                           {{x.v2|translate}}
+                       </mat-option>
+                   </mat-select>
+               </mat-form-field>
+           </ng-container>
+           <!-- bool  -->
+           <ng-container
+               *ngIf="getdataType(i)=='bool' || getdataType(i)=='boolean'||getdataType(i)=='Bool'||getdataType(i)=='Boolean'">
+               <mat-form-field  class="w-100">
+                   <mat-label>{{'Comparison'|translate}}</mat-label>
+                   <mat-select formControlName="conditionComparison">
+                       <mat-option [value]="x.v1" *ngFor="let x of booleanoptions">
+                           {{x.v2|translate}}
+                       </mat-option>
+                   </mat-select>
+               </mat-form-field>
+           </ng-container>
+          </div>
+          <div class="col-4">
+            <mat-form-field style="width:80%;">
+              <input matInput type="tel" placeholder="value" formControlName="value">
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <mat-dialog-actions align="end" class="my-1">
+      <div class="row mt-2 justify-content-center">
+        <div class="col-4">
+            <button mat-button mat-dialog-close>{{"Cancel"|translate}}</button>
+        </div>
+        <div class="col-4">
+          <button mat-raised-button class="b-blue" *ngIf="ScreenType == 'CreateStrategy'"
+          (click)="CreateStrategy()">{{'Apply'|translate}}</button>
+        <button mat-raised-button class="b-blue" *ngIf="ScreenType == 'editstratergy'">{{'Update'|translate}}</button>       
+       </div>
+    </div>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>

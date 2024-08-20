@@ -1,0 +1,172 @@
+.event {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-left: 15px;
+}
+
+.align_botton {
+    vertical-align: bottom;
+}
+
+.pageHeight {
+    height: auto;
+
+}
+
+.scrollHeight {
+    overflow-y: auto !important;
+}
+
+.color_blue {
+    color: cornflowerblue !important;
+}
+
+.color_green {
+    color: green !important;
+}
+
+.color_grey {
+    color: gray;
+}
+
+.flex-74 {
+    flex: 0 0 86%;
+
+}
+
+.event_split {
+    margin-bottom: 10px;
+}
+
+.bdr {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+}
+
+.avatarimage {
+    height: 50px !important;
+    width: 50px !important;
+    border-radius: 50px;
+    margin-top: -10px;
+}
+
+.modal-header {
+    padding: 10px;
+    background: #fb4444;
+    color: #fff;
+    width: 100%;
+}
+
+.bdr-invited {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+    background-color: #c5dbff
+}
+
+.bdr-simulation {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.13);
+    background-color: #ffcccb
+}
+
+.btn-black {
+    color: black;
+}
+
+#carte {
+    agm-map {
+        width: 100%;
+        height: 100%;
+    }
+
+    .height400 {
+        height: 400px;
+    }
+
+    section {
+        display: table;
+        margin: 8px;
+        float: right;
+    }
+
+    .create-button-row {
+        display: table-cell;
+        position: relative;
+    }
+
+    .create-button-row button {
+        display: table-cell;
+        margin-right: 8px;
+        position: fixed;
+        right: 0;
+        z-index: 1;
+        bottom: 9px;
+    }
+
+    .create-flex-container {
+        display: flex;
+        justify-content: space-between;
+        width: 480px;
+    }
+
+    .create-button-container {
+        display: flex;
+        justify-content: center;
+        width: 120px;
+
+        .mat-icon {
+            color: #fff;
+        }
+    }
+
+    .b-btm {
+        border-bottom: 1px solid lightgrey !important;
+        margin-bottom: 3px !important;
+    }
+
+    .br-btm {
+        border-bottom: 1px solid lightred !important;
+    }
+}
+
+.color_white {
+    color: white;
+}
+
+.color_red {
+    background-color: #f04141;
+    color: white;
+}
+
+.m-t-4 {
+    margin-top: 4px !important;
+}
+
+.externaldata {
+    background-color: #528bf1;
+    color: white;
+    position: absolute !important;
+    z-index: 1 !important;
+    left: 30px !important;
+    top: 20px !important;
+}
+
+.bgcolr_grey {
+    background-color: gray !important;
+    color: white;
+}
+
+.map-icon {
+    background-repeat: no-repeat;
+    display: inline-block;
+    fill: currentColor;
+    height: 24px;
+    width: 24px;
+    position: relative;
+    left: 10px;
+}
+
+agm-marker-cluster {
+    width: 10px;
+    height: 10px;
+    background-color: #f04141 !important;
+}

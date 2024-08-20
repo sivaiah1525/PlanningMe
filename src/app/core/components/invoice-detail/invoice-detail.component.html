@@ -1,0 +1,99 @@
+<div class="modal-header">
+  <div class="row">
+    <div class="col-2">
+      <mat-icon mat-dialog-close>keyboard_backspace</mat-icon>
+    </div>
+    <div class="col-8">
+      <h2 mat-dialog-title class="m-0 dialog-title  w-100">{{'Invoice Details'|translate}}</h2>
+    </div>
+    <div class="col-1">
+      <mat-icon style="color: white;">print</mat-icon>
+    </div>
+    <div class="col-1">
+      <mat-icon style="color: white;">download</mat-icon>
+    </div>
+  </div>
+</div>
+<div class="invoice-detail">
+  <mat-dialog-content>
+    <div class="row mt-3 mb-3">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+        <div >
+          <img src="../../../../assets/images/iconsForsvg/Comapny details.svg">
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+        <div >
+          <div><img src="../../../../assets/logo/login-logo.png" alt=""></div>
+        </div>
+      </div>
+    
+    </div>
+
+    <div class="row mt-3 mb-3">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+        <div class="ion-margin-end bdr">
+          <div class="fw-600">LIIC, Inc</div>
+          <div class="fs-12">{{invoiceDetails.address}}<br />{{invoiceDetails.city}}<br />{{invoiceDetails.country}}</div>
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+        <div class="ion-margin-start bdr-all">
+          <div class="fw-600">Robert Smith</div>
+          <div class="fs-12">
+            CS-343, Creative Studio, 340<br />
+            San Francisco, CA 94107<br />
+            ph: (123) 456-7890</div>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-around">
+      <div class="col-6">
+        <div class="fs-16"><b class="fw-600">Invoice Id :</b>  <span>{{invoiceDetails.invoiceId}}</span></div>
+      </div>
+      <div class="col-6">
+        <div class="fs-16"><b class="fw-600">{{'Date'|translate}} : </b><span>{{invoiceDetails.date|date:'dd-MMM-yyyy'}}</span></div>
+      </div>
+    </div>
+    <div class="row mt-3 mb-3">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>{{'Product Name'|translate}}</th>
+                <th>{{'Quantity'|translate}}</th>
+                <th>{{'Unit Price'|translate}}</th>
+                <th>{{'Total'|translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let x of invoiceDetails.invoiceDto;">
+                <td>{{x.description}}</td>
+                <td>{{x.quantity}}</td>
+                <td>{{x.unitPrice}} {{invoiceDetails.currency}}</td>
+                <td>{{x.total}} {{invoiceDetails.currency}}</td>
+              </tr>
+              <tr>
+                <td colspan="3" style="text-align: start !important;" class="ion-text-uppercase  fs-16 fw-600">{{'Total'|translate}}</td>
+                <td class="fs-16 fw-600">{{invoiceDetails.totalwithoutTax}} {{invoiceDetails.currency}}</td>
+              </tr>
+              <tr>
+                <td colspan="3" style="text-align: start !important;" class="ion-text-uppercase  fs-16 fw-600">{{'Tax Percentage'|translate}}</td>
+                <td class="fs-16 fw-600">{{invoiceDetails.taxPercentage}}</td>
+              </tr>
+              <tr>
+                <td colspan="3" style="text-align: start !important;" class="ion-text-uppercase  fs-16 fw-600">{{'Tax Amount'|translate}}</td>
+                <td class="fs-16 fw-600">{{invoiceDetails.taxAmount}} {{invoiceDetails.currency}}</td>
+              </tr>
+              <tr>
+                <td colspan="3" style="text-align: start !important;" class="ion-text-uppercase  fs-16 fw-600">{{'Total with Tax'|translate}}</td>
+                <td class="fs-16 fw-600">{{invoiceDetails.total}} {{invoiceDetails.currency}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+</div>

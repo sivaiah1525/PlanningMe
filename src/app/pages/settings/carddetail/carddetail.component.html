@@ -1,0 +1,65 @@
+<div class="container">
+    <div class="row b-btm-grey m-t-14" *ngFor="let credit of creditDetails ; let i = index">
+        <div class="col-1">
+            <button class="btn-red" mat-icon-button (click)="deletecard(viewDialog,credit,i)">
+                <mat-icon class="icon-options danger">delete
+                </mat-icon>
+            </button>
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <p class="f-weight">Type :</p>{{credit.type}}
+            </div>
+            <div class="row">
+                <p class="f-weight">CardNumber :</p>{{credit.cardNumber}}
+            </div>
+            <div class="row">
+                <p class="f-weight">ExpiryMonth :</p>{{credit.expMonth}}
+            </div>
+            <div class="row">
+                <p class="f-weight">ExpiryYear :</p>{{credit.expYear}}
+            </div>
+        </div>
+        <div class="col-3">
+            <mat-slide-toggle [color]="color" [(ngModel)]="credit.isActive"
+                (ngModelChange)="toggleChange($event,credit.id)">
+            </mat-slide-toggle>
+        </div>
+    </div>
+
+</div>
+
+<!-- ---------------------  -->
+<ng-template #viewDialog class="container">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Confirmation</h2>
+    </div>
+    <mat-dialog-content class="viewDialog pading "
+        style="padding: 0px  !important; margin: 0px !important;height:60px; width: 310px;">
+        <div class="row">
+            <h3 style="
+            margin-top: 14px;
+            margin-left: 34px;
+        ">Are you sure you want to delete?</h3>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-action>
+        <div class="row" style="margin-bottom: 8px;">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6"></div>
+            <button mat-raised-button mat-dialog-close (click)="closedialogbox()">Cancel</button>
+            <button mat-raised-button cdkFocusInitial color="danger" (click)="deletecarddetail()">Delete</button>
+        </div>
+    </mat-dialog-action>
+</ng-template>
+
+
+<div class="container">
+    <button *ngIf="showcredit == 0" mat-fab color="primary" class="fab-table-group"
+        (click)="createpayment(viewpayment)">
+        <mat-icon style="color: white;">add</mat-icon>
+    </button>
+    <button *ngIf="showcredit == 1" mat-fab color="primary" class="fab-table-group"
+        (click)="createBankAccount(viewAccount)">
+        <mat-icon style="color: white;">add</mat-icon>
+    </button>
+</div>

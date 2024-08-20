@@ -1,0 +1,144 @@
+<div class="d-flex flex-row align-items-center modal-header">
+  <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Event Details</h2>
+  <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+<mat-dialog-content style="height: 440px;">
+
+  <section style="margin-left: 27px;">
+    <div class="itanlist" *ngIf="eventData.title != null">
+      <span class="fw-600">Title: </span>
+      <span class="ml-3 fw-600 color_grey">{{eventData.title}}</span>
+    </div>
+    <div class="itanlist" *ngIf="eventData.description != null">
+      <span class="fw-600">Description: </span>
+      <span class="ml-3 fw-600 color_grey">{{eventData.description}}</span>
+    </div>
+    <div class="itanlist" *ngIf="eventData.startDate != null">
+      <span class="fw-600">StartDate: </span>
+      <span class="ml-3 fw-600 color_grey">{{eventData.startDate | date:'medium'}}</span>
+    </div>
+    <div class="itanlist" *ngIf="eventData.endDate != null">
+      <span class="fw-600">EndDate: </span>
+      <span class="ml-3 fw-600 color_grey">{{eventData.endDate | date:'medium'}}</span>
+    </div>
+    <div class="itanlist" *ngIf="eventData.address != null">
+      <span class="fw-600">Address: </span>
+      <span class="ml-3 fw-600 color_grey">{{eventData.address+' '+eventData.city+' '+eventData.country+'
+        '+eventData.zipCode}}</span>
+    </div>
+    <div class="itanlist" *ngIf="eventData.categoryName != null">
+      <span class="fw-600">Category: </span>
+      <span class="ml-3 fw-600 color_grey">{{eventData.categoryName}}</span>
+    </div>
+    <div class="itanlist" *ngIf="eventData.criticityName != null">
+      <span class="fw-600">Critic level: </span>
+      <span class="ml-3 fw-600 color_grey">{{eventData.criticityName}}</span>
+    </div>
+    <div class="itanlist">
+      <span class="fw-600">Event Type : </span>
+      <span *ngIf="eventData.isPublic==true" class="ml-3 fw-600 color_grey">Public</span>
+      <span *ngIf="eventData.isPublic==false" class="ml-3 fw-600 color_grey">Private</span>
+    </div>
+    <div class="itanlist" *ngIf="eventData.keywords != null">
+      <span class="fw-600">keywords: </span>
+      <span *ngFor="let x of eventData.keywords ;let i=index">
+        <span class="ml-3 fw-600 color_grey">{{' '+x+','}}</span>
+      </span>
+    </div>
+
+
+
+    <div class="itanlist" *ngIf="eventData.comments != null">
+      <span class="fw-600">Comments: </span>
+      <span class="ml-3 fw-600 color_grey">{{eventData.comments?eventData.comments : '-'}}</span>
+    </div>
+    <!-- Users  -->
+    <div class="itanlist">
+      <span class="fw-600"> <mat-icon>person</mat-icon>Users :</span>
+      <span class="ml-3 fw-600 color_grey m-t-6 pointer" (click)="findUsersLinked()"
+        [ngClass]="{'color_grey': eventData?.usersCount > 0,'name_red': eventData.usersCount == 0 }">
+        {{eventData.usersCount+1}} {{eventData.usersCount > 1 ? 'Users' : 'user'}}</span>
+    </div>
+    <ng-container *ngIf="showUser">
+      <div class="col-10 m-t-10 "
+        [ngClass]="{'auto_height': eventData.usersCount > 4,'overflow': eventData.usersCount < 4 }">
+        <!-- creater  -->
+        <div class="row">
+          <span class="m-l-28"><img style="border-radius: 50%; cursor: pointer;" width="30" height="30"
+              [src]="eventData.eventCreatorProfile ? eventData.eventCreatorProfile :'assets/avatar.svg'"></span>
+          <span class="p-l-10 fw-600 color_grey" style="cursor: pointer;"
+            (click)="openUserDialog(eventData.eventCreatorId,eventData,'user')">{{eventData.eventCreatorFirstName+'
+            '+eventData.eventCreatorLastName+' '}}<mat-icon>edit</mat-icon></span>
+        </div>
+        <!-- show list   -->
+
+        <div class="row  m-t-10 fw-600 color_grey" *ngFor="let user of userDeatils ; let i = index">
+          <span class="m-l-28"><img style="border-radius: 50%; cursor: pointer;" width="30" height="30"
+              [src]="user.profile ? user.profile :'assets/avatar.svg'"></span>
+          <span class="p-l-10 fw-600 color_grey" style="cursor: pointer;"
+            (click)="openUserDialog(user.id,user,'user')">{{user.firstName+' '+user.lastName}}</span>
+        </div>
+      </div>
+    </ng-container>
+    <!-- Site  -->
+    <div class="itanlist">
+      <span class="fw-600"> <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg"> Site :</span>
+      <span class="ml-3 fw-600 color_grey" (click)="openSiteDialog(eventData.id,'site')">{{eventData.siteName ?
+        eventData.siteName :'-'}}</span>
+    </div>
+    <!-- Contacts  -->
+    <div class="itanlist">
+      <span class="fw-600"><mat-icon>contacts</mat-icon>Contacts :</span>
+      <span class="ml-3 fw-600 color_grey m-t-6 pointer" (click)="findcontactLinked()"
+        [ngClass]="{'color_grey': eventData?.contactsCount > 0,'name_red': eventData.contactsCount == 0 }">
+        {{eventData.contactsCount}} {{eventData.contactsCount > 1 ? 'Contacts' : 'Contact'}}</span>
+    </div>
+    <ng-container *ngIf="showcontact">
+      <div class="col-10 m-b-10  "
+        [ngClass]="{'auto_height': eventData.contactsCount > 4,'overflow': eventData.contactsCount < 4 }">
+        <div class="row m-t-10" *ngFor="let contact of contactDeatils ; let i = index">
+          <div>
+            <span><img style="border-radius: 50%; cursor: pointer;" width="30" height="30"
+                [src]="contact.profile ? contact.profile :'assets/avatar.svg'"></span>
+            <span class="p-l-10 fw-600 color_grey" style="cursor: pointer;"
+              (click)="openContactDialog(contact.id,contact,'contact')">{{contact.firstName
+              +''+contact.lastName}}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- Files  -->
+    <div class="itanlist">
+      <span class="fw-600"> <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>Files : </span>
+      <span class="ml-3 fw-600 color_grey m-t-6 pointer" (click)="findfilesLinked()"
+        [ngClass]="{'color_grey': eventData?.filesCount > 0,'name_red': eventData.filesCount == 0 }">
+        {{eventData.filesCount}} {{eventData.filesCount > 1 ? 'Files' : 'File'}}</span>
+    </div>
+    <ng-container *ngIf="showfile">
+      <div class="col-10 p-0   m-b-15"
+        [ngClass]="{'auto_height': eventData.filesCount > 4,'overflow': eventData.filesCount < 4 }">
+        <div class="row m-l-10  m-t-10 " *ngFor="let file of getfile ; let i = index">
+          <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+          <a style="cursor:pointer;" (click)="gotofiles(file)" class="color_grey m-l-10">{{file.title}}</a>
+        </div>
+      </div>
+    </ng-container>
+    <!-- Notes -->
+    <div class="itanlist">
+      <span class="fw-600"><mat-icon style="color:rgb(255,193,111) ;">speaker_notes</mat-icon>Notes : </span>
+      <span class="ml-3 fw-600 color_grey m-t-6 pointer" (click)="findNotesLinked()"
+        [ngClass]="{'color_grey': eventData?.notesCount > 0,'name_red': eventData.notesCount == 0 }">{{eventData.notesCount}}
+        {{eventData.notesCount > 1 ? 'Notes' : 'Note'}}</span>
+    </div>
+    <ng-container *ngIf="shownotes">
+      <div class="col-10 pointer "
+        [ngClass]="{'auto_height': eventData.notesCount > 4,'overflow':eventData.notesCount < 4 }">
+        <div (click)="ShowNote(notes.id)" class="row   m-l-10 fw-600 color_grey m-t-10"
+          *ngFor="let notes of getnotes ; let i = index">
+          <mat-icon style="color:rgb(255,193,111) ;">speaker_notes</mat-icon>
+          <span class="m-l-10">{{notes.title}}</span>
+        </div>
+      </div>
+    </ng-container>
+  </section>
+</mat-dialog-content>

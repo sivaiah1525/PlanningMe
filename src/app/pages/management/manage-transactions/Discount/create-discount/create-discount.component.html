@@ -1,0 +1,121 @@
+<div class="d-flex justify-content-between align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;"> loyalty</mat-icon>
+        <span *ngIf="discountCreateScreen">{{'Create Discount'|translate}}</span>
+        <span *ngIf="discountUpdateScreen">{{'Update Discount'|translate}}</span>
+    </h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+
+<mat-dialog-content class="mr-0 ml-0">
+    <form [formGroup]="discountForm">
+        <mat-form-field class="w-100 m-t-10">
+            <input matInput type="text" placeholder="Discount Name" formControlName="name">
+            <mat-error *ngIf="discountForm.controls['name'].hasError('required')">
+                {{'Name'|translate}} is <strong>{{'required'|translate}}</strong>
+            </mat-error>
+        </mat-form-field>
+
+        <div class="row">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6 p-0"> 
+                <mat-form-field class="w-100">
+                    <mat-label>{{'Discount Code'|translate}}</mat-label>
+                    <input matInput type="text" [(ngModel)]="DiscountCode" placeholder="Discount Code"
+                        formControlName="code">
+                        <mat-icon matSuffix (click)="genrattingNewCode()" style="cursor: pointer;">refresh</mat-icon>
+                    <mat-error *ngIf="discountForm.controls['code'].hasError('required')">
+                        {{'Discount code'|translate}} is <strong>{{'required'|translate}}</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field class="w-100">
+                    <mat-label>{{'Discount'|translate}} (%)</mat-label>
+                    <input matInput type="number" placeholder="Discount (%)" formControlName="amount">
+                    <mat-error *ngIf="discountForm.controls['amount'].hasError('required')">
+                        {{'Amount % value'|translate}} is <strong>{{'required'|translate}}</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row m-2">
+            <mat-radio-group formControlName="isPublic" (change)="getisPrivateStatus($event.value)">
+                <mat-radio-button [value]="false">
+                    <mat-icon style="font-size: 20px;position: relative;top:3px;">lock</mat-icon>
+                    {{'Private'|translate}}</mat-radio-button>
+                <mat-radio-button [value]="true">
+                    <img src="../../../../../assets/images/iconsForsvg/Unlock.svg" alt="">
+                    {{'Public'|translate}}</mat-radio-button>
+            </mat-radio-group>
+        </div>
+        <div class="row">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4 p-1">
+                <mat-form-field class="w-100" appearance="fill">
+                    <mat-label>{{'Start Date'|translate}}</mat-label>
+                    <input matInput [matDatepicker]="picker1" formControlName="startDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4 p-1">
+                <mat-form-field class="w-100" appearance="fill">
+                    <mat-label>{{'End Date'|translate}}</mat-label>
+                    <input matInput [matDatepicker]="picker2" formControlName="endDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4 p-1">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{'Max limit'|translate}}</mat-label>
+                    <input matInput type="number" placeholder="Max Use" formControlName="limit">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Keywords  -->
+            <mat-form-field appearance="fill" class="example-chip-list">
+                <mat-label>{{'keyword'|translate}}</mat-label><br>
+                <mat-chip-list #chipGridforkeyword aria-label="Fruit selection" style="margin-top: 10px !important;">
+                    <span>
+                        <button
+                            style="border: none; border-radius:20px; background-color: rgb(252, 185, 185);color: red;padding: 5px 12px 5px 12px;">
+                            <span style="position: relative; top: 1px; left: 3px;">{{DiscountCode}}</span></button>
+                    </span>
+                    <mat-chip-row style="margin-top:5px !important; margin-bottom:6px !important;"
+                        *ngFor="let keyword of keywordlist">
+                        <button style="border: none; border-radius:20px; background-color: rgb(228, 223, 223);">
+                            <span style="position: relative; top: 1px; left: 3px;">{{keyword}}</span>
+                            <mat-icon
+                                style="cursor: pointer; position: relative; top:2px;left: 7px; font-size: 20px; color: rgb(169, 163, 163);"
+                                (click)="remove(keyword)">cancel</mat-icon></button>
+                    </mat-chip-row>
+                </mat-chip-list>
+                <input formControlName="keyword" [matChipInputFor]="chipGridforkeyword"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="add($event)" />
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <!-- description  -->
+            <mat-form-field class="w-100">
+                <mat-label>{{'Description'|translate}}</mat-label>
+                <input matInput type="text" placeholder=" Description" formControlName="description">
+            </mat-form-field>
+        </div>
+
+    </form>
+
+</mat-dialog-content>
+<mat-dialog-actions class="my-1">
+    <div class="row mt-2 justify-content-center">
+        <div class="col-4">
+            <button mat-button mat-dialog-close>{{"Cancel"|translate}}</button>
+        </div>
+        <div class="col-4">
+            <button mat-raised-button *ngIf="discountCreateScreen" class="b-blue"
+            (click)="Discountcreate()">{{'Apply'|translate}}</button>
+        <button mat-raised-button *ngIf="discountUpdateScreen" class="b-blue"
+            (click)="DiscountUpdate()">{{'Update'|translate}}</button>        </div>
+    </div>
+</mat-dialog-actions>

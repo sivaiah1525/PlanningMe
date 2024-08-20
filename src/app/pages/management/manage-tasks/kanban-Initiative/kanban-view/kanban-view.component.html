@@ -1,0 +1,70 @@
+<div class="board">
+  <div class="board-wrapper">
+    <div class="board-columns">
+      <div cdkDropList
+        cdkDropListOrientation="horizontal" class="board-columns"
+        (cdkDropListDropped)="dropGrid($event)">
+        <div
+          cdkDragLockAxis="x" class="board-column"
+          *ngFor="let column of Initiativescardview.columns" cdkDrag>
+          <div class="kanban-column-header" cdkDragHandle>
+            <div style="display: flex;">
+              <div style="width: 50%;">
+                <span
+                  [title]="column.name">{{getfirstTenCharacters(column.name)}}</span>
+              </div>
+              <div style="width: 50%;">
+                <mat-icon style="float: right;" [matMenuTriggerFor]="moreMenu"
+                  class="icon-options">more_horiz</mat-icon>
+                <mat-menu #moreMenu="matMenu" class="eventlist">
+                  <ng-template matMenuContent>
+                    <button class="fw-600" mat-menu-item
+                      (click)="onEditClick()">
+                      <mat-icon class="icon-options">edit</mat-icon>
+                      <span
+                        class="fw-600 color_black">{{'Edit'|translate}}</span>
+                    </button>
+                    <button class="fw-600" mat-menu-item
+                      (click)="onDeleteClick()">
+                      <mat-icon class="icon-options">delete</mat-icon>
+                      <span
+                        class="fw-600 color_black">{{'Delete'|translate}}</span>
+                    </button>
+                  </ng-template>
+                </mat-menu>
+              </div>
+            </div>
+          </div>
+          <div
+            style="display: flex; margin-bottom: 5px; color: gray;font-size: 14px;font-weight: 700;">
+            <div style="width: 60%;">
+              {{getTotalInitiative(column.tasks)}}
+              {{getTotalInitiative(column.tasks) ==
+              0||getTotalInitiative(column.tasks) == 1 ? 'Initiatives' :
+              'Initiative'}}
+            </div>
+            <div style="float: left;width: 40%;">
+              <span style="font-size: 13px;font-weight: 900;color: black;">
+                <b>Total : </b></span>
+              <span
+                style="font-size: 13px;font-weight: 900;color: gray;">{{getTotalAMount(column.tasks)}}</span>
+            </div>
+          </div>
+          <div class="tasks-container"
+            id="{{column.id}}"
+            [cdkDropListConnectedTo]="column.columnids"
+            cdkDropList
+            [cdkDropListData]="column.tasks"
+            (cdkDropListDropped)="drop($event)">
+            <app-kanban-card
+              cdkDrag
+              *ngFor="let item of column.tasks"
+              [card]="item"
+              (edit)="editCard($event)"
+              (delete)="deleteCard($event)"></app-kanban-card>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

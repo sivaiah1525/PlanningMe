@@ -1,0 +1,159 @@
+#calender {
+    .active {
+        background: #3880ff;
+        color: #fff;
+    }
+    .inactive {
+        background: #989aa2 !important;
+        color: #fff !important;
+    }
+    section {
+        display: table;
+        float: right;
+        margin:0;
+    }
+    .calender-button-row {
+        display: table-cell;
+    }
+    .calender-button-row button {
+        display: table-cell;
+        margin-right: 4px;
+    }
+    .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+        line-height: 28px;
+        padding: 0 6px;
+    }
+    .mat-raised-button {
+        line-height: 30px;
+    }
+    .float_right{
+        float: right;
+    }
+    .btn_color{
+        background-color: #3880ff;
+        color: white;
+    }
+}
+
+.cal-month-view {
+    background-color: #fff;
+    justify-content: center;
+    margin-left: 37px !important;
+}
+
+
+.question-mark {
+    font-size: 100px;
+    background: #fff;
+    color: #000;
+}
+
+.help-btn {
+    position: absolute;
+    right: 45%;
+    bottom: 30%;
+}
+
+.available-user {
+     position: fixed;
+     width: 18%;
+    // right:1%;
+    top:16%;
+    box-shadow: 0 4px 10px #0003;
+    background: #fff;
+    z-index: 1;
+}
+
+ul {
+    padding: 0;
+    li {
+        list-style: none;
+        padding: 4px;
+        img {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+    }
+}
+.action-btn {
+    position: relative;
+    top: 40px;
+    right: 20px;
+    .apply {
+        margin-left: 20px;
+    }
+}
+
+.close {
+    color: red;
+    font-weight: bold;
+    cursor: pointer;
+    float: right;
+    // padding: 12px;
+}
+.row_design{
+    padding: 10px;
+}
+.design{
+// padding: 12px;
+    font-size: 17px;
+    color: black;
+    font-weight: 900;
+}
+.floatright{
+    float: right;
+}
+.w-85{
+    width: 85% !important;
+}
+.cal-week-view .cal-current-time-marker {
+    background-color: #ea4334;
+    padding: 10px !important;
+}
+mat-dialog-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    }
+
+#calender{
+    width: 100% !important;
+}
+
+@media only screen and (max-width: 768px) {
+    #calender {
+        .mat-raised-button {
+            min-width: 38px;
+            line-height: 29px;
+            padding: 0 14px;
+        }
+    }
+}
+
+
+::ng-deep  .cal-week-view .cal-time-events .cal-event {
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+    margin: 1px;
+    padding: 10px !important;
+    line-height:1 !important;
+    text-align: center;
+    font-size: 50px;
+    color: white !important;
+    a {
+        color: white; 
+        text-decoration: none;
+        background-color: transparent;
+    }
+}
+
+
+
+
+
+
+.alldata {
+    background: #989aa2 !important;
+    color: #fff !important;
+}

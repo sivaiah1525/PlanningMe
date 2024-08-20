@@ -1,0 +1,75 @@
+
+<div class="User-details">
+    <div class="d-flex flex-row align-items-center modal-header1">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+            {{'Activity Logs'|translate}}
+        </h2>
+        <mat-icon mat-dialog-close>close</mat-icon>
+    </div>
+    <mat-dialog-content class="mr-0 ml-0">
+        <div class="row mt-2">
+            <h2> Activity Logs For </h2>
+            <img class="avatar" style="border-radius: 50%;" *ngIf="data.data?.profilePicture!=null"
+            onError="this.src='assets/avatar.svg'" 
+            [src]="data.data?.profilePicture ? data.data?.profilePicture:'assets/avatar.svg'">
+            <span  *ngIf="data.data?.profilePicture==''||data.data?.profilePicture==null" [style.background]="getColor(4)"
+              style="color: white; padding: 8px;border-radius: 50%;position: relative; top: -8px;margin: 5px">
+                {{getuserFLnames(data.data.firstName+' '+data.data.lastName)}}
+            </span>
+               <h2><u>{{data.data.firstName|titlecase}} {{data.data.lastName|titlecase}}</u></h2>
+        </div>
+        <ng-container *ngIf="ActivitLogdata.length!=0">
+            <div class="row mt-2">
+                <div class="col-12 p-0" *ngFor="let x of ActivitLogdata;let index=index;">
+                    <div class="row titlebody">
+                        <div class="col-6">
+                                <img class="avatar" style="border-radius: 50%;" *ngIf="x?.profilePicture!=''||x?.profilePicture!=null"
+                                onError="this.src='assets/avatar.svg'" 
+                                [src]="x?.profilePicture ? x?.profilePicture:'assets/avatar.svg'">
+                                <span  *ngIf="x?.profilePicture==''||x?.profilePicture==null" [style.background]="getColor(index)"
+                                  style="color: white; padding: 8px;border-radius: 50%;position: relative; top: 5px;margin: 5px">
+                                    {{getuserFLnames(p.user)}}
+                                </span>
+                            <span>{{x.user|titlecase}}</span>
+                        </div>
+                        <div class="col-6">
+                            <span>{{x.logTime| date:'dd-MMM-yyyy H:mm'}}</span>
+                        </div>
+                    </div><br>
+                  <ng-container >
+                     <div class="row">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-1">
+                                    <span *ngIf="x.entity=='Users'">
+                                    <mat-icon style="position: relative;right: 10px;"> person</mat-icon>
+                                    </span>
+                                    <span *ngIf="x.entity=='Contacts'">
+                                    <mat-icon style="position: relative;right: 10px;"> contacts</mat-icon>
+                                    </span>
+                                </div>
+                                <div class="col-11"><p><b>{{x.title}}</b></p></div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-1"></div>
+                                <div class="col-11">
+                                    <p>{{x.message}}</p>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                  </ng-container>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="ActivitLogdata.length==0">
+            <div class="row mt-2">
+                <div class="col-12 p-0">
+                    <p style="text-align: center;">No Data Found</p>
+                    </div>
+                    </div>
+        </ng-container>
+
+     </mat-dialog-content>

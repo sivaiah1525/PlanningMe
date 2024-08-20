@@ -1,0 +1,115 @@
+<div class="d-flex justify-content-between align-items-center modal-header">
+    <h2 *ngIf="this.data.type == 'Users'" mat-dialog-title class="m-0 dialog-title text-center w-100">{{'Users'|translate}} </h2>
+    <h2 *ngIf="this.data.type == 'Contacts'" mat-dialog-title class="m-0 dialog-title text-center w-100">{{'Contacts'|translate}} </h2>
+    <h2 *ngIf="this.data.type == 'Sites'" mat-dialog-title class="m-0 dialog-title text-center w-100">{{'Sites'|translate}} </h2>
+    <h2 *ngIf="this.data.type == 'Products'" mat-dialog-title class="m-0 dialog-title text-center w-100">{{'Products'|translate}} </h2>
+    <mat-icon matDialogClose>close</mat-icon>
+</div>
+
+
+<mat-dialog-content class="mr-0 ml-0">
+    <div class="row justify-content-center">
+        <div class="d-flex flex-column align-items-center mt-4">
+            <h2 *ngIf="this.data.type == 'Users'">Achived Amount Based On Users</h2>
+            <h2 *ngIf="this.data.type == 'Contacts'">Achived Amount Based On Contacts</h2>
+            <h2 *ngIf="this.data.type == 'Sites'">Achived Amount Based On Sites</h2>
+            <h2 *ngIf="this.data.type == 'Products'">Achived Amount Based On Products</h2>
+        </div>
+    </div>
+
+    <table mat-table [dataSource]="dataSource" class="w-100">
+        <ng-container matColumnDef="image">
+            <th mat-header-cell *matHeaderCellDef>{{'Name' | translate}} </th>
+            <td mat-cell *matCellDef="let row; let i = index">
+                <div class="d-flex flex-column py-2">
+                    <span *ngIf="row.profile != null">
+                    <span class="mr-2">
+                        <img style="border-radius: 50%;"width="30" height="30"
+                            [src]="row.profile" alt="">
+                    </span> 
+                        <span *ngIf="this.data.type == 'Users' || this.data.type == 'Contacts'">
+                            {{row.fullName|titlecase}}
+                        </span>
+                        <span *ngIf="this.data.type == 'Products'">
+                            {{row.productName|titlecase}}
+                        </span>
+                        <span *ngIf="this.data.type == 'Sites'">
+                            {{row.siteName|titlecase}}
+                        </span>
+                    </span> 
+                    <span *ngIf="row.profile == null && this.data.type != 'Sites' && this.data.type != 'Products'">
+                        <span  
+                        [style.background]="getColor(i)"  style="color: white; padding: 8px;border-radius: 50%;position: relative;margin: 5px;right: 8px;">{{getuserFLnames(row.fullName)}}</span>
+                        {{row.fullName|titlecase}}
+                    </span>
+                    <span *ngIf="this.data.type == 'Sites' && this.data.type == 'Products'">
+                        <img style="border-radius: 50%;"width="30" height="30"
+                src="../../../../../assets/images/iconsForsvg/Site_Icon.svg" alt="">
+                        {{row.siteName}}</span>
+                        <span *ngIf="this.data.type == 'Products' && row.profile == null">
+                            <img style="border-radius: 50%;"width="30" height="30"
+                    src="../../../../../assets/images/iconsForsvg/icon_product.svg" alt="">
+                            {{row.productName}}</span>
+                     
+                </div>
+                
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="options" *ngIf="this.targetData.targetTypeName == 'Orders' && this.targetData.isCountTarget == true">
+            <th mat-header-cell *matHeaderCellDef>{{'Achieved Amount' | translate}}</th>
+            <td mat-cell *matCellDef="let row">
+                <div class="d-flex flex-column">
+                    <span>{{transform(row.achievedAmount)}} &euro;</span>
+                    <span style="color: green !important;" *ngIf="row.percentage>99"><b>+{{percentagecalucation(row)}}% PERFORMANCE</b></span>
+                </div>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="options" *ngIf="this.targetData.targetTypeName == 'Orders'">
+            <th mat-header-cell *matHeaderCellDef>{{'Achieved Amount' | translate}}</th>
+            <td mat-cell *matCellDef="let row">
+                <div class="d-flex flex-column">
+                    <span>{{transform(row.achievedAmount)}} &euro;</span>
+                    <span style="color: green !important;" *ngIf="row.percentage>99"><b>+{{percentagecalucation(row)}}% PERFORMANCE</b></span>
+                </div>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="options" *ngIf="this.targetData.targetTypeName != 'Orders' && this.targetData.isCountTarget != true">
+            <th mat-header-cell *matHeaderCellDef>{{'Achieved Duration' | translate}}</th>
+            <td mat-cell *matCellDef="let row">
+                <div class="d-flex flex-column" >
+                    <span>{{row.achievedDuration}}</span>
+                    <span style="color: green !important;" *ngIf="row.percentage>99"><b>+{{percentagecalucation(row)}}% PERFORMANCE</b></span>
+                </div>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="options" *ngIf="this.targetData.targetTypeName != 'Orders' && this.targetData.isCountTarget == true">
+            <th mat-header-cell *matHeaderCellDef>{{'Achieved Count' | translate}}</th>
+            <td mat-cell *matCellDef="let row">
+                <div class="d-flex flex-column" >
+                    <span>{{row.achievedAmount}}</span>
+                    <span style="color: green !important;" *ngIf="row.percentage>99"><b>+{{percentagecalucation(row)}}% PERFORMANCE</b></span>
+                </div>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="progress">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Progress' | translate}} </th>
+            <td mat-cell *matCellDef="let row" style="width: 200px;">
+                <div class="d-flex flex-column">
+                    <div class="col-12" style="text-align: center;">{{row.percentage+'%'}}</div>
+                    <div class="col-12">
+                        <mat-progress-bar class="w-100" [value]="row.percentage" [ngClass]="this.targetData.cssClass">
+                        </mat-progress-bar>
+                    </div>  
+                </div>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let row; columns: columns;">
+
+        </tr>
+    </table>
+
+</mat-dialog-content>

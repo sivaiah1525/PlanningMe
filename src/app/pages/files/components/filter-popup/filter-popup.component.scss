@@ -1,0 +1,10 @@
+.margin-20 {
+    margin: 20px;
+    ::ng-deep .mat-dialog-content {
+        overflow: auto;
+        .mat-radio-button {
+            margin-right: 20px;
+        }
+    }
+
+}

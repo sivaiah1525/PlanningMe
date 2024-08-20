@@ -1,0 +1,28 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <p mat-dialog-title class="m-0 dialog-title text-center w-100">{{'You have'|translate}} {{eventProposalArray?.length}} {{'new proposals'|translate}}
+        {{'for the event'|translate}} {{eventProposalArray[0]?.eventTitle}}</p>
+</div>
+<div class="edit-proposal-container">
+    <div class="edit-proposal" *ngFor="let data of eventProposalArray">
+        <span>
+            <img  [src]="data.proposeUserProfile ? data.proposeUserProfile : 'assets/images/admin.jpg'"/>
+        </span>
+        <div class="event-details">
+            <p class="title">{{data?.proposeUserName}}</p>
+            <p (click)="proposeNewEvent(data)"> {{data?.newStartDate | date:'mediumDate'}},
+                {{data?.newStartDate | date:'shortTime'}},
+                {{data?.newEndDate | date:'mediumDate'}},
+                {{data?.newEndDate |date:'shortTime'}}
+            </p>
+            <div class="like-dislike">
+                <button mat-icon-button>
+                    <mat-icon class="btn-blue" (click)="invitedEventUpdate(data?.id, 1)">thumb_up_alt</mat-icon>
+                </button>
+                <button mat-icon-button>
+                    <mat-icon class="btn-red" (click)="invitedEventUpdate(data?.id, 0)">thumb_down_alt</mat-icon>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>

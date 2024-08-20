@@ -1,0 +1,562 @@
+<div class="d-flex justify-content-between align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <span *ngIf="ScreenType=='Create'">
+            <mat-icon style="position: relative;right:5px;"> track_changes</mat-icon>{{'Create Targets'|translate}}
+        </span>
+        <span *ngIf="ScreenType=='Edit'">
+            <mat-icon style="position: relative;right:5px;"> track_changes</mat-icon>{{'Update Targets'|translate}}
+        </span>
+    </h2>
+        <mat-icon matDialogClose>close</mat-icon>
+</div>
+<mat-dialog-content class="mr-0 ml-0">
+    <mat-tab-group (selectedTabChange)="tabChanged($event)"
+        [selectedIndex]="selectedIndex">
+        <!-- -------------Single-----------000000000000000  -->
+        <mat-tab >
+            <ng-template mat-tab-label>
+                <div class="tabclas">
+                        <span>{{"Single"|translate}}</span>
+                </div>
+            </ng-template>
+            <form [formGroup]="targetCreateForm">
+                <div class="row mt-2  justify-content-center">
+                        <!-- 090909090909  -->
+                        <div class="row m-2">
+                            <mat-radio-group formControlName="targetStatus"
+                                (change)="gettargetStatus($event.value)">
+                                <mat-radio-button value="Private">
+                                    <mat-icon
+                                        style="font-size: 20px;position: relative;top:3px;">lock</mat-icon>
+                                    {{'Private'|translate}}</mat-radio-button>
+                                <mat-radio-button value="Public">
+                                    <img
+                                        src="../../../../../assets/images/iconsForsvg/Unlock.svg"
+                                        alt>
+                                    {{'Public'|translate}}</mat-radio-button>
+                                <mat-radio-button value="Deligation">
+                                    <mat-icon class="green"
+                                        style="font-size: 20px;position: relative;top:3px;">device_hub</mat-icon>
+                                    {{'Delegation'|translate}}</mat-radio-button>
+                            </mat-radio-group>
+                        </div> 
+                          <!-- 000000000000 -->
+                        <div class="mt-2 w-100" *ngIf="selectedOption=='Users'">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"User"|translate}} <span class="danger">* </span></mat-label>
+                                <mat-select [(value)]="selected" (openedChange)="filterOptions('','users')" #select formControlName="SelactSingleIdes">
+                                  <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'users')" placeholder="Filter" />
+                                  <mat-option *ngFor="let user of filterList" [value]="user.id">
+                                    <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                        [src]="user?.profilePicture ? user.profilePicture:'assets/avatar.svg'"
+                                        onError="this.src='assets/avatar.svg'">
+                                    {{ user.firstName| titlecase}} {{user.lastName|titlecase}}
+                                </mat-option>
+                                </mat-select>
+                              </mat-form-field>
+                        </div>
+                        <div class="mt-2 w-100" *ngIf="selectedOption=='Contacts'">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{'Contact'|translate}} <span class="danger">* </span></mat-label>
+                            <mat-select [(value)]="selected" (openedChange)="filterOptions('','Contacts')" #select formControlName="SelactSingleIdes">
+                                <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'Contacts')" placeholder="Filter" />
+                                <mat-option *ngFor="let contact of filterList" [value]="contact.id">
+                                <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                    [src]="contact?.profilePicture ? contact.profilePicture:'assets/avatar.svg'"
+                                    onError="this.src='assets/avatar.svg'">
+                                {{ contact.firstName|titlecase }} {{contact.lastName|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                        </div>
+                        <div class="mt-2 w-100" *ngIf="selectedOption=='Sites'">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"Site"|translate}} <span class="danger">* </span></mat-label>
+                                <mat-select [(value)]="selected" (openedChange)="filterOptions('','Sites')" #select formControlName="SelactSingleIdes">
+                                  <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'Sites')" placeholder="Filter" />
+                                  <mat-option *ngFor="let site of filterList" [value]="site.id">
+                                  <span>
+                                      <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                                  </span>
+                                  {{site.companyName|titlecase}}
+                              </mat-option>
+                          </mat-select>
+                              </mat-form-field>
+                        </div>
+                        <div class="mt-2 w-100" *ngIf="selectedOption=='Products'">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"Product"|translate}} <span class="danger">* </span></mat-label>
+                            <mat-select [(value)]="selected" (openedChange)="filterOptions('','Products')" #select formControlName="SelactSingleIdes">
+                                <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'Products')" placeholder="Filter" />
+                                <mat-option *ngFor="let product of filterList" [value]="product.id">
+                                <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                    [src]="Product?.profilePicture ? Product.profilePicture:'assets/images/iconsForsvg/icon_product.svg '"
+                                    onError="this.src='assets/images/iconsForsvg/icon_product.svg '">
+                                {{product.productName|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                        </div>
+                        <div class="mt-2 w-100">
+                            <!-- Target Type  -->
+                        <div class="row">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>Target Type <span class="danger">* </span></mat-label>
+                                <mat-select  #select formControlName="targetType" (selectionChange)="selectedTarget($event)">
+                                  <mat-option  [value]="1">Orders</mat-option>
+                                  <mat-option  [value]="2">Events</mat-option>
+                                  <mat-option  [value]="3">Tasks</mat-option>
+                                  <mat-option  [value]="4">Initiatives</mat-option>
+                                </mat-select>
+                              </mat-form-field>
+                    </div>
+
+
+                    <div class="row m-2">
+                            <mat-radio-group formControlName="Basedontargetselaction">
+                                <mat-radio-button value="IsAmountTarget" *ngIf="getTargetselaction()==1">
+                                    {{'Amount'|translate}}</mat-radio-button>
+                                <mat-radio-button value="IsCountTarget" >
+                                    {{'Count'|translate}}</mat-radio-button>
+                                <mat-radio-button value="IsDurationTarget" *ngIf="getTargetselaction()!=1">
+                                    {{'Duration'|translate}}</mat-radio-button>
+                            </mat-radio-group>
+                    </div>
+                          <!-- start date && end date    -->
+            <!-- Start Date & Time   -->
+            <div class="row firstAndLastName">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"Start Date"|translate}} <span class="danger">* </span></mat-label>
+                        <input matInput [matDatepicker]="startdatepicker1" style="color: black;"
+                            formControlName="StartDate">
+                        <mat-datepicker-toggle matSuffix [for]="startdatepicker1"></mat-datepicker-toggle>
+                        <mat-datepicker #startdatepicker1></mat-datepicker>
+                        <mat-error *ngIf="targetCreateForm.controls['StartDate'].hasError('required')">
+                            {{"Start Date"|translate}} is <strong>{{"required"|translate}}</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"End Date"|translate}} <span class="danger">* </span></mat-label>
+                        <input matInput [matDatepicker]="enddatepicker1" style="color: black;"
+                            formControlName="EndDate">
+                        <mat-datepicker-toggle matSuffix [for]="enddatepicker1"></mat-datepicker-toggle>
+                        <mat-datepicker #enddatepicker1></mat-datepicker>
+                        <mat-error *ngIf="targetCreateForm.controls['EndDate'].hasError('required')">
+                            {{"End Date"|translate}} is <strong>{{"required"|translate}}</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row m-2">
+                <mat-radio-group  formControlName="selectdatetype" (change)="getdateStatus($event.value)">
+                    <mat-radio-button value="Manual">
+                        {{'Manual'|translate}}</mat-radio-button>
+                    <mat-radio-button value="Daily">
+                        {{'Daily'|translate}}</mat-radio-button>
+                        <mat-radio-button value="weekly">
+                            {{'Weekly'|translate}}</mat-radio-button>
+                    <mat-radio-button value="monthly">
+                        {{'Monthly'|translate}}</mat-radio-button>
+                    <mat-radio-button value="yearly">
+                        {{'Yearly'|translate}}</mat-radio-button>
+                </mat-radio-group>
+            </div>
+
+                    <!-- IsAmountTarget  -->
+                    <ng-container >
+                     <!-- 00000000000 -->
+                   <div class="row" *ngIf="getBasedontargetselaction()=='IsAmountTarget'&&getTargetselaction()==1">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>{{"Status Of Transaction"|translate}} <span class="danger">* </span></mat-label>
+                            <mat-select formControlName="statusOfTransaction" (selectionChange)="seletectdtransationstatus($event)">
+                                <mat-option [value]="0">{{"Pending"|translate}}</mat-option>
+                                <mat-option [value]="1">{{"Validated"|translate}}</mat-option>
+                                <!-- <mat-option [value]="2">Cancelled</mat-option> -->
+                            </mat-select>
+                            <mat-error *ngIf="targetCreateForm.controls['statusOfTransaction'].hasError('required')">
+                                {{'Status Of Transaction'|translate}} is <strong>{{'required'|translate}}</strong>
+                            </mat-error>
+                        </mat-form-field>
+                   </div>
+                    <!-- ---------  -->
+                    <div class="row">
+                        <mat-form-field class="example-chip-list" style="width: 100% !important;">
+                            <mat-label>{{"keyword"|translate}}</mat-label><br>
+                            <mat-chip-list #chipGridforkeyword aria-label="Fruit selection" class="keywordlist">
+                                <mat-chip-row class="keywordrow" *ngFor="let keyword of keywordlist">
+                                    <button class="keywordbutton">
+                                        <span class="keywordpostion">{{keyword|titlecase}}</span>
+                                        <mat-icon class="keywordcancelicon" (click)="remove(keyword)">cancel</mat-icon>
+                                    </button>
+                                </mat-chip-row>
+                            </mat-chip-list>
+                                <mat-select  multiple>
+                                    <mat-option (click)="Selectedkeywprd(x)"  *ngFor="let x of KeywordsFromOrder">{{x}}</mat-option>
+                                </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- ----------  -->
+                    <div class="row" *ngIf="getBasedontargetselaction()=='IsAmountTarget'&&getTargetselaction()==1">
+                        <mat-form-field class="w-100" appearance="fill">
+                            <mat-label>{{'Target Amount'|translate}} <span class="danger">* </span></mat-label>
+                            <input matInput type="number"
+                                placeholder="Amount"
+                                formControlName="targetAmt">
+                        </mat-form-field>
+                    </div>
+                    <div class="row" *ngIf="getBasedontargetselaction()=='IsAmountTarget'&&getTargetselaction()==1">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>{{'Currency'|translate}}</mat-label>
+                            <mat-select formControlName="currency">
+                                <mat-option [value]="1">Euro</mat-option>
+                                <mat-option [value]="2">Dollar</mat-option>
+                                
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    </ng-container>
+
+                    <!-- IsCountTarget  -->
+                    <ng-container *ngIf="getBasedontargetselaction()=='IsCountTarget'">
+                    <!-- ----------  -->
+                    <div class="row">
+                        <mat-form-field class="w-100" appearance="fill">
+                            <mat-label>{{'Target Count'|translate}} <span class="danger">* </span></mat-label>
+                            <input matInput type="number"
+                                placeholder="Count"
+                                formControlName="targetCount">
+                        </mat-form-field>
+                    </div>
+                    </ng-container>
+
+                    <!-- IsDurationTarget  -->
+                    <ng-container *ngIf="getBasedontargetselaction()=='IsDurationTarget'">
+                    <!-- ----------  -->
+                    <div class="row">
+                        <mat-form-field class="w-100" appearance="fill">
+                            <mat-label>{{'Target Duration'|translate}} <span class="danger">* </span></mat-label>
+                            <input matInput type="text"
+                                placeholder="Duration"
+                                formControlName="targetDuration">
+                        </mat-form-field>
+                    </div>
+                    </ng-container>
+                         </div>
+                </div>
+            </form>
+        </mat-tab>
+
+
+
+
+
+
+
+
+
+
+
+
+        <!-- -----------Group---11111111111111111  -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <div class="tabclas">
+                        <span>{{"Group"|translate}}</span>
+                </div>
+            </ng-template>
+            <form [formGroup]="targetCreateForm">
+                <div class="row mt-2 justify-content-center">
+                        <div class="row m-2">
+                            <mat-radio-group formControlName="targetStatus"
+                                (change)="gettargetStatus($event.value)">
+                                <mat-radio-button value="Private">
+                                    <mat-icon
+                                        style="font-size: 20px;position: relative;top:3px;">lock</mat-icon>
+                                    {{'Private'|translate}}</mat-radio-button>
+                                <mat-radio-button value="Public">
+                                    <img
+                                        src="../../../../../assets/images/iconsForsvg/Unlock.svg"
+                                        alt>
+                                    {{'Public'|translate}}</mat-radio-button>
+                                <mat-radio-button value="Deligation">
+                                    <mat-icon class="green"
+                                        style="font-size: 20px;position: relative;top:3px;">device_hub</mat-icon>
+                                    {{'Delegation'|translate}}</mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                        <!-- 00000000000  -->
+                        <div class="mt-2 w-100" *ngIf="selectedOption=='Users'">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"User Group"|translate}} <span class="danger">* </span></mat-label>
+                                <mat-select [(value)]="selectedGroup" (openedChange)="filterOptions('','UserGroups')" #select
+                                    formControlName="SelactGroupIdes">
+                                    <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'UserGroups')"
+                                        placeholder="Filter" />
+                                    <mat-option [value]="userGroup.id" *ngFor="let userGroup of filterGroup">
+                                        <span *ngIf="userGroup.dynamicGroupId ==null">
+                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                        </span>
+                                        <span *ngIf="userGroup.dynamicGroupId !=null">
+                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                        </span>
+                                        {{userGroup.groupName|titlecase}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field> 
+                        </div>
+                        <div class="mt-2 w-100"*ngIf="selectedOption=='Contacts'">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"Contact Group"|translate}} <span class="danger">* </span></mat-label> 
+                                <mat-select [(value)]="selectedGroup" (openedChange)="filterOptions('','ContactGroups')" #select
+                                    formControlName="SelactGroupIdes">
+                                    <input style="padding: 15px;" matInput
+                                        (keyup)="filterOptions($event.target.value,'ContactGroups')" placeholder="Filter" />
+                                    <mat-option [value]="contactGroup.id" *ngFor="let contactGroup of filterGroup">
+                                        <span *ngIf="contactGroup.dynamicGroupId ==null">
+                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                        </span>
+                                        <span *ngIf="contactGroup.dynamicGroupId !=null">
+                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                        </span>
+                                        {{contactGroup.groupName|titlecase}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="mt-2 w-100" *ngIf="selectedOption=='Sites'">
+                            <mat-form-field appearance="fill"
+                            class="w-100">
+                            <mat-label>{{'Sites Groups'|translate}} <span class="danger">* </span></mat-label>
+                                <mat-select [(value)]="selectedGroup" (openedChange)="filterOptions('','SitesGroups')" #select
+                                formControlName="SelactGroupIdes">
+                                <input style="padding: 15px;" matInput
+                                    (keyup)="filterOptions($event.target.value,'SitesGroups')" placeholder="Filter" />
+                                <mat-option
+                                    *ngFor="let val of filterGroup"
+                                    [value]="val.id">
+                                    <span
+                                        *ngIf="val.dynamicGroupId ==null">
+                                        <img
+                                            style="border-radius: 50%;"
+                                            width="30" height="30"
+                                            src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                    </span>
+                                    <span
+                                        *ngIf="val.dynamicGroupId !=null">
+                                        <img
+                                            style="border-radius: 50%;"
+                                            width="30" height="30"
+                                            src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                    </span>
+                                    {{val.siteGroupName|titlecase}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        </div>
+                        <div class="mt-2 w-100"*ngIf="selectedOption=='Products'">
+                            <mat-form-field appearance="fill"
+                            class="w-100">
+                            <mat-label>{{'Productes Groups'|translate}} <span class="danger">* </span></mat-label>
+                            <mat-select [(value)]="selectedGroup" (openedChange)="filterOptions('','ProductesGroups')" #select
+                            formControlName="SelactGroupIdes">
+                            <input style="padding: 15px;" matInput
+                                (keyup)="filterOptions($event.target.value,'ProductesGroups')" placeholder="Filter" />
+                                <mat-option
+                                    *ngFor="let val of filterGroup"
+                                    [value]="val.id">
+                                    <span
+                                        *ngIf="val.dynamicGroupId ==null">
+                                        <img
+                                            style="border-radius: 50%;"
+                                            width="30" height="30"
+                                            src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                    </span>
+                                    <span
+                                        *ngIf="val.dynamicGroupId !=null">
+                                        <img
+                                            style="border-radius: 50%;"
+                                            width="30" height="30"
+                                            src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                    </span>
+                                    {{val.productGroupName|titlecase}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        </div>
+                        <div class="mt-2 w-100">
+                            <!-- Target Type  -->
+                        <div class="row">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>Target Type <span class="danger">* </span></mat-label>
+                                <mat-select  #select formControlName="Targetselaction" (selectionChange)="selectedTarget($event)">
+                                  <mat-option  [value]="1">Orders</mat-option>
+                                  <mat-option  [value]="2">Events</mat-option>
+                                  <mat-option  [value]="3">Tasks</mat-option>
+                                  <mat-option  [value]="4">Initiatives</mat-option>
+                                </mat-select>
+                              </mat-form-field>
+                    </div>
+
+
+                    <div class="row m-2">
+                            <mat-radio-group formControlName="Basedontargetselaction">
+                                <mat-radio-button value="IsAmountTarget" *ngIf="getTargetselaction()==1">
+                                    {{'Amount'|translate}}</mat-radio-button>
+                                <mat-radio-button value="IsCountTarget" >
+                                    {{'Count'|translate}}</mat-radio-button>
+                                <mat-radio-button value="IsDurationTarget" *ngIf="getTargetselaction()!=1">
+                                    {{'Duration'|translate}}</mat-radio-button>
+                            </mat-radio-group>
+                    </div>
+                          <!-- start date && end date    -->
+            <!-- Start Date & Time   -->
+            <div class="row firstAndLastName">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"Start Date"|translate}} <span class="danger">* </span></mat-label>
+                        <input matInput [matDatepicker]="startdatepicker1" style="color: black;"
+                            formControlName="StartDate">
+                        <mat-datepicker-toggle matSuffix [for]="startdatepicker1"></mat-datepicker-toggle>
+                        <mat-datepicker #startdatepicker1></mat-datepicker>
+                        <mat-error *ngIf="targetCreateForm.controls['StartDate'].hasError('required')">
+                            {{"Start Date"|translate}} is <strong>{{"required"|translate}}</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"End Date"|translate}} <span class="danger">* </span></mat-label>
+                        <input matInput [matDatepicker]="enddatepicker1" style="color: black;"
+                            formControlName="EndDate">
+                        <mat-datepicker-toggle matSuffix [for]="enddatepicker1"></mat-datepicker-toggle>
+                        <mat-datepicker #enddatepicker1></mat-datepicker>
+                        <mat-error *ngIf="targetCreateForm.controls['EndDate'].hasError('required')">
+                            {{"End Date"|translate}} is <strong>{{"required"|translate}}</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row m-2">
+                <mat-radio-group formControlName="selectdatetype" (change)="getdateStatus($event.value)">
+                    <mat-radio-button value="Manual">
+                        {{'Manual'|translate}}</mat-radio-button>
+                    <mat-radio-button value="Daily">
+                        {{'Daily'|translate}}</mat-radio-button>
+                        <mat-radio-button value="weekly">
+                            {{'Weekly'|translate}}</mat-radio-button>
+                    <mat-radio-button value="monthly">
+                        {{'Monthly'|translate}}</mat-radio-button>
+                    <mat-radio-button value="yearly">
+                        {{'Yearly'|translate}}</mat-radio-button>
+                </mat-radio-group>
+            </div>
+
+                    <!-- IsAmountTarget  -->
+                    <ng-container >
+                     <!-- 00000000000 -->
+                   <div class="row" *ngIf="getBasedontargetselaction()=='IsAmountTarget'&&getTargetselaction()==1">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>{{"Status Of Transaction"|translate}} <span class="danger">* </span></mat-label>
+                            <mat-select formControlName="statusOfTransaction" (selectionChange)="seletectdtransationstatus($event)">
+                                <mat-option value="0">{{"Pending"|translate}}</mat-option>
+                                <mat-option value="1">{{"Validated"|translate}}</mat-option>
+                                <mat-option value="2">{{'Cancelled' | translate}}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="targetCreateForm.controls['statusOfTransaction'].hasError('required')">
+                                {{'Status Of Transaction'|translate}} is <strong>{{'required'|translate}}</strong>
+                            </mat-error>
+                        </mat-form-field>
+                   </div>
+                    <!-- ---------  -->
+                    <div class="row">
+                        <mat-form-field class="example-chip-list" style="width: 100% !important;">
+                            <mat-label>{{"keyword"|translate}}</mat-label><br>
+                            <mat-chip-list #chipGridforkeyword aria-label="Fruit selection" class="keywordlist">
+                                <mat-chip-row class="keywordrow" *ngFor="let keyword of keywordlist">
+                                    <button class="keywordbutton">
+                                        <span class="keywordpostion">{{keyword|titlecase}}</span>
+                                        <mat-icon class="keywordcancelicon" (click)="remove(keyword)">cancel</mat-icon>
+                                    </button>
+                                </mat-chip-row>
+                            </mat-chip-list>
+                                <mat-select  multiple>
+                                    <mat-option (click)="Selectedkeywprd(x)"  *ngFor="let x of KeywordsFromOrder">{{x}}</mat-option>
+                                </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- ----------  -->
+                    <div class="row" *ngIf="getBasedontargetselaction()=='IsAmountTarget'&&getTargetselaction()==1">
+                        <mat-form-field class="w-100" appearance="fill">
+                            <mat-label>{{'Target Amount'|translate}} <span class="danger">* </span></mat-label>
+                            <input matInput type="number"
+                                placeholder="Amount"
+                                formControlName="targetAmt">
+                        </mat-form-field>
+                    </div>
+                    <div class="row" *ngIf="getBasedontargetselaction()=='IsAmountTarget'&&getTargetselaction()==1">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>{{'Currency'|translate}}</mat-label>
+                            <mat-select formControlName="currency">
+                                <mat-option [value]="1">Euro</mat-option>
+                                <mat-option [value]="2">Dollar</mat-option>
+                                
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    </ng-container>
+
+                    <!-- IsCountTarget  -->
+                    <ng-container *ngIf="getBasedontargetselaction()=='IsCountTarget'">
+                    <!-- ----------  -->
+                    <div class="row">
+                        <mat-form-field class="w-100" appearance="fill">
+                            <mat-label>{{'Target Count'|translate}} <span class="danger">* </span></mat-label>
+                            <input matInput type="number"
+                                placeholder="Count"
+                                formControlName="targetCount">
+                        </mat-form-field>
+                    </div>
+                   
+                    </ng-container>
+
+                    <!-- IsDurationTarget  -->
+                    <ng-container *ngIf="getBasedontargetselaction()=='IsDurationTarget'">
+                    <!-- ----------  -->
+                    <div class="row">
+                        <mat-form-field class="w-100" appearance="fill">
+                            <mat-label>{{'Target Duration'|translate}} <span class="danger">* </span></mat-label>
+                            <input matInput type="text"
+                                placeholder="Duration"
+                                formControlName="targetDuration">
+                        </mat-form-field>
+                    </div>
+                   
+                    </ng-container>
+                     </div>
+                </div>
+            </form>
+        </mat-tab>
+    </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="my-1">
+
+    <div class="row mt-2 justify-content-center">
+        <div class="col-4">
+            <button mat-button mat-dialog-close>{{'Cancel'|translate}}</button>
+        </div>
+        <div class="col-4">
+            <button mat-raised-button class="b-blue" (click)="CreatTargetAll()">{{"Apply"|translate}}</button>
+        </div>
+    </div>
+</mat-dialog-actions>

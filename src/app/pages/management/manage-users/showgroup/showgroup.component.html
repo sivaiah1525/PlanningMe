@@ -1,0 +1,47 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;"> person</mat-icon>
+        {{'Group Details'|translate}}
+    </h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+<div class="row  justify-content-center mt-3 mb-3" *ngFor="let x of details">
+    <ng-container *ngIf="Entity=='Users'">
+        <div class="col-2">
+            <img style="border-radius: 50%; cursor: pointer;" width="30" height="30"
+                [src]="x.profile ? x.profile :'assets/avatar.svg'" onError="this.src='assets/avatar.svg'">
+        </div>
+        <div class="col-6">
+            {{x.firstName|titlecase}} {{x.lastName|titlecase}}
+        </div>
+    </ng-container>
+    <ng-container *ngIf="Entity=='Contacts'">
+        <div class="col-2">
+            <img style="border-radius: 50%; cursor: pointer;" width="30" height="30"
+                [src]="x.profile ? x.profile :'assets/avatar.svg'" onError="this.src='assets/avatar.svg'">
+        </div>
+        <div class="col-6">
+            {{x.firstName|titlecase}} {{x.lastName|titlecase}}
+        </div>
+    </ng-container>
+    <ng-container *ngIf="Entity=='Sites'">
+        <div class="col-1">
+            <span>
+                <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+            </span>
+        </div>
+        <div class="col-8">
+            {{x.siteName|titlecase}}
+        </div>
+    </ng-container>
+    <ng-container *ngIf="Entity=='Products'">
+        <div class="col-2">
+            <img style="border-radius: 50%; cursor: pointer;" width="30" height="30"
+                [src]="x.profile ? x.profile :'assets/images/iconsForsvg/icon_product.svg '"
+                onError="this.src='assets/images/iconsForsvg/icon_product.svg '">
+        </div>
+        <div class="col-8">
+            {{x.productName|titlecase}}
+        </div>
+    </ng-container>
+</div>

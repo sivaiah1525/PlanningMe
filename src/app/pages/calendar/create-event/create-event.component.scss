@@ -1,0 +1,46 @@
+.available-status {
+  color: green;
+  font-size: 15px;
+  // position: absolute;
+  right: 305px;
+  bottom: -5px;
+}
+
+.unavailable-status {
+  color: red;
+  font-size: 15px;
+  // position: absolute;
+  right: 305px;
+  bottom: -5px;
+}
+
+.margin_right_10 {
+  margin-right: 10px;
+}
+
+.margin_bottom_10 {
+  margin-bottom: 10px;
+}
+
+.no-padding {
+  padding-left: 0px !important;
+}
+
+.m-r {
+  margin-right: 0px !important;
+}
+
+.mb-24 {
+  margin-bottom: 24px !important;
+}
+
+::ng-deep .custom-dialog-container {
+  mat-dialog-container {
+    overflow: hidden;
+  }
+}
+
+.f-flex {
+  display: flex;
+  justify-content: space-between;
+}

@@ -1,0 +1,1092 @@
+<!-- Transaction Lis -->
+<mat-tab-group mat-align-tabs="center" class="no-bg" (selectedTabChange)="tabChange($event.index)">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tabclas">
+                <mat-icon [ngClass]="{
+                    'btn-blue': tabnumber == 0 
+                  }">list</mat-icon>
+                <span>{{'Transaction List'|translate}}</span>
+            </div>
+        </ng-template>
+        <div class="tab-container  mt-2">
+            <div class="table-container mat-elevation-z2" *ngIf="!isMobileView">
+                <div class="row" style="margin-top: 10px;margin-bottom: 10px;" *ngIf="showicon">
+                    <h3 style="margin-top: 10px;margin-bottom: 10px;">Search Results Of :</h3>
+                    <ng-container *ngFor="let x of SearchTransaction; let index = index;">
+                        <span class="keywordsearch" style="margin: 10px;">
+                            <ng-container *ngIf="x?.name=='Search'"><span
+                                    class="keywordvalue">Search: {{x.value ? x.value : 'none'}}</span></ng-container>
+                                    <ng-container *ngIf="x?.name=='NumberOfRecord'">
+                                        <span style="display: none;"></span></ng-container>
+                                        <ng-container *ngIf="x?.name=='PageNumber'">
+                                            <span style="display: none;"></span></ng-container>
+                            <ng-container *ngIf="x?.name=='TransactionTypeId' && x.value"><span class="keywordvalue">
+                                Transaction Tye: {{x.value == 1 ? 'Buy' : 'Sale'}}</span></ng-container>
+                            <ng-container *ngIf="x?.name=='StatusOfTransaction' && x.value"><span
+                                    class="keywordvalue">Status of Transaction: {{x.value == 0 ? 'Pending' : x.value == 1 ? 'Validated' : x.value == 3 ? 'Cancelled' : 'None'}}</span></ng-container>
+                            <span><mat-icon class="keywordremove"
+                                    (click)="removeSearch(x, index)">cancel</mat-icon></span>
+                        </span>
+                    </ng-container>
+                </div>
+                <div class="row" *ngIf="showicon" style="background-color: #fffde3;padding: 10px;">
+                    <div class="col-3">
+                        <span class="fs-16" style="font-weight: 700;">No of Records : </span>
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{transactionLength}}</span>
+                    </div>
+                    <div class="col-3 ">
+                        <span class="fs-16 " style="font-weight: 700;">Total Quantity : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{StockQuantity}} Unit / Liter</span>
+                    </div>
+                    <div class="col-3">
+                        <span class="fs-16" style="font-weight: 700;">Total Final Price : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{transform(StockTotalPrice)}} &euro;</span>
+                    </div>
+                    <div class="col-3">
+                        <span class="fs-16" style="font-weight: 700;">Average Amount : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{RoundAmount(StockTotalPrice / StockQuantity)}} &euro;</span>
+                    </div>
+                </div>
+                <table mat-table [dataSource]="transactionDataSource" matSort class="table">
+                    <ng-container matColumnDef="A">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                        <td mat-cell style="width: 0 !important; padding: 0 !important;"
+                            *matCellDef="let row;let i = index">
+                            <div id="main">
+                                <div>
+                                    <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                                        <mat-icon class="icon-options">more_vert</mat-icon>
+                                    </button>
+                                </div>
+                                <div>
+                                    <span *ngIf="row?.isPrivateDiscount ==true &&row?.externalDiscountAmount==0">
+                                        <img style="border-radius: 50%;"
+                                            (click)="viewdiscountForTransation(row,row?.isPublicDiscount,row?.isPublicDiscount,false)"
+                                            src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                    </span>
+                                    <span *ngIf="row?.isPublicDiscount ==true &&row?.externalDiscountAmount==0">
+                                        <img style="border-radius: 50%;"
+                                            (click)="viewdiscountForTransation(row,row?.isPublicDiscount,row?.isPublicDiscount,false)"
+                                            src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                    </span>
+                                    <span *ngIf="row?.externalDiscountAmount!=0">
+                                        <img style="border-radius: 50%;"
+                                            (click)="viewdiscountForTransation(row,row?.isPublicDiscount,row?.isPublicDiscount,true)"
+                                            src="assets/images/iconsForsvg/discount-icon-yellow.svg">
+                                    </span>
+                                </div>
+                            </div>
+                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                <ng-template matMenuContent>
+                                    <button class="fw-600" mat-menu-item (click)="openTransactionDialog(row)"> 
+                                        <mat-icon class="icon-options">visibility</mat-icon>
+                                        <span class="fw-600 color_black">{{'View'|translate}}
+                                        </span>
+                                    </button>
+                                    <ng-container *ngIf="(AdminStatus=='true'||row?.isCreator==true)">
+                                        <button class="fw-600" mat-menu-item *ngIf="row?.statusName=='Pending'"
+                                            (click)="updatetransactionDialog(row)">
+                                            <mat-icon class="icon-options">edit</mat-icon>
+                                            <span class="fw-600 color_black">{{'Edit'|translate}}
+                                            </span>
+                                        </button>
+                                    </ng-container>
+                                    <button class="fw-600" mat-menu-item
+                                        *ngIf="(AdminStatus=='true'||row?.isCreator==true)"
+                                        (click)="deleteDialogConfirmation(row,'deleteTransation')">
+                                        <mat-icon class="icon-options">delete</mat-icon>
+                                        <span class="fw-600 color_black">{{'Delete'|translate}}
+                                        </span> </button>
+                                    <button class="fw-600" mat-menu-item (click)="openAddEventDialog()">
+                                        <mat-icon>event</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Create an Event'|translate}}
+                                        </span> </button>
+                                    <button class="fw-600" mat-menu-item (click)="ActivityReport()">
+                                        <mat-icon style="color:green">bar_chart</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Create an Activity Report'|translate}}
+                                        </span> </button>
+                                    <button class="fw-600" mat-menu-item (click)="CreateStratergy()">
+                                        <mat-icon>wb_incandescent</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Create Stratergy'|translate}}
+                                        </span>
+                                    </button>
+                                    <button *ngIf="AdminStatus=='true'||TransactionsCreation=='true'" class="fw-600"
+                                        mat-menu-item (click)="CreateduplicateTransation(row)">
+                                        <img src="../../../../assets/images/iconsForsvg/duplicate-outline.svg" alt="">
+                                        <span class="fw-600 color_black" style="margin-left:24px;">
+                                            {{'Duplicate'|translate}}</span>
+                                    </button>
+                                    <button *ngIf="(row.isPublicDiscount ==true||row.isPrivateDiscount ==true)"
+                                    class="fw-600 " mat-menu-item
+                                        (click)="viewdiscountForTransation(row,row.isPublicDiscount,row.isPrivateDiscount,false)">
+                                        <mat-icon class="green">loyalty</mat-icon>
+                                        <span class="fw-600 color_black">{{'View Discount'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600 " mat-menu-item (click)="AddDiscount1(row,'transactions')"
+                                    *ngIf="row.isPublicDiscount ==false && row.isPrivateDiscount ==false">
+                                    <mat-icon class="green">loyalty</mat-icon>
+                                    <span class="fw-600 color_black">{{'Add Discount'|translate}}</span>
+                                </button>
+                                </ng-template>
+                            </mat-menu>
+
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="B">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell style="width: 5px !important;padding-right:20px !important;" *matCellDef="let row">
+                            <span *ngIf="row.transactionType=='Sale'">
+                                <img src="../../../../assets/images/iconsForsvg/cart1.svg" alt="">
+                            </span>
+                            <span *ngIf="row.transactionType=='Buy'">
+                                <img src="../../../../assets/images/iconsForsvg/cart2.svg" alt="">
+                            </span> 
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="C">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell style="width: 0 !important; padding: 0 !important;" *matCellDef="let row">
+                            <span *ngIf="row.statusName == 'Pending'">
+                                <mat-icon style="font-size: 12px;  color:yellow;">fiber_manual_record</mat-icon>
+                            </span>
+                            <span *ngIf="row.statusName == 'Validated'">
+                                <mat-icon style="font-size: 12px;  color:blue;margin-top:18px;">fiber_manual_record</mat-icon>
+                            </span>
+                            <span *ngIf="row.statusName == 'Cancelled'">
+                                <mat-icon style="font-size: 12px;  color:green;margin-top:18px;">fiber_manual_record</mat-icon>
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="Discount">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell *matCellDef="let row"><span *ngIf="row.discountId !== null">
+                                <mat-icon style="color:green;">loyalty</mat-icon>
+                            </span></td>
+                    </ng-container>
+                    <ng-container matColumnDef="orderId">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Order ID'|translate}} </th>
+                        <td mat-cell *matCellDef="let row" style="cursor: pointer;"
+                            (click)="openTransactionDialog(row)">
+                            {{row.orderId}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="quantity">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Quantity'|translate}} </th>
+                        <td mat-cell *matCellDef="let row"> {{row.quantity+' '+row.unit}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="unitPrice">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Unit Price'|translate}} </th>
+                        <td mat-cell *matCellDef="let row"> {{transform(row.unitPrice)+' '+row.currencyName}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="finalPrice">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Final Price'|translate}} </th>
+                        <td mat-cell *matCellDef="let row"> {{transform(row.finalPrice)+' '+row.currencyName}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="transactionDate">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Transaction Date'|translate}} </th>
+                        <td mat-cell *matCellDef="let row"> {{row.transactionDate| date:'dd-MMM-yyyy'}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="siteName">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Site Name'|translate}} </th>
+                        <td mat-cell *matCellDef="let row">{{row.siteName|titlecase}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="productName">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Product Name'|translate}} </th>
+                        <td mat-cell *matCellDef="let row"> {{row.productName | slice:0:30 | titlecase}} </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="transactionColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: transactionColumns;">
+                    </tr>
+                </table>
+                <mat-paginator *ngIf="!this.showicon" [pageSize]="20" [length]="TransationDataLength" (page)="nextTransation($event)"></mat-paginator>
+                <mat-paginator *ngIf="this.showicon" [pageSize]="20" [length]="transactionLength" (page)="nextTransation($event)"></mat-paginator>
+            </div>
+
+            <div class="table-container mat-elevation-z2" *ngIf="isMobileView">
+                <div class="row" style="margin-top: 10px;margin-bottom: 10px;" *ngIf="showicon">
+                    <h3 style="margin-top: 10px;margin-bottom: 10px;">Search Results Of :</h3>
+                    <div style="display: flex; flex-wrap: wrap; align-items: flex-start;">
+
+                        <!-- Left arrow to navigate to previous items -->
+                        <div style="cursor: pointer;" *ngIf="startIndex > 0">
+                            <mat-icon (click)="navigateItems('left')"
+                                style="padding: 8px;font-size: 35px;margin-right: 10px;">keyboard_arrow_left</mat-icon>
+                        </div>
+    
+                        <!-- Show the items in a row -->
+                        <ng-container *ngFor="let x of SearchTransaction; let index = index;">
+                            <span class="keywordsearch" style="margin: 10px;">
+                                <ng-container *ngIf="x?.name=='Search'"><span
+                                        class="keywordvalue">{{x.value}}</span></ng-container>
+                                        <ng-container *ngIf="x?.name=='NumberOfRecord'">
+                                            <span style="display: none;"></span></ng-container>
+                                            <ng-container *ngIf="x?.name=='PageNumber'">
+                                                <span style="display: none;"></span></ng-container>
+                                <ng-container *ngIf="x?.name=='TransactionTypeId'"><span class="keywordvalue">
+                                    Transaction Tye: {{x.value == 1 ? 'Buy' : 'Sale'}}</span></ng-container>
+                                <ng-container *ngIf="x?.name=='StatusOfTransaction'"><span
+                                        class="keywordvalue">Status of Transaction: {{x.value == 0 ? 'Pending' : x.value == 1 ? 'Validated' : x.value == 3 ? 'Cancelled' : 'None'}}</span></ng-container>
+                                <span><mat-icon class="keywordremove"
+                                        (click)="removeSearch(x, index)">cancel</mat-icon></span>
+                            </span>
+                        </ng-container>
+    
+                        <!-- Right arrow to navigate to next items -->
+                        <div style="cursor: pointer;"
+                            *ngIf="SearchTransaction.length > 1 && startIndex + SearchTransaction.length < ListOftragetfiltervalues.length">
+                            <mat-icon (click)="navigateItems('right')"
+                                style="padding: 10px;font-size: 35px;">keyboard_arrow_right</mat-icon>
+                        </div>
+    
+                    </div>
+                    
+                </div>
+                <div class="row" *ngIf="showicon" style="background-color: #fffde3;padding: 10px;">
+                    <div class="col-12">
+                        <span class="fs-16" style="font-weight: 700;">No of Records : </span>
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{transactionLength}}</span>
+                    </div>
+                    <div class="col-12 mt-2 ">
+                        <span class="fs-16 " style="font-weight: 700;">Quantity : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{StockQuantity}}</span>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <span class="fs-16" style="font-weight: 700;">Total Final Price : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{transform(StockTotalPrice)}} &euro;</span>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <span class="fs-16" style="font-weight: 700;">Average Amount : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{RoundAmount(StockTotalPrice / StockQuantity)}} &euro;</span>
+                    </div>
+                </div>
+                <table mat-table [dataSource]="transactionDataSource" matSort class="table">
+                    <ng-container matColumnDef="A">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                        <td mat-cell style="width: 0 !important; padding: 0 !important;"
+                            *matCellDef="let row;let i = index">
+                            <div id="main">
+                                <div>
+                                    <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                                        <mat-icon class="icon-options">more_vert</mat-icon>
+                                    </button>
+                                </div>
+                                <div>
+                                    <span *ngIf="row?.isPrivateDiscount ==true &&row?.externalDiscountAmount==0">
+                                        <img style="border-radius: 50%;"
+                                            (click)="viewdiscountForTransation(row,row?.isPublicDiscount,row?.isPublicDiscount,false)"
+                                            src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                    </span>
+                                    <span *ngIf="row?.isPublicDiscount ==true &&row?.externalDiscountAmount==0">
+                                        <img style="border-radius: 50%;"
+                                            (click)="viewdiscountForTransation(row,row?.isPublicDiscount,row?.isPublicDiscount,false)"
+                                            src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                    </span>
+                                    <span *ngIf="row?.externalDiscountAmount!=0">
+                                        <img style="border-radius: 50%;"
+                                            (click)="viewdiscountForTransation(row,row?.isPublicDiscount,row?.isPublicDiscount,true)"
+                                            src="assets/images/iconsForsvg/discount-icon-yellow.svg">
+                                    </span>
+                                </div>
+                            </div>
+                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                <ng-template matMenuContent>
+                                    <button class="fw-600" mat-menu-item (click)="openTransactionDialog(row)">
+                                        <mat-icon class="icon-options">visibility</mat-icon>
+                                        <span class="fw-600 color_black">{{'View'|translate}}
+                                        </span>
+                                    </button>
+                                    <ng-container *ngIf="(AdminStatus=='true'||row?.isCreator==true)">
+                                        <button class="fw-600" mat-menu-item *ngIf="row?.statusName=='Pending'"
+                                            (click)="updatetransactionDialog(row)">
+                                            <mat-icon class="icon-options">edit</mat-icon>
+                                            <span class="fw-600 color_black">{{'Edit'|translate}}
+                                            </span>
+                                        </button>
+                                    </ng-container>
+                                    <button class="fw-600" mat-menu-item
+                                        *ngIf="(AdminStatus=='true'||row?.isCreator==true)"
+                                        (click)="deleteDialogConfirmation(row,'deleteTransation')">
+                                        <mat-icon class="icon-options">delete</mat-icon>
+                                        <span class="fw-600 color_black">{{'Delete'|translate}}
+                                        </span> </button>
+                                    <button class="fw-600" mat-menu-item (click)="openAddEventDialog()">
+                                        <mat-icon>event</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Create an Event'|translate}}
+                                        </span> </button>
+                                    <button class="fw-600" mat-menu-item (click)="ActivityReport()">
+                                        <mat-icon style="color:green">bar_chart</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Create an Activity Report'|translate}}
+                                        </span> </button>
+                                    <button class="fw-600" mat-menu-item (click)="CreateStratergy()">
+                                        <mat-icon>wb_incandescent</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Create Stratergy'|translate}}
+                                        </span>
+                                    </button>
+                                    <button *ngIf="AdminStatus=='true'||TransactionsCreation=='true'" class="fw-600"
+                                        mat-menu-item (click)="CreateduplicateTransation(row)">
+                                        <img src="../../../../assets/images/iconsForsvg/duplicate-outline.svg" alt="">
+                                        <span class="fw-600 color_black" style="margin-left:24px;">
+                                            {{'Create Duplicate'|translate}}</span>
+                                    </button>
+                                    <button *ngIf="(row.isPublicDiscount ==true||row.isPrivateDiscount ==true)"
+                              
+                                    class="fw-600 " mat-menu-item
+                                        (click)="viewdiscountForTransation(row,row.isPublicDiscount,row.isPrivateDiscount,false)">
+                                        <mat-icon class="green">loyalty</mat-icon>
+                                        <span class="fw-600 color_black">{{'View Discount'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600 " mat-menu-item (click)="AddDiscount1(row,'transactions')"
+                                    *ngIf="row.isPublicDiscount ==false && row.isPrivateDiscount ==false">
+                                    <mat-icon class="green">loyalty</mat-icon>
+                                    <span class="fw-600 color_black">{{'Add Discount'|translate}}</span>
+                                </button>
+                                </ng-template>
+                            </mat-menu>
+
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="B">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell style="width: 5px !important;padding-right:20px !important;" *matCellDef="let row">
+                            <span *ngIf="row.transactionType=='Sale'">
+                                <img src="../../../../assets/images/iconsForsvg/cart1.svg" alt="">
+                            </span>
+                            <span *ngIf="row.transactionType=='Buy'">
+                                <img src="../../../../assets/images/iconsForsvg/cart2.svg" alt="">
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="C">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell style="width: 0 !important; padding: 0 !important;" *matCellDef="let row">
+                            <span *ngIf="row.statusName == 'Pending'">
+                                <mat-icon style="font-size: 12px;  color:yellow;">fiber_manual_record</mat-icon>
+                            </span>
+                            <span *ngIf="row.statusName == 'Validated'">
+                                <mat-icon style="font-size: 12px;  color:blue;">fiber_manual_record</mat-icon>
+                            </span>
+                            <span *ngIf="row.statusName == 'Cancelled'">
+                                <mat-icon style="font-size: 12px;  color:green;">fiber_manual_record</mat-icon>
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="Discount">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell *matCellDef="let row"><span *ngIf="row.discountId !== null">
+                                <mat-icon style="color:green;">loyalty</mat-icon>
+                            </span></td>
+                    </ng-container>
+                    <ng-container matColumnDef="orderId">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Order ID'|translate}} </th>
+                        <td mat-cell *matCellDef="let row" style="cursor: pointer;"
+                            (click)="openTransactionDialog(row)">
+                            {{row.orderId}} </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="transactionColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: transactionColumns;">
+                    </tr>
+                </table>
+                <mat-paginator [pageSize]="20" [length]="TransationDataLength" (page)="nextTransation($event)"></mat-paginator>
+            </div>
+
+            <span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+                <button id="add-button1" mat-fab (click)="Createdynamickeywords()">
+                    <span style="font-size: 20px;">#</span>
+                </button><br><br>
+                <button id="add-button3" mat-fab (click)="exportData('Transactions')">
+                    <mat-icon style="color: white;"> import_export</mat-icon>
+                </button><br><br>
+                <button id="add-button1" mat-fab (click)="searchbox(viewsearchbox, 'transaction')">
+                    <mat-icon style="color: white;">search</mat-icon>
+                </button><br><br>
+                <button *ngIf="AdminStatus=='true'||transationCreateStatus=='true'" id="add-button2" mat-fab
+                    (click)="createNewTransation()">
+                    <mat-icon style="color: white;">add</mat-icon>
+                </button><br><br>
+                <button *ngIf="showicon" matTooltip="delete Search" id="add-button1" mat-fab
+                (click)="closesearch('single')">
+                <mat-icon style="color: white;">delete_forever</mat-icon>
+            </button>
+            </span>
+            <!-- ---------------------  -->
+            <div class="overlay" *ngIf="loadder">
+                <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+                </mat-progress-spinner>
+            </div>
+        </div> 
+    </mat-tab>
+    <!-- Transaction Lis End  -->
+
+    <!-- Orders & Quotes -->
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tabclas">
+                <mat-icon [ngClass]="{
+                    'btn-blue': tabnumber == 1
+                  }">assignment</mat-icon>
+                <span>{{'Orders'|translate}} & {{'Quotes'|translate}}</span>
+            </div>
+        </ng-template>
+        <div class="tab-container mt-2">
+            <!-- Orders & Quotes table  -->
+            <div class="table-container mat-elevation-z2 m-1" *ngIf="!isMobileView">
+                <div class="row" style="margin-top: 10px;margin-bottom: 10px;" *ngIf="showicon">
+                    <h3 style="margin-top: 10px;margin-bottom: 10px;">Search Results Of :</h3>
+                    <ng-container *ngFor="let x of SearchOrderResult; let index = index;">
+                        <span class="keywordsearch" style="margin: 10px;">
+                            <ng-container *ngIf="x?.name=='Search'"><span
+                                    class="keywordvalue">Search: {{x.value ? x.value : 'none'}}</span></ng-container>
+                                    <ng-container *ngIf="x?.name=='NumberOfRecord'">
+                                        <span style="display: none;"></span></ng-container>
+                                        <ng-container *ngIf="x?.name=='PageNumber'">
+                                            <span style="display: none;"></span></ng-container>
+                            <ng-container *ngIf="x?.name=='TransactionTypeId'"><span class="keywordvalue">
+                                Transaction Type: {{x.value == 1 ? 'Buy' : 'Sale'}}</span></ng-container>
+                            <ng-container *ngIf="x?.name=='StatusOfTransaction'"><span
+                                    class="keywordvalue">Status of Transaction: {{x.value == 0 ? 'Pending' : x.value == 1 ? 'Validated' : x.value == 3 ? 'Cancelled' : 'None'}}</span></ng-container>
+                                    
+                            <span><mat-icon class="keywordremove"
+                                    (click)="removeSearch(x, index)">cancel</mat-icon></span>
+                        </span>
+                    </ng-container>
+                </div>
+                <div class="row" *ngIf="showicon" style="background-color: #fffde3;padding: 10px;">
+                    <div class="col-3">
+                        <span class="fs-16" style="font-weight: 700;">No of Records : </span>
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{orderuserDataLength}}</span>
+                    </div>
+                    <div class="col-3 ">
+                        <span class="fs-16 " style="font-weight: 700;">Total Final Price : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{transform(OrdersTotalPrice)}} &euro;</span>
+                    </div>
+                    <div class="col-3 ">
+                        <span class="fs-16 " style="font-weight: 700;">Average Amount : </span> 
+                        <span class="fs-16" style="font-weight: 700;color: blue;">{{RoundAmount(OrdersTotalPrice / orderuserDataLength)}} &euro;</span>
+                    </div>
+                </div>
+                <table mat-table [dataSource]="OrderQuotedataSource" matSort class="table">
+                    <ng-container matColumnDef="A">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                        <td mat-cell style="width: 0 !important; padding: 0 !important;"
+                            *matCellDef="let row;let i = index">
+                            <div id="main"> 
+                                <div>
+                                    <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                                        <mat-icon class="icon-options">more_vert</mat-icon>
+                                    </button>
+                                </div>
+                                <div>
+                                    <span *ngIf="row?.hasPrivateDiscount ==true">
+                                        <img style="border-radius: 50%;"
+                                            (click)="viewdiscountForTransation(row,false,true,false)"
+                                            src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                    </span>
+                                    <span *ngIf="row?.hasPublicDiscount ==true">
+                                        <img style="border-radius: 50%;"
+                                            (click)="viewdiscountForTransation(row,true,false,false)"
+                                            src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                    </span>
+
+                                </div>
+                            </div>
+                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                <ng-template matMenuContent>
+                                    <button class="fw-600" mat-menu-item (click)="VieworderDialog(row)">
+                                        <mat-icon class="icon-options">visibility</mat-icon>
+                                        <span class="fw-600 color_black">{{'View'|translate}}
+                                        </span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item
+                                        *ngIf="(AdminStatus=='true'||row?.isCreator==true)"
+                                        (click)="EditorderDialog(row)">
+                                        <mat-icon class="icon-options">edit</mat-icon>
+                                        <span class="fw-600 color_black">{{'Edit'|translate}}
+                                        </span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item
+                                        *ngIf="(AdminStatus=='true'||row?.isCreator==true)"
+                                        (click)="deleteDialogConfirmation(row,'deleteorder')">
+                                        <mat-icon class="icon-options">delete</mat-icon>
+                                        <span class="fw-600 color_black">{{'Delete'|translate}}
+                                        </span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="download(row)">
+                                        <mat-icon style="vertical-align: middle">download</mat-icon>
+                                        <span class="fw-600 color_black">{{'Download'|translate}}
+                                        </span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="ViewPdf(row)">
+                                        <mat-icon style="vertical-align: middle">picture_as_pdf</mat-icon>
+                                        <span class="fw-600 color_black">{{'View Invoice'|translate}}
+                                        </span>
+                                    </button>
+                                    <button *ngIf="(row.hasPublicDiscount ==true||row.hasPrivateDiscount ==true)"
+                                        class="fw-600 " mat-menu-item
+                                        (click)="viewdiscountForTransation(row,row.hasPublicDiscount,row.hasPrivateDiscount,false)">
+                                        <mat-icon class="green">loyalty</mat-icon>
+                                        <span class="fw-600 color_black">{{'View Discount'|translate}}</span>
+                                    </button>
+                                    <button *ngIf="row.orderQuoteStatus !=='Validated'" class="fw-600" mat-menu-item
+                                        (click)="QuoteToOrderChange(QuoteToOrderDialog,row)">
+                                        <mat-icon style="vertical-align: middle; color: #8ab2ef;">assignment</mat-icon>
+                                        <span class="fw-600 color_black">
+                                            {{'Change into order'|translate}}
+                                        </span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="AddFile(row,'single')">
+                                        <mat-icon style="color:rgb(66,135,245) ;">
+                                            insert_drive_file</mat-icon>
+                                        <span class="fw-600 color_black">
+                                            {{'Add File'|translate}}
+                                        </span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="AddNote(row,'single')">
+                                        <mat-icon style="color:rgb(255,193,111) ;">
+                                            speaker_notes </mat-icon>
+                                        <span class="fw-600 color_black">
+                                            {{'Add Note'|translate}}
+                                        </span>
+                                    </button>
+                                    <button *ngIf="AdminStatus=='true'||transationCreateStatus=='true'" class="fw-600"
+                                        mat-menu-item (click)="CreateduplicateOrder(row)">
+                                        <img src="../../../../assets/images/iconsForsvg/duplicate-outline.svg" alt="">
+                                        <span class="fw-600 color_black" style="margin-left:24px;">
+                                            {{'Create Duplicate'|translate}}</span>
+                                    </button>
+
+                                </ng-template>
+                            </mat-menu>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="B">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell style="width: 5px !important;padding-right:20px !important;" *matCellDef="let row">
+                            <span *ngIf="row.transactionType=='Sale'">
+                                <img src="../../../../assets/images/iconsForsvg/cart1.svg" alt="">
+                            </span>
+                            <span *ngIf="row.transactionType=='Buy'">
+                                <img src="../../../../assets/images/iconsForsvg/cart2.svg" alt="">
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="C">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell style="width: 5px !important;padding-right:20px !important;" *matCellDef="let row">
+                            <span *ngIf="row.orderQuoteStatus!=='Pending'" (click)="VieworderDialog(row)"
+                                style="cursor: pointer;">
+                                <mat-icon style="vertical-align: middle; color: #8ab2ef;">assignment</mat-icon>
+                            </span>
+                            <span *ngIf="row.orderQuoteStatus !=='Validated'" (click)="VieworderDialog(row)"
+                                style="cursor: pointer;">
+                                <mat-icon style="vertical-align: middle; color:#efc447;">assignment</mat-icon>
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="orderId">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Order ID'|translate}}</th>
+                        <td mat-cell *matCellDef="let row" style="cursor: pointer;" (click)="VieworderDialog(row)">
+                            {{row.orderId}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="totalAmount">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Total Amount'|translate}}</th>
+                        <td mat-cell *matCellDef="let row"> {{transform(row.totalAmount)+' '+'€'}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="issueDate">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Issue Date'|translate}}</th>
+                        <td mat-cell *matCellDef="let row"> {{row.issueDate |date:'dd-MMM-yyyy'}} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="dueDate">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Due Date'|translate}}</th>
+                        <td mat-cell *matCellDef="let row"> {{row.dueDate | date:'dd-MMM-yyyy'}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="siteName">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Site Name'|translate}}</th>
+                        <td mat-cell *matCellDef="let row">{{row.siteName|titlecase}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="clinetName">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Clinet Name'|translate}}</th>
+                        <td mat-cell *matCellDef="let row">{{row.clientName|titlecase}}</td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="ordercolumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: ordercolumns;"></tr>
+                </table>
+            </div>
+
+            <div class="table-container mat-elevation-z2 m-1" *ngIf="isMobileView">
+                <table mat-table [dataSource]="OrderQuotedataSource" matSort class="table">
+                    <ng-container matColumnDef="A">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                        <td mat-cell style="width: 0 !important; padding: 0 !important;"
+                            *matCellDef="let row;let i = index">
+                            <div id="main">
+                                <div>
+                                    <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                                        <mat-icon class="icon-options">more_vert</mat-icon>
+                                    </button>
+                                </div>
+                                <div>
+                                    <span *ngIf="row?.hasPrivateDiscount ==true">
+                                        <img style="border-radius: 50%;"
+                                            (click)="viewdiscountForTransation(row,false,true,false)"
+                                            src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                    </span>
+                                    <span *ngIf="row?.hasPublicDiscount ==true">
+                                        <img style="border-radius: 50%;"
+                                            (click)="viewdiscountForTransation(row,true,false,false)"
+                                            src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                    </span>
+
+                                </div>
+                            </div>
+                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                <ng-template matMenuContent>
+                                    <button class="fw-600" mat-menu-item (click)="VieworderDialog(row)">
+                                        <mat-icon class="icon-options">visibility</mat-icon>
+                                        <span class="fw-600 color_black">{{'View'|translate}}
+                                        </span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item
+                                        *ngIf="(AdminStatus=='true'||row?.isCreator==true)"
+                                        (click)="EditorderDialog(row)">
+                                        <mat-icon class="icon-options">edit</mat-icon>
+                                        <span class="fw-600 color_black">{{'Edit'|translate}}
+                                        </span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item
+                                        *ngIf="(AdminStatus=='true'||row?.isCreator==true)"
+                                        (click)="deleteDialogConfirmation(row,'deleteorder')">
+                                        <mat-icon class="icon-options">delete</mat-icon>
+                                        <span class="fw-600 color_black">{{'Delete'|translate}}
+                                        </span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="download(row)">
+                                        <mat-icon style="vertical-align: middle">download</mat-icon>
+                                        <span class="fw-600 color_black">{{'Download'|translate}}
+                                        </span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="ViewPdf(row)">
+                                        <mat-icon style="vertical-align: middle">picture_as_pdf</mat-icon>
+                                        <span class="fw-600 color_black">{{'View Invoice'|translate}}
+                                        </span>
+                                    </button>
+                                    <button *ngIf="(row.hasPublicDiscount ==true||row.hasPrivateDiscount ==true)"
+                                        class="fw-600 " mat-menu-item
+                                        (click)="viewdiscountForTransation(row,row.hasPublicDiscount,row.hasPrivateDiscount,false)">
+                                        <mat-icon class="green">loyalty</mat-icon>
+                                        <span class="fw-600 color_black">{{'View Discount'|translate}}</span>
+                                    </button>
+                                    <button *ngIf="row.orderQuoteStatus !=='Validated'" class="fw-600" mat-menu-item
+                                        (click)="QuoteToOrderChange(QuoteToOrderDialog,row)">
+                                        <mat-icon style="vertical-align: middle; color: #8ab2ef;">assignment</mat-icon>
+                                        <span class="fw-600 color_black">
+                                            {{'Change into order'|translate}}
+                                        </span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="AddFile(row,'single')">
+                                        <mat-icon style="color:rgb(66,135,245) ;">
+                                            insert_drive_file</mat-icon>
+                                        <span class="fw-600 color_black">
+                                            {{'Add File'|translate}}
+                                        </span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="AddNote(row,'single')">
+                                        <mat-icon style="color:rgb(255,193,111) ;">
+                                            speaker_notes </mat-icon>
+                                        <span class="fw-600 color_black">
+                                            {{'Add Note'|translate}}
+                                        </span>
+                                    </button>
+                                    <button *ngIf="AdminStatus=='true'||transationCreateStatus=='true'" class="fw-600"
+                                        mat-menu-item (click)="CreateduplicateOrder(row)">
+                                        <img src="../../../../assets/images/iconsForsvg/duplicate-outline.svg" alt="">
+                                        <span class="fw-600 color_black" style="margin-left:24px;">
+                                            {{'Create Duplicate'|translate}}</span>
+                                    </button>
+
+                                </ng-template>
+                            </mat-menu>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="B">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell style="width: 5px !important;padding-right:20px !important;" *matCellDef="let row">
+                            <span *ngIf="row.transactionType=='Sale'">
+                                <img src="../../../../assets/images/iconsForsvg/cart1.svg" alt="">
+                            </span>
+                            <span *ngIf="row.transactionType=='Buy'">
+                                <img src="../../../../assets/images/iconsForsvg/cart2.svg" alt="">
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="C">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                        <td mat-cell style="width: 5px !important;padding-right:20px !important;" *matCellDef="let row">
+                            <span *ngIf="row.orderQuoteStatus!=='Pending'" (click)="VieworderDialog(row)"
+                                style="cursor: pointer;">
+                                <mat-icon style="vertical-align: middle; color: #8ab2ef;">assignment</mat-icon>
+                            </span>
+                            <span *ngIf="row.orderQuoteStatus !=='Validated'" (click)="VieworderDialog(row)"
+                                style="cursor: pointer;">
+                                <mat-icon style="vertical-align: middle; color:#efc447;">assignment</mat-icon>
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="orderId">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Order ID'|translate}}</th>
+                        <td mat-cell *matCellDef="let row" style="cursor: pointer;" (click)="VieworderDialog(row)">
+                            {{row.orderId}} </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="ordercolumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: ordercolumns;"></tr>
+                </table>
+            </div>
+
+
+            <span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+                <button id="add-button3" mat-fab (click)="exportData('Orders')">
+                    <mat-icon style="color: white;"> import_export</mat-icon>
+                </button><br><br>
+                <button id="add-button1" mat-fab (click)="searchbox(viewsearchbox, 'order')">
+                    <mat-icon style="color: white;">search</mat-icon>
+                </button><br><br>
+                <button *ngIf="AdminStatus=='true'||transationCreateStatus=='true'" id="add-button2" mat-fab
+                    (click)="addorder()">
+                    <mat-icon style="color: white;">add</mat-icon>
+                </button><br><br>
+                <button *ngIf="showicon" matTooltip="delete Search" id="add-button1" mat-fab
+                    (click)="closesearch('orders')">
+                    <mat-icon style="color: white;">delete_forever</mat-icon>
+                </button>
+            </span>
+
+            <mat-paginator [pageSize]="20" [length]="orderuserDataLength" (page)="nextorder($event)"></mat-paginator>
+            <!-- ---------------------  -->
+            <div class="overlay" *ngIf="loadder">
+                <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+                </mat-progress-spinner>
+            </div>
+        </div>
+    </mat-tab>
+
+    <!-- Orders & Quotes End  -->
+    <!-- --------------  -->
+    <!-- Discounts -->
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tabclas">
+                <mat-icon [ngClass]="{
+                    'btn-blue': tabnumber == 2 
+                  }">loyalty</mat-icon>
+                <span>{{'Discounts'|translate}}</span>
+            </div>
+        </ng-template>
+        <div class="tab-container  mt-2" *ngIf="!isMobileView">
+            <div class="row" style="margin-top: 10px;margin-bottom: 10px;" *ngIf="showicon">
+                <h3 style="margin-top: 10px;margin-bottom: 10px;">Search Results Of :</h3>
+                <span class="keywordsearch" *ngFor="let x of SearchResult; let index=index;">
+                    <span style="margin: 10px;">
+                        <span class="keywordvalue">{{x}}</span>
+                        <span> <mat-icon class="keywordremove" (click)="removeSearch(x,index)">cancel</mat-icon></span>
+                    </span>
+                </span>
+            </div>
+            <div class="row" *ngIf="showicon" style="background-color: #fffde3;padding: 10px;">
+                <div class="col-3">
+                    <span class="fs-16" style="font-weight: 700;">No of Records : </span>
+                    <span class="fs-16" style="font-weight: 700;color: blue;">{{userDataLength}}</span>
+                </div>
+            </div>
+            <div class="table-container mat-elevation-z2" style="overflow-y: hidden !important;">
+                <table mat-table [dataSource]="discountDataSource" matSort class="table">
+                    <ng-container matColumnDef="options">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                        <td mat-cell *matCellDef="let row;let i = index" style="width: 200px;">
+                            <div>
+                                <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                                    <mat-icon class="icon-options">more_vert</mat-icon>
+                                </button>
+
+                                <mat-menu #moreMenu="matMenu" class="eventlist">
+                                    <ng-template matMenuContent>
+                                        <button class="fw-600" mat-menu-item (click)="openDiscount(row)">
+                                            <mat-icon class="icon-options">visibility</mat-icon>{{'View'|translate}}
+                                        </button>
+
+                                        <button class="fw-600" mat-menu-item (click)="UpdateDiscount(row)">
+                                            <mat-icon class="icon-options">edit</mat-icon>{{'Edit'|translate}}
+                                        </button>
+
+                                        <button class="fw-600" mat-menu-item
+                                            (click)="deleteDialogConfirmation(row,'deletediscount')">
+                                            <mat-icon class="icon-options">delete</mat-icon>{{'Delete'|translate}}
+                                        </button>
+                                        <button class="fw-600" mat-menu-item (click)="ShowDiscountHistory(row)">
+                                            <img src="../../../../assets/images/iconsForsvg/history-com.svg">
+                                            {{'Discount history'|translate}}
+                                        </button>
+                                        <button class="fw-600" mat-menu-item (click)="ShowDiscountMatrix(row)">
+                                            <img src="../../../../assets/images/iconsForsvg/Latest Matrix.svg">
+                                            {{'Discount Matrix'|translate}}
+                                        </button>
+                                    </ng-template>
+                                </mat-menu>
+
+                                <span *ngIf="row.isPublic ==false">
+                                    <img style="border-radius: 50%;" (click)="openDiscount(row)"
+                                        src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                </span>
+                                <span *ngIf="row.isPublic ==true">
+                                    <img style="border-radius: 50%;" (click)="openDiscount(row)"
+                                        src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                </span>
+                                <span> {{row.amount+' '+'%'}}</span>
+                            </div>
+                        </td>
+
+                    </ng-container>
+                    <ng-container matColumnDef="DiscountName">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Discount Name'|translate}}</th>
+                        <td mat-cell *matCellDef="let row"> {{row.name|titlecase}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="Discountcode">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Discount Code'|translate}}</th>
+                        <td mat-cell *matCellDef="let row"> {{row.code}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="ExpiredDate">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Expired'|translate}} </th>
+                        <td mat-cell *matCellDef="let row"> {{row.endDate| date:'dd-MMM-yyyy'}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="createdDate">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Created'|translate}} </th>
+                        <td mat-cell *matCellDef="let row"> {{row.created| date:'dd-MMM-yyyy'}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="DiscountDescription">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> Discount Description </th>
+                        <td mat-cell *matCellDef="let row"> {{row.description|titlecase}} </td>
+                    </ng-container>
+                    <ng-container matColumnDef="DiscountStatus">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'Discount Status'|translate}} </th>
+                        <td mat-cell *matCellDef="let row">
+                            <div class="row justify-content-start">
+                                <div class="col-2">
+                                    <span *ngIf="row.isActive==true">
+                                        <img style="width:20px;height:20px;"
+                                            src="../../../../assets/images/img/active.png" alt="">
+                                    </span>
+                                    <span *ngIf="row.isActive==false">
+                                        <img style="width:20px;height:20px;"
+                                            src="../../../../assets/images/img/deactive.png" alt="">
+                                    </span>
+                                </div>
+                                <div class="col-2">
+                                    <span *ngIf="row.isActive==true">
+                                        {{'Active'|translate}}
+                                    </span>
+                                    <span *ngIf="row.isActive==false">
+                                        {{'Expired'|translate}}
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="discountColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: discountColumns;">
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="tab-container  mt-2" *ngIf="isMobileView">
+            <div class="row">
+                <div class="col-8 col-sm-8  col-md-8 col-lg-6 col-xl-6">
+                    <mat-form-field class="w-100">
+                        <input matInput [(ngModel)]="discountSearchValue" placeholder="Search">
+                        <mat-icon matSuffix class="pointer searchicon" (click)="filterDiscount()">search
+                        </mat-icon>
+                    </mat-form-field>
+                </div>
+                <div *ngIf="showicon" class="col-4 col-sm-4  col-md-4 col-lg-4 col-xl-4">
+                    <button mat-raised-button class="b-blue" style="margin-top:5px !important;" class="externaldata"
+                        (click)="closesearch('multiple')">{{'Remove Filter'|translate}}</button>
+                </div>
+            </div>
+            <div class="table-container mat-elevation-z2" style="overflow-y: hidden !important;">
+                <table mat-table [dataSource]="discountDataSource" matSort class="table">
+                    <ng-container matColumnDef="options">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+                        <td mat-cell *matCellDef="let row;let i = index" style="width: 200px;">
+                            <div>
+                                <button mat-icon-button [matMenuTriggerFor]="moreMenu">
+                                    <mat-icon class="icon-options">more_vert</mat-icon>
+                                </button>
+
+                                <mat-menu #moreMenu="matMenu" class="eventlist">
+                                    <ng-template matMenuContent>
+                                        <button class="fw-600" mat-menu-item (click)="openDiscount(row)">
+                                            <mat-icon class="icon-options">visibility</mat-icon>{{'View'|translate}}
+                                        </button>
+
+                                        <button class="fw-600" mat-menu-item (click)="UpdateDiscount(row)">
+                                            <mat-icon class="icon-options">edit</mat-icon>{{'Edit'|translate}}
+                                        </button>
+
+                                        <button class="fw-600" mat-menu-item
+                                            (click)="deleteDialogConfirmation(row,'deletediscount')">
+                                            <mat-icon class="icon-options">delete</mat-icon>{{'Delete'|translate}}
+                                        </button>
+                                        <button class="fw-600" mat-menu-item (click)="ShowDiscountHistory(row)">
+                                            <img src="../../../../assets/images/iconsForsvg/history-com.svg">
+                                            {{'Discount history'|translate}}
+                                        </button>
+                                        <button class="fw-600" mat-menu-item (click)="ShowDiscountMatrix(row)">
+                                            <img src="../../../../assets/images/iconsForsvg/Latest Matrix.svg">
+                                            {{'Discount Matrix'|translate}}
+                                        </button>
+                                    </ng-template>
+                                </mat-menu>
+
+                                <span *ngIf="row.isPublic ==false">
+                                    <img style="border-radius: 50%;" (click)="openDiscount(row)"
+                                        src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                </span>
+                                <span *ngIf="row.isPublic ==true">
+                                    <img style="border-radius: 50%;" (click)="openDiscount(row)"
+                                        src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                </span>
+                                <span> {{row.amount+' '+'%'}}</span>
+                            </div>
+                        </td>
+
+                    </ng-container>
+                    <ng-container matColumnDef="DiscountName">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>{{'Discount Name'|translate}}</th>
+                        <td mat-cell *matCellDef="let row"> {{row.name|titlecase}} </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="discountColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: discountColumns;">
+                    </tr>
+                </table>
+            </div>
+        </div>
+            <!-- -------------  -->
+            <span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+                <button matTooltip="Advance Search" id="add-button1" mat-fab (click)="AdvanceSearchSingle()">
+                    <mat-icon style="color: white;">search</mat-icon>
+                </button><br><br>
+                <button id="add-button2" mat-fab (click)="createDiscount()">
+                    <mat-icon style="color: white;">add</mat-icon>
+                </button><br><br>
+                <button *ngIf="showicon" matTooltip="delete Search" id="add-button1" mat-fab
+                    (click)="closesearch('multiple')">
+                    <mat-icon style="color: white;">delete_forever</mat-icon>
+                </button>
+            </span>
+            <!-- ----------------  -->
+            <mat-paginator [pageSize]="20" [length]="userDataLength" (page)="nextDiscount($event)"></mat-paginator>
+
+            <!-- ---------------------  -->
+            <div class="overlay" *ngIf="loadder">
+                <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+                </mat-progress-spinner>
+            </div>
+    </mat-tab>
+
+</mat-tab-group>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ---------------  -->
+<ng-template #QuoteToOrderDialog class="container">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{'Confirmation'|translate}}</h2>
+    </div>
+    <mat-dialog-content class="viewDialog pading "
+        style="padding: 0px  !important; margin: 0px !important;height:80px; width:380px;">
+        <div class="row">
+            <h3 style="margin-top: 14px;margin-left: 34px; ">{{'Are you sure you want Change Quote To Order'|translate}}</h3>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-action>
+        <div class="row justify-content-center" style="margin-bottom: 8px;">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6"></div>
+            <button mat-raised-button mat-dialog-close style="margin: 10px;" (click)="closedialogbox()">{{'Cancel'|translate}}</button>
+            <button mat-raised-button style="margin: 10px;" color="primary" (click)="ChangeQuoteToOrder()">{{'Ok'|translate}}</button>
+        </div>
+    </mat-dialog-action>
+</ng-template>
+
+
+
+<!-- search box  -->
+<ng-template #viewsearchbox>
+    <div class="d-flex justify-content-between align-items-center modal-header"
+        style="margin: 0 !important;">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100"><mat-icon
+                style="position: relative;top: 5px;right: 10px;">search</mat-icon>{{'Advance Search'|translate}}</h2>
+        <mat-icon class="pointer" (click)="closedialogbox()">close</mat-icon>
+    </div>
+    <div>
+            <mat-dialog-content class="mr-0 ml-0">
+                <form [formGroup]="AdvanceSearchForm">
+
+                <div class="row mt-2 justify-content-center">
+                    <div class="col-12 p1">
+                        <mat-form-field appearance="legacy" class="w-100">
+                            <input formControlName="Search" matInput placeholder="Search Value">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4">
+                        <h4 class="fw-600 ">{{'Transaction Type'|translate}} </h4>
+                    </div>
+                    <div class="col-12 col-sm-12  col-md-12 col-lg-3 col-xl-3" *ngFor="let x of TransactionTypevalue">
+                        <mat-checkbox (change)="advancesearchtransaction($event,x)" class="example-margin"
+                            [value]="x.value">{{x.name|titlecase}}</mat-checkbox>
+                    </div>
+                </div>
+                <div class="row mt-2" *ngIf="PageType == 'transaction'">
+                    <div class="col-12 col-sm-12  col-md-12 col-lg-3 col-xl-3">
+                        <h4 class="fw-600">{{'Payment Status'|translate}} </h4>
+                    </div>
+                    <div class="col-12 col-sm-12  col-md-12 col-lg-3 col-xl-3" *ngFor="let x of Statusvalue">
+                        <mat-checkbox (change)="advancesearchinpaymentStatus($event,x)" class="example-margin"
+                            [value]="x.value">{{x.name|titlecase}}</mat-checkbox>
+                    </div>
+                </div>
+            </form>
+            </mat-dialog-content>
+            <mat-dialog-action>
+                <div class="row mt-2 mb-2 justify-content-center">
+                    <div class="col-4">
+                        <button mat-raised-button mat-dialog-close (click)="closedialogbox()">{{'Cancel'|translate}}</button>
+                    </div>
+                    <div class="col-4">
+                        <button mat-raised-button class="b-blue" (click)="AdvanceSearch()">{{'Apply'|translate}}</button>
+                    </div>
+                </div>
+            </mat-dialog-action> 
+    </div>
+</ng-template>

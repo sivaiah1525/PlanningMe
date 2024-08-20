@@ -1,0 +1,28 @@
+<div class="cookies-popup">
+    <div class="row mt-1 mb-1 justify-content-start">
+        <div class="col-12 col-sm-12  col-md-12 col-lg-8 col-xl-8">
+            <span><h2 class="cookiesstyle">
+                    {{"We use cookies to provide, improve, protect and promote our services. To learn more, see our Privacy Policy and Privacy Policy FAQ."|translate}}
+                </h2></span>
+        </div>
+        <div class="col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4">
+            <div class="row justify-content-center">
+                <div class="col-4">
+                    <button mat-button class="W-blue w-100"
+                        (click)="Infobutton()">{{"Info"|translate}}
+                    </button>
+                </div>
+                <div class="col-4">
+                    <button mat-button mat-dialog-close class="B-blue w-100"
+                        (click)="cancel()">{{"Refuse"|translate}} </button>
+                </div>
+                <div class="col-4">
+                    <button mat-raised-button class="b-blue w-100"
+                        (click)="onSubmit()">{{"Accept"|translate}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

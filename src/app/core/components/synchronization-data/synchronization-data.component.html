@@ -1,0 +1,53 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <mat-icon mat-dialog-close>keyboard_backspace</mat-icon>
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+      <span> List Of Accounts</span>
+    </h2>
+    <mat-icon  (click)="addASynchronization()">add_box</mat-icon>
+  </div>
+  <mat-dialog-content class="mr-0 ml-0" style="min-height: 300px !important;">
+    <div class="row cardbody cardrowstyle" id="strategy">
+      <div class="col-12  col-sm-12 col-md-6 col-lg-4 col-xl-4" *ngFor="let r of AllSynchronizationData; let i =index">
+        <mat-card (click)="gettingonAsstoken(r)" class="cardsize">
+          <mat-card-header style="width: 100%;">
+            <mat-card-title style="width: 100%;">
+              <div class="row">
+                <div class="col-2">
+                  <img style="width: 30px;height: 30px;border-radius:50%;float: right;"  onError="this.src='assets/avatar.svg'"
+                  [src]="r?.profileLink ? r?.profileLink:'assets/avatar.svg'" />
+                </div>
+                <div class="col-8"><p class="mt-2 f-weight">{{r.name | titlecase }}</p></div>
+                <div class="col-2"><mat-slide-toggle [(ngModel)]="isChecked" style="float: left;" color="primary"></mat-slide-toggle></div>
+              </div>              
+              <mat-divider class="divider"></mat-divider>
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="row">
+              <div class="col-2">
+                <img *ngIf="r.applicationName==='GoogleDrive'" style="width:30px;height:30px;border-radius:50%;object-fit: contain;float: right;" src="../../../../assets/notecreateicons/GoogleDrive.png" alt="GoogleDrive">
+                <img *ngIf="r.applicationName==='OneDrive'" style="width:30px;height:30px;border-radius:50%;object-fit: contain;float: right;" src="../../../../assets/notecreateicons/OneDrive.svg" alt="GoogleDrive">
+                <img *ngIf="r.applicationName==='Gmail'" style="width:30px;height:30px;border-radius:50%;object-fit: contain;float: right;" src="../../../../assets/notecreateicons/Gmail.svg" alt="GoogleDrive">
+                <img *ngIf="r.applicationName==='Outlook'" style="width:30px;height:30px;border-radius:50%;object-fit: contain;float: right;" src="../../../../assets/notecreateicons/Outlook.svg" alt="GoogleDrive">
+                <img *ngIf="r.applicationName==='GoogleCalendar'" style="width:30px;height:30px;border-radius:50%;object-fit: contain;float: right;" src="../../../../assets/notecreateicons/googlecalendar.svg" alt="GoogleCalendar">
+                <img *ngIf="r.applicationName==='OutlookCalendar'" style="width:30px;height:30px;border-radius:50%;object-fit: contain;float: right;" src="../../../../assets/notecreateicons/outlookcalendar.svg" alt="outlookcalendar">
+              </div>
+              <div class="col-8">
+                <p style="color: gray;font-weight: 900;"> <b>{{r.email | titlecase }}</b> </p>
+                <p><b>{{"Created "|titlecase}} : </b> <span style="color: gray;font-weight: 900;">{{r.created | date:'dd-MMM-yyyy' }}</span>  </p>
+              </div>
+              <div class="col-2">
+                <mat-icon (click)="deleteAccount(r,'Deletesuycaccount')" class="icon-options">delete</mat-icon>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  
+    <!-- ---------------------  -->
+    <div class="overlay" *ngIf="spinner">
+      <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+      </mat-progress-spinner>
+    </div>
+  </mat-dialog-content>

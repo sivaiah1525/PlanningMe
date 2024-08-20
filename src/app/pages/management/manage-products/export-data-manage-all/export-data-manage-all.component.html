@@ -1,0 +1,202 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;">import_export</mat-icon>
+        {{"Export Data"|translate}}
+    </h2>
+    <mat-icon matDialogClose>close</mat-icon>
+</div>
+<mat-dialog-content class="mr-0 ml-0">
+
+    <form [formGroup]="exportdataForm">
+        <div class="row">
+            <div class="col-8">
+                <mat-form-field class="w-100">
+                    <mat-label>Search</mat-label>
+                    <input matInput placeholder="Placeholder">
+                    <mat-icon matSuffix class="pointer searchicon">search</mat-icon>
+                </mat-form-field>
+            </div>
+            <div *ngIf="showicon == true" class="col-3">
+                <button class="mr-1 pointer removefilter">{{"Remove Filter"|translate}}</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-2">
+                <p class=" fw-600">{{"Format"|translate}}</p>
+            </div>
+            <div class="col-8">
+                <mat-radio-group id="fileFormat">
+                    <mat-radio-button value="csv" checked="csv" (change)="selectTypeChanged('csv')"
+                        class="mr-4">CSV</mat-radio-button>
+                    <mat-radio-button value="json" (change)="selectTypeChanged('json')"
+                        class="mr-4">JSON</mat-radio-button>
+                    <mat-radio-button value="xlsx" (change)="selectTypeChanged('xlsx')"
+                        class="mr-4">XLSX</mat-radio-button>
+                    <mat-radio-button value="External" (change)="selectTypeChanged('External')"
+                        class="mr-4">{{"External"|translate}}</mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+        <ng-container *ngIf="Webservice==true">
+            <div class="row justify-content-start" style="position: relative;top: -10px;">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-5 col-xl-5">
+                    <mat-form-field appearance="fill" class="w-100 m-t-10">
+                        <mat-label>{{"Application Name"|translate}}</mat-label>
+                        <mat-select formControlName="applicationName">
+                            <mat-option *ngFor="let app of applicationname" [value]="app.applicationName"
+                                (click)="Selactapplication(app)">
+                                {{app.applicationName|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-12 col-sm-12  col-md-12 col-lg-5 col-xl-5">
+                    <mat-form-field appearance="fill" class="w-100 m-t-10">
+                        <mat-label>{{"Configuration Name"|translate}}</mat-label>
+                        <mat-select formControlName="ConfigurationName">
+                            <mat-option [value]="Name.id" *ngFor="let Name of ConfigurationName"
+                                (click)="SelectConfigurationName(Name.id)"> {{Name.configurationName|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-2">
+                    <mat-icon style="margin-top: 20px;" (click)="createmapping()">add_box</mat-icon>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- Selact All  -->
+        <div class="row">
+            <div class="col-6">
+                <mat-checkbox (change)="SelactAllData($event)" class=" f-weight m-l-22">
+                    <span class="m-l-10"> {{"Select All"|translate}} </span>
+                </mat-checkbox>
+            </div>
+        </div>
+        <!-- allusers -->
+        <ng-container *ngIf="UserScreen">
+            <div class="row m-t-10">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6 " *ngFor="let data of Alldata">
+                    <mat-checkbox [checked]="data.chekecd" class=" f-weight m-l-22"
+                        (change)="checkBoxSelact($event,data)">
+                        <div id="main">
+                            <div>
+                                <img class="avatar b-r-20 m-l-22"
+                                    [src]="data?.profilePicture ? data.profilePicture:'assets/avatar.svg'"
+                                    onError="this.src='assets/avatar.svg'">
+                            </div>
+                            <div style=" white-space: normal !important;">
+                                {{data.name|titlecase}}
+                            </div>
+                        </div>
+                    </mat-checkbox>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- allproduct -->
+        <ng-container *ngIf="ProductScreen">
+            <div class="row m-t-10">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6" *ngFor="let data of Alldata">
+                    <mat-checkbox [checked]="data.chekecd" class=" f-weight m-l-22"
+                        (change)="checkBoxSelact($event,data)">
+                        <div id="main">
+                            <div>
+                                <img class="avatar b-r-20 m-l-22"
+                                    [src]="data?.profilePicture ?  data.profilePicture:'assets/images/iconsForsvg/icon_product.svg'"
+                                    onError="this.src='assets/images/iconsForsvg/icon_product.svg'">
+                            </div>
+                            <div style=" white-space: normal !important;">
+                                {{data.name|titlecase}}
+                            </div>
+                        </div>
+                    </mat-checkbox>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- allcontact -->
+        <ng-container *ngIf="ContactScreen">
+            <div class="row m-t-10">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6" *ngFor="let data of Alldata">
+                    <div class="row">
+                        <mat-checkbox [checked]="data.chekecd" class=" f-weight m-l-22"
+                            (change)="checkBoxSelact($event,data)">
+                            <div id="main">
+                                <div>
+                                    <img class="avatar b-r-20 m-l-22"
+                                        [src]="data?.profilePicture ? data.profilePicture:'assets/avatar.svg'"
+                                        onError="this.src='assets/avatar.svg'">
+                                </div>
+                                <div style=" white-space: normal !important;">
+                                    {{data.name|titlecase}}
+                                </div>
+                            </div>
+                        </mat-checkbox>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- allsites -->
+        <ng-container *ngIf="SiteScreen">
+            <div class="row m-t-10">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6" *ngFor="let data of Alldata">
+                    <mat-checkbox [checked]="data.chekecd" class=" f-weight m-l-22"
+                        (change)="checkBoxSelact($event,data)">
+                        <div id="main">
+                            <div>
+                                <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                            </div>
+                            <div style=" white-space: normal !important;">
+                                {{data.name|titlecase}}
+                            </div>
+                        </div>
+                    </mat-checkbox>
+                </div>
+            </div>
+        </ng-container>
+        <!-- transactionsScreen -->
+        <ng-container *ngIf="transactionsScreen">
+            <div class="row m-t-10">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4" *ngFor="let data of Alldata">
+                    <mat-checkbox [checked]="data.chekecd" class=" f-weight m-l-22"
+                        (change)="checkBoxSelact($event,data)">
+                        <div id="main">
+                            <div>
+                                <mat-icon>shopping_cart</mat-icon>
+                            </div>
+                            <div style=" white-space: normal !important;">
+                                {{data.id}}
+                            </div>
+                        </div>
+                    </mat-checkbox>
+                </div>
+            </div>
+        </ng-container>
+        <!-- allsites -->
+        <ng-container *ngIf="OrdersScreen">
+            <div class="row m-t-10">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4" *ngFor="let data of Alldata">
+                    <mat-checkbox [checked]="data.chekecd" class=" f-weight m-l-22"
+                        (change)="checkBoxSelact($event,data)">
+                        <mat-icon>assignment</mat-icon>
+                        <span class="m-l-10"> {{data.id}} </span>
+                    </mat-checkbox>
+                </div>
+            </div>
+        </ng-container>
+    </form>
+</mat-dialog-content>
+<div class="row" style="margin-bottom: 8px;">
+    <div class="row mt-2 justify-content-center">
+        <div class="col-4">
+            <button mat-raised-button mat-dialog-close (click)="closedialogbox()">{{"Cancel"|translate}}</button>
+        </div>
+        <div class="col-4">
+            <button mat-raised-button mat-dialog-close class="b-blue m-l-10" (click)="exportdata()">{{"Export"|translate}}</button>
+        </div>
+    </div>
+</div>

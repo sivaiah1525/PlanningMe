@@ -1,0 +1,115 @@
+<div class="row p-1" style="background-color:#000;">
+    <div class="col-2  col-sm-2 col-lg-2 col-xl-2 p-0">
+      <img (click)="locationchange('Dashboard')" style="height:50px !important;margin-top: 10px;"
+        src="../../../assets/logo/logo-dark-sm.png">
+    </div>
+  <ng-container *ngIf="!isMobileView">
+    <div class=" col-sm-5 col-lg-4 col-xl-5 p-0" style="display: flex;justify-content: end;">
+    <img style="width: 150px;height:50px;object-fit: contain;margin-top: 10px;"
+      src="../../../../../assets/logo/middle-logo-dark.png" (click)="openSelect()">
+  </div>
+  </ng-container>
+    <div class="col-10  col-sm-10 col-lg-6 col-xl-5">
+      <div class="ioconssection">
+        <div class="icon">
+          <img 
+          [src]="languagesimage" class="flagstyle"
+            [matMenuTriggerFor]="menu" title="languages"><br>
+            <span style="color: white;font-size: 12px;">Languages</span>
+        </div>
+        <mat-menu #menu="matMenu"
+          style="background-color:#000 !important;color: white !important;"
+          class="custom-menu-panel">
+          <ng-template matMenuContent class="no-padding-menu-content"
+            style="background-color:#000 !important;color: white !important;">
+            <div style="background-color:#000 !important;color: white !important;"  >
+              <button mat-menu-item (click)="selectLanguage(opt)" *ngFor="let opt of languages">
+                <img [src]="opt.img" class="flagstyle" />
+                <span class="matMenutext">{{opt.label|translate}}</span>
+              </button>
+            </div>
+          </ng-template>
+        </mat-menu>
+
+        <div class="icon">
+          <img (click)="locationchange('Features&Pricing')"
+            src="../../../../../assets/images/iconsForsvg/icon-1-euro.svg"
+            title="Features & Pricing"><br>
+            <span style="color: white;font-size: 12px;">Pricing</span>
+        </div>
+        <div class="icon">
+          <img (click)="locationchange('Document')"
+            src="../../../../../assets/images/iconsForsvg/icon-2-document.svg"
+            [matMenuTriggerFor]="menu1" title="Document"><br>
+            <span style="color: white;font-size: 12px;">Document</span>
+        </div>
+        <mat-menu #menu1="matMenu"
+          style="background-color:#000 !important;color: white !important;"
+          class="custom-menu-panel">
+          <ng-template matMenuContent class="no-padding-menu-content"
+            style="background-color:#000 !important;color: white !important;">
+            <div style="background-color:#000 !important;color: white !important;">
+              <button mat-menu-item (click)="locationchange('UserGuide')">
+                <img src="../../../../../assets/images/iconsForsvg/Userguide.svg">
+                <span class="matMenutext">{{"User Guide"|translate}}</span>
+              </button>
+              <!-- <button mat-menu-item (click)="locationchange('Releasenote')">
+                <img
+                  src="../../../../../assets/images/iconsForsvg/Releasenote.svg">
+                <span class="matMenutext">{{"Release note"|translate}}</span>
+              </button> -->
+              <!-- <button mat-menu-item (click)="locationchange('SSO')">
+                  <img src="../../../../../assets/images/iconsForsvg/sso.svg" >
+                <span class="matMenutext">SSO</span>
+              </button> -->
+              <button mat-menu-item (click)="locationchange('Swagger')">
+                <img src="../../../../../assets/images/iconsForsvg/swagger.svg">
+                <span class="matMenutext">
+                  <span class="matMenutext">{{"Swagger"|translate}}</span>
+                </span>
+              </button>
+              <button mat-menu-item (click)="locationchange('WhiteBook')">
+                <img
+                  src="../../../../../assets/images/iconsForsvg/icon-2-document.svg">
+                <span class="matMenutext">
+                  <span class="matMenutext">{{"WhiteBook"|translate}}</span>
+                </span>
+              </button>
+            </div>
+          </ng-template>
+        </mat-menu>
+        <div class="icon"><img (click)="locationchange('GuidedVisit')"
+            src="../../../../../assets/images/iconsForsvg/icon-3-demo.svg"
+            title="Guided Visit"><br>
+            <span style="color: white;font-size: 12px;">Guided Visit</span>
+          </div>
+        <div class="icon"><img (click)="locationchange('login')"
+            src="../../../../../assets/images/iconsForsvg/icon-4-login.svg"
+            title="Login"><br>
+            <span style="color: white;font-size: 12px;"><span>Register</span><br><span>Login</span> </span>
+          </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Are you sure you want to logout?  -->
+  <ng-template #viewDialog class="container">
+    <div class="d-flex flex-row align-items-center modal-header">
+      <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Confirmation</h2>
+    </div>
+    <mat-dialog-content class="viewDialog pading "
+      style="padding: 0px  !important; margin: 0px !important;height:60px; width: 310px;">
+      <div class="row">
+        <h3 style="
+              margin-top: 14px;
+              margin-left: 34px;
+          ">Are you sure you want to logout?</h3>
+      </div>
+    </mat-dialog-content>
+    <div class="row" style="margin-bottom: 8px;">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6"></div>
+      <button mat-raised-button (click)="closedialogbox()">No</button>
+      <button mat-raised-button cdkFocusInitial color="danger">Yes</button>
+    </div>
+  </ng-template>
+  

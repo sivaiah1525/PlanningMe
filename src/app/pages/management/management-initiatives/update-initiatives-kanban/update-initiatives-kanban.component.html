@@ -1,0 +1,108 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Update PipeLine
+    </h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+
+<mat-dialog-content class="mr-0 ml-0">
+    <form [formGroup]="taskForm">
+        <div class="row">
+            <mat-form-field class="w-100">
+                <mat-label>{{"Pipeline Name"|translate}}</mat-label>
+                <input matInput type="text" placeholder="Pipelinename *" formControlName="Pipelinename">
+            </mat-form-field>
+        </div>
+        <!-- 00000000000  -->
+        <div style="border: 1px solid gray;border-radius: 3px;" class="row w-100">
+            <div class="row  p-1 justify-content-around w-100"
+                style="color: white; background-color:#fb4444; font-weight: 600;">
+                <div class="col-10">
+                    <p>Add Steps With Task</p>
+                </div>
+                <div class="col-2">
+                    <mat-icon style="color: white;" (click)="Addsteps()">add</mat-icon>
+                </div>
+            </div>
+            <div formArrayName="Allsteps" class="row  w-100">
+                <div class="row FivecolWithTwocol w-100" *ngFor="let x of getAllsteps().controls; let i=index"
+                    [formGroupName]="i">
+                    <div class="mb-1"
+                        style="padding: 5px;background: gray;color: black;font-weight: 900;display: flex;width: 100% !important;border-radius: 3px;">
+                        <div style="width: 90%;">
+                            <p> Step - {{i+1}}</p>
+                        </div>
+                        <div style="width: 10%;">
+                            <mat-icon class="maticonpostion1" (click)="Removesteps(i)">delete</mat-icon>
+                        </div>
+                    </div>
+                    <div style="width: 100% !important">
+                        <div class="row">
+                            <div class="col-12">
+                                <mat-form-field class="w-100 mt-2 mb-2">
+                                    <mat-label>{{"StepName"|translate}}</mat-label>
+                                    <input matInput type="text" placeholder="StepName *" formControlName="name">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-12">
+                                <button mat-raised-button class="G-Green" (click)="ChooseTaskOption(i)">{{"Add a Task"|translate}}</button>
+                            </div>
+                        </div>
+                        <!-- 0000  -->
+                        <div formArrayName="taskmodule" class="row  w-100">
+                            <div class="row FivecolWithTwocol w-100"
+                                *ngFor="let x of getsteptaskmodule(i).controls; let k=index" [formGroupName]="k">
+                                <div
+                                    style="background: lightgray;color: black; font-weight: 600;display: flex;width: 100% !important;margin: 5px;border-radius: 3px;">
+                                    <div style="width: 90%;display: flex;">
+                                        <mat-icon *ngIf="getstepinsidetaskIsMileStone(i,k)==false" style="color:green;">
+                                            assignment_turned_in</mat-icon>
+                                        <img *ngIf="getstepinsidetaskIsMileStone(i,k)" style="margin-right: 12px;"
+                                            src="/assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg">
+                                        <p> {{getstepinsidetaskname(i,k)}}</p>
+                                    </div>
+                                    <div style="width: 10%;">
+                                        <mat-icon [matMenuTriggerFor]="moreMenu"
+                                            class="icon-options">more_vert</mat-icon>
+                                        <mat-menu #moreMenu="matMenu" class="eventlist">
+                                            <ng-template matMenuContent>
+                                                <button class="fw-600" mat-menu-item (click)="showtaskdetails(i,k)">
+                                                    <mat-icon class="icon-options">visibility</mat-icon>
+                                                    <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                                </button>
+                                                <button class="fw-600" mat-menu-item (click)="addsubtask(i,k)">
+                                                    <mat-icon style="color: green;">assignment_turned_in</mat-icon>
+                                                    <span class="fw-600 color_black"> {{'Add subTask'|translate}}</span>
+                                                </button>
+                                                <button class="fw-600" mat-menu-item *ngIf="!getstepinsidetaskid(i,k)"
+                                                    (click)="edittask(i,k)">
+                                                    <mat-icon class="icon-options">edit</mat-icon>
+                                                    <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                                </button>
+                                                <button class="fw-600" mat-menu-item (click)="removestepinsidetas(i,k)">
+                                                    <mat-icon class="icon-options">delete</mat-icon>
+                                                    <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                                </button>
+                                            </ng-template>
+                                        </mat-menu>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="my-1">
+    <div class="row mt-2 mb-4 justify-content-center" style="margin-bottom: 10px !important;">
+        <div class="col-4">
+            <button mat-raised-button mat-dialog-close class="W-blue">{{"Cancel"|translate}}</button>
+        </div>
+        <div class="col-4">
+            <button mat-raised-button class="b-blue" (click)="Applyinitiative()">{{"Update"|translate}}</button>
+        </div>
+    </div>
+</mat-dialog-actions>

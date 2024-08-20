@@ -1,0 +1,13 @@
+<nav mat-tab-nav-bar class=" mt-2  d-sm-flex m-t-10">
+  <span *ngFor="let nav of settingsNav">
+    <a mat-tab-link class="tabdirection" [routerLink]="nav.url" routerLinkActive #rla="routerLinkActive"
+      [active]="rla.isActive" (click)="tabChange(nav.tabnumber)">
+      <span [ngClass]="{ 'btn-blue': nav.tabnumber == tabnumber, 'danger': nav.tabnumber != tabnumber}">
+        <span> <mat-icon [ngClass]="{'btn-blue': nav.tabnumber == tabnumber }"> {{nav.icon}}</mat-icon></span>
+        <span>{{nav.title|translate}}</span>
+      </span>
+    </a>
+  </span>
+</nav>
+
+<router-outlet></router-outlet>

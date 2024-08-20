@@ -1,0 +1,41 @@
+ #file-note-popup {
+     .mat-radio-button {
+         display: block;
+         padding: 10px 0;
+     }
+}
+
+::ng-deep .files {
+    position: relative !important;
+    .mat-dialog-container {
+        overflow: hidden;
+    }
+
+      
+      .close-icon {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        transform: translate(50%, -50%);
+      }
+
+      form{
+        height:300px;
+      }
+}
+.f-flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mt-20{
+  margin-top: 40px;
+}
+.flex-c {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  button {
+    margin: 10px 20px;
+  }
+}

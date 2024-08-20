@@ -1,0 +1,24 @@
+<!-- <ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">Event Details</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <pm-event-lists [event]="event" *ngFor="let event of events; let i=index"></pm-event-lists>
+</ion-content> -->
+
+<div class="d-flex justify-content-between align-items-center">
+    <button mat-icon-button mat-dialog-close>
+    <mat-icon>delete</mat-icon>
+</button>
+    <h2 mat-dialog-title class="m-0">Event Details</h2>
+</div>
+<mat-dialog-content>
+    <pm-event-lists [event]="event" *ngFor="let event of events; let i=index"></pm-event-lists>
+</mat-dialog-content>

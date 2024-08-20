@@ -1,0 +1,85 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;"> business_center</mat-icon>
+        {{"Price History"|translate}}
+    </h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+
+<mat-dialog-content class="mr-0 ml-0">
+    <div class="row justify-content-center">
+        <div class="col-3">
+            <img class="avatar-70" style=" position: relative;  right: -20px;"
+                [src]="productDetails.profilePicture ? productDetails.profilePicture:'assets/images/iconsForsvg/icon_product.svg'"
+                onError="this.src='assets/images/iconsForsvg/icon_product.svg'">
+        </div>
+    </div>
+    <div>
+        <h2 class="name_red" style="text-align: center;">{{productDetails.productName|titlecase}}</h2>
+    </div>
+
+    <div class="row" *ngIf="priceType=='baseUnitPrice'">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">{{"Name"|translate}}</th>
+                    <th scope="col">{{"Start Date"|translate}}</th>
+                    <th scope="col">{{"End Date"|translate}}</th>
+                    <th scope="col">{{"Unit Price"|translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let Product of productPriceDetails;let i = index" style="height:50px !important;">
+                    <td>
+                        <span>
+                            <img class="avatar" onError="this.src='assets/images/iconsForsvg/icon_product.svg'"
+                                [src]="Product?.creatorProfile ? Product.creatorProfile:'assets/images/iconsForsvg/icon_product.svg'">
+                        </span>
+
+                    </td>
+                    <td><span>{{Product.creatorFirstName|titlecase}} {{Product.creatorLastName|titlecase}}</span></td>
+                    <td>{{Product.startDate| date:'dd-MMM-yyyy H:mm'}}</td>
+                    <td>{{Product.endDate| date:'dd-MMM-yyyy H:mm'}}</td>
+                    <td>{{priceFormat(Product.unitPrice)+' '+'€'}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="row" *ngIf="priceType=='sellingPrice'">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">{{"Name"|translate}}</th>
+                    <th scope="col">{{"Start Date"|translate}}</th>
+                    <th scope="col">{{"End Date"|translate}}</th>
+                    <th scope="col">{{"Selling Price"|translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let Product of productPriceDetails;let i = index" style="height:50px !important;">
+                    <td>
+                        <span>
+                            <img class="avatar" onError="this.src='assets/images/iconsForsvg/icon_product.svg'"
+                                [src]="Product?.creatorProfile ? Product.creatorProfile:'assets/images/iconsForsvg/icon_product.svg'">
+                        </span>
+                    </td>
+                    <td> <span>{{Product.creatorFirstName|titlecase}} {{Product.creatorLastName|titlecase}}</span></td>
+                    <td>{{Product.startDate| date:'dd-MMM-yyyy H:mm'}}</td>
+                    <td>{{Product.endDate| date:'dd-MMM-yyyy H:mm'}}</td>
+                    <td>{{priceFormat(Product.sellingPrice)+' '+'€'}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="overlay" *ngIf="Loadspinner">
+        <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+        </mat-progress-spinner>
+    </div>
+    <div class="row mb-4 justify-content-end">
+        <div class="col-10">
+            <mat-paginator [pageSize]="100" [length]="DataLength" (page)="next($event)"></mat-paginator>
+        </div>
+    </div>
+</mat-dialog-content>

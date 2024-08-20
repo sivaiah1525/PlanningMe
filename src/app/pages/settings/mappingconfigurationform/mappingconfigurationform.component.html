@@ -1,0 +1,135 @@
+<div class="d-flex flex-row  modal-header">
+    <h2 mat-dialog-title *ngIf="screentype=='ViewMapping'"  class="m-0 dialog-title text-center w-100">{{"Mapping Details"|translate}}</h2>
+    <h2 mat-dialog-title *ngIf="screentype=='UpdateMapping'" class="m-0 dialog-title text-center w-100">{{"Update Mapping Setting"|translate}}</h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+
+<mat-dialog-content class="mr-0 ml-0">
+    <mat-tab-group (selectedTabChange)="tabChanged($event)" [selectedIndex]="tabindex">
+        <!-- ------------------------000000000000000  -->
+        <mat-tab label="Api Key">
+            <form [formGroup]="configurationform">
+                <div class="row">
+                    <mat-form-field appearance="fill" class="w-100 m-t-10">
+                        <mat-label>{{"Application Name"|translate}}</mat-label>
+                        <mat-select formControlName="applicationId">
+                            <mat-option *ngFor="let app of applicationname" [value]="app.id"
+                                (click)="Selactapplication(app)">
+                                {{app.applicationName|titlecase}}
+                            </mat-option> 
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+
+                <div class="row">
+                    <mat-form-field appearance="fill" class="w-100 m-t-10">
+                        <mat-label>{{"Configuration Name"|translate}}</mat-label>
+                        <mat-select formControlName="ConfigurationName">
+                            <mat-option [value]="Name.id" *ngFor="let Name of ConfigurationNamelistforApiKey"
+                                (click)="SelectConfigurationName(Name.id)"> {{Name.configurationName|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <mat-form-field class="w-100">
+                        <mat-label>Url</mat-label>
+                        <input matInput type="text" formControlName="url">
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <mat-form-field class="w-100">
+                        <mat-label>Api Key</mat-label>
+                        <input matInput type="text"  formControlName="apiKey">
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <mat-form-field class="w-100 m-t-10">
+                        <mat-label>{{"Description"|translate}}</mat-label>
+                        <input matInput type="text" 
+                            formControlName="ConfigurationDescription">
+                    </mat-form-field>
+                </div>
+            </form>
+            <div class="row" *ngFor="let col of mappingcol">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <div class="row m-t-10">
+                        <mat-checkbox [(ngModel)]="col.isChecked" [ngModelOptions]="{standalone: true}">
+                            {{col.fileColumnName|titlecase}}
+                        </mat-checkbox>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <mat-form-field class="w-100 ">
+                        <mat-label>Planning & Me</mat-label>
+                        <mat-select [(ngModel)]="col.entityFieldName" name="col.entityFieldName">
+                            <mat-option *ngFor="let plan of planningcolumns" [value]="plan">
+                                {{plan|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+        </mat-tab>
+        <!-- -------------111111111111111  -->
+        <mat-tab label="File">
+            <form [formGroup]="configurationform">
+                <div class="row mt-2">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{'Select Entity'|translate}}</mat-label>
+                        <mat-select >
+                            <mat-option [value]="type" *ngFor="let type of managementType"
+                                (click)="SelectEntity(type)">{{type|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <mat-form-field appearance="fill" class="w-100 m-t-10">
+                    <mat-label>{{"Configuration Name"|translate}}</mat-label>
+                    <mat-select formControlName="ConfigurationName">
+                        <mat-option [value]="Name.id" *ngFor="let Name of ConfigurationNamelistforfile"
+                            (click)="SelectConfigurationName(Name.id)"> {{Name.configurationName|titlecase}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="w-100 m-t-10">
+                    <mat-label>{{"Description"|translate}}</mat-label>
+                    <input matInput type="text"
+                        formControlName="ConfigurationDescription">
+                </mat-form-field>
+            </form>
+            <div class="row" *ngFor="let col of mappingcol">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <div class="row m-t-10">
+                        <mat-checkbox [(ngModel)]="col.isChecked" [ngModelOptions]="{standalone: true}">
+                            {{col.fileColumnName|titlecase}}
+                        </mat-checkbox>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <mat-form-field class="w-100 ">
+                        <mat-label>{{"Planning & Me"|translate}}</mat-label>
+                        <mat-select [(ngModel)]="col.entityFieldName" [(value)]="col.entityFieldName">
+                            <mat-option *ngFor="let plan of planningcolumns" [value]="plan">
+                                {{plan|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions *ngIf="screentype=='UpdateMapping'" align="end" class="mb-1 pr-5">
+    <div class="row mt-2 justify-content-center">
+        <div class="col-5">
+            <button mat-raised-button mat-dialog-close>{{'Cancel'|translate}}</button>
+        </div>
+        <div class="col-5">
+            <button mat-raised-button  class="b-blue" (click)="onSubmit()">{{'Update'|translate}}</button>
+        </div>
+    </div>
+</mat-dialog-actions>

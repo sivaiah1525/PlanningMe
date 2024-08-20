@@ -1,0 +1,158 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <mat-icon mat-dialog-close>keyboard_backspace</mat-icon>
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <span *ngIf="screenType==='create'"> Create Dynamic Keyword</span>
+        <span *ngIf="screenType==='update'"> Update Dynamic Keyword</span>
+    </h2>
+</div>
+<mat-dialog-content class="mr-0 ml-0">
+    <form [formGroup]="Form">
+        <div class="row ">
+            <mat-form-field class="w-100"> 
+                <mat-label>Name </mat-label>
+                <input matInput formControlName="name">
+            </mat-form-field>
+        </div>
+        <div class="row ">
+            <mat-form-field class="w-100">
+                <mat-label>Description</mat-label>
+                <input matInput formControlName="description">
+            </mat-form-field>
+        </div>
+        <div class="row justify-content-end"  style="background-color: rgb(202, 198, 198);color: black;padding: 10px 4px 2px;">
+            <div class="col-10">
+                <h4 style="text-align: center;"><b> Keyword Conditions</b> </h4> 
+            </div>
+            <div class="col-2">
+                <mat-icon  (click)="Addnewcondictuon()">add_box</mat-icon>
+            </div>
+        </div>
+        <div formArrayName="Conditions" style="border: 1px solid gray;">
+            <div class="row" *ngFor="let file of getCondition().controls; let i=index" [formGroupName]="i">
+                <div class="row conditionsstyle">
+                    <div class="col-4">
+                        <mat-form-field class="w-100">
+                            <mat-label>Parameter</mat-label>
+                            <mat-select formControlName="conditionParameter">
+                                <mat-option [value]="x.columnName" (click)="selactdatatype(x,i)"
+                                    *ngFor="let x of conditioncolumns">{{x.columnName}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-4">
+                        <!-- AllOption  -->
+                        <ng-container
+                            *ngIf="getdataType(i)!='string'&&getdataType(i)!='String' && getdataType(i)!='number'&&getdataType(i)!='Number'
+                                 && getdataType(i)!='bool' &&getdataType(i)!='boolean' &&getdataType(i)!='text'&&getdataType(i)!='Date'">
+                            <mat-form-field  class="w-100">
+                                <mat-label>{{'Comparison'|translate}}</mat-label>
+                                <mat-select formControlName="conditionComparison">
+                                    <mat-option [value]="x.v1" *ngFor="let x of AllOption">
+                                        {{x.v2|translate}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </ng-container>
+                        <!-- string -->
+                        <ng-container
+                            *ngIf="getdataType(i)=='string' || getdataType(i)=='String' || getdataType(i)=='text'||getdataType(i)=='Date'">
+                            <mat-form-field  class="w-100">
+                                <mat-label>{{'Comparison'|translate}}</mat-label>
+                                <mat-select formControlName="conditionComparison">
+                                    <mat-option [value]="x.v1" *ngFor="let x of stringoptions">
+                                        {{x.v2|translate}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </ng-container>
+                        <!-- number  -->
+                        <ng-container *ngIf="getdataType(i)=='number' || getdataType(i)=='Number'&&getdataType(i)!='Date'">
+                            <mat-form-field  class="w-100">
+                                <mat-label>{{'Comparison'|translate}}</mat-label>
+                                <mat-select formControlName="conditionComparison">
+                                    <mat-option [value]="x.v1" *ngFor="let x of numberoptions">
+                                        {{x.v2|translate}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </ng-container>
+                        <!-- bool  -->
+                        <ng-container
+                            *ngIf="getdataType(i)=='bool' || getdataType(i)=='boolean'|| getdataType(i)=='Boolean'|| getdataType(i)=='Bool'&&getdataType(i)!='Date'">
+                            <mat-form-field  class="w-100">
+                                <mat-label>{{'Comparison'|translate}}</mat-label>
+                                <mat-select formControlName="conditionComparison">
+                                    <mat-option [value]="x.v1" *ngFor="let x of booleanoptions">
+                                        {{x.v2|translate}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </ng-container>
+                    </div>
+
+
+                    <div class="col-3">
+                        <ng-container *ngIf="getdataType(i)!='Date'&&gettagename(i)!='Payment Type'&&gettagename(i)!='Transaction Type'&&gettagename(i)!='Status Of Transaction'&&gettagename(i)!='Payment Type'" >
+                        <mat-form-field class="w-100">
+                            <mat-label>Value<span class="danger"></span></mat-label>
+                            <input matInput type="text" formControlName="value">
+                        </mat-form-field>
+                    </ng-container>
+                    <ng-container *ngIf="gettagename(i)=='Transaction Type'" >
+                        <mat-form-field  class="w-100">
+                            <mat-label>{{'value'|translate}}</mat-label>
+                            <mat-select formControlName="value">
+                                <mat-option [value]="x.name" *ngFor="let x of TransactionType">
+                                    {{x.name|translate}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </ng-container>
+                    <ng-container *ngIf="gettagename(i)=='Status Of Transaction'" >
+                        <mat-form-field  class="w-100">
+                            <mat-label>{{'value'|translate}}</mat-label>
+                            <mat-select formControlName="value">
+                                <mat-option [value]="x.name" *ngFor="let x of TransactionStatus">
+                                    {{x.name|translate}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </ng-container>
+                    <ng-container *ngIf="gettagename(i)=='Payment Type'" >
+                        <mat-form-field  class="w-100">
+                            <mat-label>{{'value'|translate}}</mat-label>
+                            <mat-select formControlName="value">
+                                <mat-option [value]="x.name" *ngFor="let x of PaymentType">
+                                    {{x.name|translate}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </ng-container>
+                <ng-container *ngIf="getdataType(i)=='Date'">
+                    <mat-form-field  class="w-100">
+                        <mat-label>Value<span class="danger"></span></mat-label>
+                        <input matInput [matDatepicker]="enddatepicker1" style="color: black;"
+                            formControlName="value">
+                        <mat-datepicker-toggle matSuffix [for]="enddatepicker1"></mat-datepicker-toggle>
+                        <mat-datepicker #enddatepicker1></mat-datepicker>
+                    </mat-form-field>
+                </ng-container>
+                    </div>
+                    <div class="col-1">
+                        <mat-icon style="margin-top: 10px;" (click)="Removecondictuon(i)">delete</mat-icon>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="my-1">
+    <div class="row mt-2 justify-content-center">
+        <div class="col-4">
+            <button mat-button mat-dialog-close>{{"Cancel"|translate}}</button>
+        </div>
+        <div class="col-4">
+            <button mat-raised-button class="b-blue" [disabled]="!Form.valid" (click)="onSubmit()">Apply</button>
+        </div>
+    </div>
+</mat-dialog-actions>

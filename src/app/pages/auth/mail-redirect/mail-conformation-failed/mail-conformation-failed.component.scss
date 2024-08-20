@@ -1,0 +1,51 @@
+p{
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    margin-top:50px;
+    line-height: 2;
+}
+
+
+.imagestyle{
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: start;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    object-fit: contain;
+}
+.loginbody {
+    width: 100%;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    object-fit: cover !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+}
+
+
+.login-card {
+    width: 350px;
+    align-items: center;
+    opacity: 0.9;
+    height: 350px;
+    img {
+        height: 70px;
+        padding: 0;
+        border: none;
+    }
+}
+
+
+.imageiconstyle{
+    vertical-align: middle;
+    border-style: none;
+    width: 80px;
+    height: 80px;
+    margin: auto;
+}

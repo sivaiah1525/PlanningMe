@@ -1,0 +1,107 @@
+<div #elementToScroll>
+    <div class="imagelogo">
+        <div class="mainimageBodystart">
+            <div class="body">
+                <h2 class="mainimageTitle">{{'Project Management' | translate}}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6  imageright1"></div>
+        <div class="col-12 col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6  textcontentbody">
+            <div style="padding: 10px;">
+                <h2 class="blockheaderstyle">
+                    {{'Coordination and Synergy' | translate}}
+                </h2>
+                <h2 class="blockteststyle">
+                    {{'I make sure that my entire team has access to the essential information to understand the goals and them, in addition to:' | translate}}
+                </h2>
+                <div class="row" *ngFor="let x of Map">
+                    
+                    <div class="col-2 mt-2"><mat-icon>done</mat-icon></div>
+                    <div class="col-10">
+                        <h2 class="blockteststyle">
+                            {{x|translate}}
+                        </h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- <div class="col-3 mt-2" style="display: flex;justify-content: end;">
+                        <mat-icon (click)="Videoplay('https://drive.google.com/file/d/1jaCksz4HsbWFcaNnZZjewVEFoW2gbXUf/preview')" class="playiconstyle">play_circle_outline</mat-icon>
+                    </div> -->
+                    <div class="col-9">
+                        <h4 class="singnaturestyle"> Paul Fondal </h4>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row" >
+        <div class="col-12 order-2  col-sm-12 order-sm-2 col-md-12 order-md-2 col-lg-6 order-lg-1 order-xl-1 col-xl-6 m-0 textcontentbody" style="background-color: black;border: 5px solid white;">
+            <div style="padding: 10px;">
+                <h2 class="whiteheaderstyle">
+                    {{'Strategic Alignment' | translate}}
+                </h2>
+                <h2 class="whiteteststyle">
+                    {{'I can set my priorities, focus on my most important tasks, avoid delays and:' | translate}}
+                </h2>
+                <div class="row" *ngFor="let x of Alignment">
+                    
+                    <div class="col-2 mt-2"><mat-icon>done</mat-icon></div>
+                    <div class="col-10">
+                        <h2 class="whiteteststyle">
+                            {{x|translate}}
+                        </h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- <div class="col-3 mt-2" style="display: flex;justify-content: end;">
+                        <mat-icon (click)="Videoplay('')" class="playiconstyle">play_circle_outline</mat-icon>
+                    </div> -->
+                    <div class="col-9">
+                        <h4 class="singnaturestyle1">Alain Dupel</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 order-1 col-sm-12 order-sm-1 col-md-12 order-md-1 col-lg-6 order-lg-2 col-xl-6 order-xl-2  imageright2" style="border: 5px solid white;"> </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6  imageright3"> </div>
+        <div class="col-12 col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6  textcontentbody">
+            <div style="padding: 10px;">
+                <h2 class="blockheaderstyle">
+                    {{'Improved Governance' | translate}}
+                </h2>
+                <h2 class="blockteststyle">
+                    {{'I can structure all projects to match StarPro’s strategic objectives, while:' | translate}}
+                </h2>
+                <div class="row" *ngFor="let x of Governance">
+                    
+                    <div class="col-2 mt-2"><mat-icon>done</mat-icon></div>
+                    <div class="col-10">
+                        <h2 class="blockteststyle">
+                            {{x|translate}}
+                        </h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- <div class="col-4" style="display: flex;justify-content: end;">
+                        <mat-icon (click)="Videoplay('https://drive.google.com/file/d/1UIV165_PZ1_NItCNC8t8IrOPoUzuQUbF/preview')" class="playiconstyle">play_circle_outline</mat-icon>
+                    </div> -->
+                    <div class="col-8">
+                        <h4 class="singnaturestyle">Anne Brunelle</h4>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+

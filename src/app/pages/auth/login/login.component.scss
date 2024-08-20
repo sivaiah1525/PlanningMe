@@ -1,0 +1,45 @@
+
+.b-blue {
+    background-color: #3880ff;
+}
+
+.loginbody {
+    width: 100%;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    object-fit: cover !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+@media all and (max-width: 3000px) {
+    .login-card {
+        width: 380px;
+        align-items: center;
+        opacity: 0.9;
+        height: 480px;
+        img {
+            height: 70px;
+            padding: 0;
+            border: none;
+        }
+    }
+
+}
+
+@media all and (max-width: 800px) {
+    .login-card {
+        width: 330px;
+        align-items: center;
+        opacity: 0.9;
+        height: 480px;
+        img {
+            height: 50px;
+            padding: 0;
+            border: none;
+        }
+    }
+
+}

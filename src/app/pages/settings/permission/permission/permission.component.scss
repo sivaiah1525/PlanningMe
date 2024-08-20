@@ -1,0 +1,45 @@
+
+.f-w-bold{
+    font-weight: bold !important;
+    margin-left: 6px;
+}
+.permissiondialog{
+    padding: 0px  !important;
+     margin: 0px !important;
+     height:500px;
+      width: 500px;
+}
+.height-280{
+    height: 280px;
+    overflow: auto;
+}
+.m-t--16{
+margin-top: -16px;
+}
+.m-l--10{
+    margin-left: -10px;
+}
+.m-t--10{
+    margin-top: -10px;
+}
+.flex-container > div {
+    padding-left:40px;
+    width:340px;
+    
+  }
+  .flex-container {
+    display: flex;
+  }
+  .ioncolor{
+    color: white;
+  }
+  .flex-body{
+    display: flex;
+  }
+  .flex-body>div{
+    // padding-left:40px;
+    // width:340px;
+    padding-left:100px;
+    width:400px;
+  }
+

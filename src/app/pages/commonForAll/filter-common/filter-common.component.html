@@ -1,0 +1,163 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title *ngIf="screenType=='mappingFilter'" class="m-0 dialog-title text-center w-100">Filter</h2>
+    <h2 mat-dialog-title *ngIf="screenType=='selectUserType'" class="m-0 dialog-title text-center w-100">Select User Selection</h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+
+
+<ng-container *ngIf="screenType=='mappingFilter'">
+    <mat-dialog-content class="mr-0 ml-0">
+        <form [formGroup]="FilterForm"> 
+            <section class="example-section">
+                <mat-checkbox [checked]="selectedFile" (change)="switchLanguage('File')" class="example-margin">File</mat-checkbox>
+                <mat-checkbox [checked]="selectedApiKey" (change)="switchLanguage('ApiKey')" class="example-margin">ApiKey</mat-checkbox>
+            </section>
+            <section class="example-section">
+                <mat-checkbox [checked]="selectedImport" (change)="switchLanguage('Import')" class="example-margin">Import</mat-checkbox>
+                <mat-checkbox [checked]="selectedExport" (change)="switchLanguage('Export')" class="example-margin">Export</mat-checkbox> 
+            </section>
+            <div class="row">
+                <mat-form-field appearance="fill" class="w-100 m-t-10">
+                    <mat-label>Application Name</mat-label>
+                    <mat-select formControlName="applicationId">
+                        <mat-option *ngFor="let app of applicationname" [value]="app.id"
+                            (click)="Selactapplication(app)">
+                            {{app.applicationName|titlecase}}
+                        </mat-option> 
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="row">
+                <mat-form-field appearance="fill" class="w-100 m-t-10">
+                    <mat-label>Configuration Name</mat-label>
+                    <mat-select formControlName="Configurationid" multiple>
+                        <mat-option [value]="Name.id" *ngFor="let Name of ConfigurationNamelistforApiKey"
+                            (click)="SelectConfigurationName(Name)"> {{Name.configurationName|titlecase}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="row">
+                <mat-form-field class="w-100 m-t-10">
+                    <input matInput type="text" placeholder="Configuration Description "
+                        formControlName="ConfigurationDescription">
+                </mat-form-field>
+            </div>
+            <div class="row">
+                <div class="col-12  col-sm-12  col-md-12 col-lg-6 col-xl-6 ">
+                    <!-- Start Date & Time   -->
+    
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>Start Date</mat-label>
+                        <input matInput [matDatepicker]="startdatepicker1" style="color: black;" placeholder="Start Date"
+                            formControlName="StartDate">
+                        <mat-datepicker-toggle matSuffix [for]="startdatepicker1"></mat-datepicker-toggle>
+                        <mat-datepicker #startdatepicker1></mat-datepicker>
+                    </mat-form-field>
+                </div>
+                <div class="col-12  col-sm-12  col-md-12 col-lg-6 col-xl-6 ">
+                    <!-- End Date & Time -->
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>End Date</mat-label>
+                        <input matInput [matDatepicker]="enddatepicker1" style="color: black;" placeholder="End Date"
+                            formControlName="EndDate">
+                        <mat-datepicker-toggle matSuffix [for]="enddatepicker1"></mat-datepicker-toggle>
+                        <mat-datepicker #enddatepicker1></mat-datepicker>
+    
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+    </mat-dialog-content>
+    
+    <mat-dialog-actions align="end" class="my-1">
+        <div class="row justify-content-center">
+            <div class="col-5">
+                <button mat-button mat-dialog-close>Cancel</button>
+            </div>
+            <div class="col-5">
+                <button mat-raised-button class="b-blue" (click)="onSubmit()">Apply</button>
+            </div>
+        </div>
+    </mat-dialog-actions>
+</ng-container>
+
+
+<ng-container *ngIf="screenType=='selectUserType'">
+    <mat-dialog-content class="mr-0 ml-0">
+    <div class="container">
+        <form [formGroup]="UserGroupForm" style="width: 95%;"> 
+        <div class="row mt-4 mb-4">
+
+            <div class="row mt-2 mb-2">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <mat-checkbox class="example-margin"
+                        formControlName="selectTypeSingle">{{'Single User'|translate}}</mat-checkbox>
+                </div>
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <mat-checkbox class="example-margin"
+                        formControlName="selectTypeGroup">
+                        {{'Group of Users'|translate}}</mat-checkbox>
+                </div>
+            </div>
+        </div>
+        </form>
+        <ng-container *ngIf="selectTypeSingle()">
+            <div class="row">
+                <div class="col-12">
+                  <form [formGroup]="UserGroupForm" style="width: 95%;"> 
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"Single User"|translate}} <span class="danger">* </span></mat-label>
+                        <mat-select multiple (openedChange)="filterOptions('','users')" #select formControlName="Selactedusers">
+                          <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'users')" placeholder="Filter" />
+                          <mat-option *ngFor="let user of filterList" [value]="user.id">
+                            <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                [src]="user?.profilePicture ? user.profilePicture:'assets/avatar.svg'"
+                                onError="this.src='assets/avatar.svg'">
+                            {{ user.firstName| titlecase}} {{user.lastName|titlecase}}
+                        </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      </form>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="selectTypeGroup()">
+            <div class="row">
+                <div class="col-12">
+                  <form [formGroup]="UserGroupForm" style="width: 95%;"> 
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"User Group"|translate}} <span class="danger">* </span></mat-label>
+                        <mat-select multiple  (openedChange)="filterOptions('','UserGroups')" #select
+                            formControlName="SelactedGroups">
+                            <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'UserGroups')"
+                                placeholder="Filter" />
+                            <mat-option [value]="userGroup" *ngFor="let userGroup of filterGroup">
+                                <span *ngIf="userGroup.dynamicGroupId ==null">
+                                    <img style="border-radius: 50%;" width="30" height="30"
+                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                </span>
+                                <span *ngIf="userGroup.dynamicGroupId !=null">
+                                    <img style="border-radius: 50%;" width="30" height="30"
+                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                </span>
+                                {{userGroup.groupName|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    </form>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="selectTypeGroup()||selectTypeSingle()">
+            <div class="row mb-4 justify-content-center">
+                <div class="col-5">
+                </div>
+                <div class="col-5">
+                    <button mat-raised-button class="b-blue" (click)="UserGroupApply()">Apply</button>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+    </mat-dialog-content>
+</ng-container>

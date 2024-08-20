@@ -1,0 +1,37 @@
+.detail-wrapper .mat-list-base .mat-list-item {
+    border-bottom: 0px;
+}
+
+.remise {
+    background-color: #e5f9f6;
+    color: #08cbae;
+    padding: 4px 30px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.status {
+    padding: 4px 30px;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+#main {
+    display: flex;
+    flex-flow: row-wrap;
+}
+
+.container {
+    .col-12 {
+        margin: 10px !important;
+    }
+}
+
+.discountcolor {
+    color: red;
+}
+
+td,
+th {
+    text-align: center;
+}

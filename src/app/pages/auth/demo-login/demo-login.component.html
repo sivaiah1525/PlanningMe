@@ -1,0 +1,45 @@
+<div class="loginbody" [ngStyle]="{'background-image': 'url(' + image + ')'}">
+    <div>
+        <mat-card class="login-card mat-elevation-z8 p-4 ">
+            <form [formGroup]="loginForm" novalidate>
+                <mat-card-content>
+                    <div class="d-flex justify-content-center mb-2" (click)="gotodashboard()">
+                        <img class="loginlogo" src="assets/logo/login-logo.png" />
+                    </div>
+                    <h4 style="text-align: center; font-weight: bold;">{{'Veuillez choisir quel personnage STARPRO vous'|translate}}
+                        voulez Incarner !!</h4>
+                    <div class="row justify-content-center">
+                        <div class="col-10">
+                            <div class="row detailsRow p-2" *ngFor="let x of logindetails" (click)="onSubmit(x)">
+                                <div id="main">
+                                    <div>
+                                        <img class="loginimages" onError="this.src='assets/avatar.svg'"
+                                            [src]="x?.profilePicture ? x.profilePicture:'assets/avatar.svg'"
+                                            onError="this.src='assets/avatar.svg'">
+                                    </div>
+                                    <div>
+                                        <div>
+                                            <span style="position: relative; top:5px;left:10px;font-weight: bold;">
+                                                <span>{{x.firstName|titlecase}} {{x.lastName|titlecase}}</span><br>
+                                                <span style="color: #616264;font-weight: bold;">{{x.position|translate}}</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </form>
+        </mat-card>
+    </div>
+</div>
+
+
+
+
+<div class="overlay" *ngIf="spinnerloding">
+    <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+    </mat-progress-spinner>
+</div>
+

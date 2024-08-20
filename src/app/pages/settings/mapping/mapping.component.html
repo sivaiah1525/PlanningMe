@@ -1,0 +1,566 @@
+<mat-tab-group mat-align-tabs="center" class="no-bg display" (selectedTabChange)="tabChange($event.index)">
+
+
+    <!-- Mapping Configuration  -->
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tabclas">
+                <span [ngClass]="{'btn-blue': tabnumber == 0 }">
+                    <mat-icon [ngClass]="{'btn-blue': tabnumber == 0 }">build</mat-icon>
+                    <span> {{"Mapping Configuration"|translate}}</span>
+                </span>
+            </div>
+        </ng-template>
+        <div class="row m-t-10 m-b-10">
+            <div class=" col-12  col-sm-6 col-md-6 col-lg-4 col-xl-4" *ngFor="let c of configuration">
+                <mat-card class=" m-t-20 br-1 w-95">
+                    <div class="row">
+                        <p class="f-weight" style="text-align: center;">{{c.configurationName|titlecase}}</p>
+                    </div>
+                    <mat-divider class="configdivider"></mat-divider><br>
+                    <mat-card-content class=" example-card   overflow_unset">
+                        <div class="row">
+                            <div class="col-xl-8 col-lg-9 col-md-8 col-sm-8 p-0 margin-0">
+                                <img *ngIf="c.isFile == false"
+                                    src="../../../../assets/images/iconsForsvg/api-key-config.svg">
+                                <img *ngIf="c.isFile == true"
+                                    src="../../../../assets/images/iconsForsvg/file-config.svg">
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 p-0 margin-0">
+                                <p class="import"><mat-icon style="color: white;"> import_export</mat-icon>{{"Import"|translate}}</p>
+                                <!-- <p class="export"><mat-icon style="color: white;"> import_export</mat-icon>Export</p> -->
+                            </div>
+
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-10">
+                                <span class="color_grey f-weight">
+                                    {{c.description|titlecase}}
+                                </span>
+                            </div>
+                            <div class="col-2">
+                                <mat-icon [matMenuTriggerFor]="moreMenu">more_vert</mat-icon>
+                            </div>
+                        </div>
+                        <mat-menu #moreMenu="matMenu" class="eventlist">
+                            <ng-template matMenuContent>
+                                <button mat-menu-item (click)="Mappingconfiguration(c,'ViewMapping')">
+                                    <mat-icon class="icon-options">visibility</mat-icon>{{"View"|translate}}
+                                </button>
+                                <button mat-menu-item (click)="Mappingconfiguration(c,'UpdateMapping')">
+                                    <mat-icon class="icon-options">edit</mat-icon>{{"Edit"|translate}}
+                                </button>
+                                <button mat-menu-item (click)="deleteDialogConfirmation(c,'deleteconfiguration')">
+                                    <mat-icon class="icon-options">delete</mat-icon>{{"Delete"|translate}}
+                                </button>
+                            </ng-template>
+                        </mat-menu>
+
+                    </mat-card-content>
+                    <!-- </mat-card-actions> -->
+                </mat-card>
+            </div>
+        </div>
+        <span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+            <button id="add-button1" mat-fab (click)="Filterinmapping()">
+                <mat-icon style="color: white;">filter_list</mat-icon>
+            </button><br><br>
+            <button id="add-button2" mat-fab (click)="createConfiguration()">
+                <mat-icon style="color: white;">add</mat-icon>
+            </button>
+        </span>
+    </mat-tab>
+
+     <!-- Automation  -->
+     <ng-container *ngIf="AdminStatus=='true'">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <div class="tabclas">
+                    <span [ngClass]="{'btn-blue': tabnumber == 1}">
+                        <img [ngClass]="{'btn-blue': tabnumber == 1}" src="../../../../assets/images/iconsForsvg/setting-automation.svg" alt="">
+                        <!-- <mat-icon >settings_applications</mat-icon> -->
+                        <span>{{'Automation'|translate}}</span>
+                    </span>
+                </div>
+            </ng-template>
+             <!-- 11111111  -->
+             <app-lead-automation style="width: 100% !important;height: 100% !important;"></app-lead-automation> 
+        </mat-tab>
+    </ng-container>
+
+    <!-- Invoice Configuration  -->
+    <ng-container *ngIf="AdminStatus=='true'">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <div class="tabclas">
+                    <span [ngClass]="{'btn-blue': tabnumber == 2}">
+                        <mat-icon [ngClass]="{'btn-blue': tabnumber == 2 }">print</mat-icon>
+                        <span>{{"Invoice Configuration"|translate}}</span>
+                    </span>
+
+                </div>
+            </ng-template>
+            <div class="tab-container p-2 mt-2">
+                <div class="row mb-2 justify-content-center">
+                    <div class="col-2">
+                        <div class="avatar">
+                            <img class="imgclass" [src]="profilePick ? profilePick:'assets/avatar.svg'">
+                            <span class="Editoption">
+                                <mat-icon class="Editicon"> edit </mat-icon>
+                                <input class="editfileselaction" (change)="onFileSelect($event)" type="file" />
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <form [formGroup]="invoiceForm" style="width: 100%; margin-top:50px;">
+                        <div class="row mt-2 mb-2 justify-content-start ">
+                            <div class="col-2"></div>
+                            <div class="col-10">
+                                <mat-label> {{"Color"|translate}} </mat-label>
+                                <input [style.background]="color1" [(colorPicker)]="color1"
+                                    (colorPickerOpen)="onEventLog('colorPickerOpen', $event)"
+                                    (colorPickerClose)="onEventLog('colorPickerClose', $event)" />
+                            </div>
+                        </div>
+                        <div class="row justify-content-center ">
+                            <div class="col-10 col-sm-10  col-md-10 col-lg-5 col-xl-5">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"Name"|translate}} </mat-label>
+                                    <input matInput type="text" readonly="false" 
+                                        formControlName="name">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-10 col-sm-10  col-md-10 col-lg-5 col-xl-5">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"CompanyName"|translate}} </mat-label>
+                                    <input matInput type="text" 
+                                        formControlName="CompanyName">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center ">
+                            <div class="col-10 ">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"Address"|translate}} </mat-label>
+                                    <input ngx-google-places-autocomplete [options]='options' #placesRef="ngx-places"
+                                        (onAddressChange)="handleAddressChange($event,'invoice')" matInput type="text"
+                                        formControlName="Address">
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2 justify-content-center ">
+                            <div class="col-10 col-sm-10  col-md-10 col-lg-4 col-xl-4">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"Country"|translate}} </mat-label>
+                                    <input matInput type="text" formControlName="country">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-10 col-sm-10  col-md-10 col-lg-4 col-xl-4">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"City"|translate}} </mat-label>
+                                    <input matInput type="text"  formControlName="city">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-10 col-sm-10  col-md-10 col-lg-2 col-xl-2">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"zip code"|translate}} </mat-label>
+                                    <input matInput type="text"  formControlName="zipcode">
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+
+
+                        <div class="row justify-content-center ">
+                            <div class="col-10">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"Payment Mention"|translate}} </mat-label>
+                                    <input matInput type="text" 
+                                        formControlName="PaymentMention">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-9">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"Bank Account"|translate}} </mat-label>
+                                    <input matInput type="text" 
+                                        formControlName="BankAccount">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-1">
+                                <mat-icon style="cursor: pointer;" (click)="showAccountDetails()">visibility</mat-icon>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center ">
+                            <div class="col-9">
+                                <h4 style="color: grey;"><b>{{"Add another Bank Account"|translate}}</b></h4>
+                            </div>
+                            <div class="col-1">
+                                <mat-icon style="cursor: pointer;" (click)="showpaymentMode(paymentMode)">add_circle
+                                </mat-icon>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center ">
+                            <div class="col-10 col-sm-10  col-md-10 col-lg-5 col-xl-5">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"Payment deadline"|translate}} </mat-label>
+                                    <input matInput type="datetime-local" [min]="minDate" 
+                                        id="StartDate" formControlName="PaymentDeadLine">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-10 col-sm-10  col-md-10 col-lg-5 col-xl-5">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"Quote deadline"|translate}} </mat-label>
+                                    <input matInput type="datetime-local" [min]="minDate"
+                                        
+                                        formControlName="QuoteDeadLine">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center ">
+                            <div class="col-10">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"Penality Mention"|translate}} </mat-label>
+                                    <input matInput type="text"
+                                        formControlName="PenaltyMention">
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <div class="row justify-content-center ">
+                            <div class="col-9">
+                                <h4 style="color: grey;"><b>{{"Add a mention"|translate}}</b></h4>
+                            </div>
+                            <div class="col-1">
+                                <mat-icon style="cursor: pointer;">add_circle
+                                </mat-icon>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center ">
+                            <div class="col-10">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"Footer Mention"|translate}} </mat-label>
+                                    <input matInput type="text" 
+                                        formControlName="FooterMention">
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <div class="row justify-content-end  m-t-4 ">
+                            <div class="col-4">
+                                <button mat-raised-button class=" m-l-10 b-blue"
+                                    (click)="createInvoice()">{{"Update"|translate}}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </mat-tab>
+    </ng-container>
+
+    <!-- Account Size -->
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <div class="tabclas">
+                <span [ngClass]="{'btn-blue': tabnumber == 3}">
+                    <mat-icon [ngClass]="{'btn-blue': tabnumber == 3}">donut_small</mat-icon>
+                    <span>{{'Account Size'|translate}}</span>
+                </span>
+
+            </div>
+        </ng-template>
+        <div class="tab-container  mt-2">
+            <div class="row m-t-14  justify-content-center">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 p-4">
+                    <div class="row">
+                        <p class="f-weight f-size-15">{{"Personal Planning & Me Space Using"|translate}} {{planning|number}} %</p>
+                    </div>
+                    <ngx-charts-pie-chart [view]="view" [scheme]="colorScheme" [results]="single" [legend]="true"
+                        [legendPosition]="'bottom'" [legendTitle]="''" [arcWidth]=".5" [doughnut]="true">
+                    </ngx-charts-pie-chart>
+                </div>
+                <ng-container *ngIf="AdminStatus=='true'">
+                    <mat-divider [vertical]="true"></mat-divider>
+                    <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 p-4" *ngIf="showorg == true">
+                        <div class="row">
+                            <p class="f-weight f-size-15">{{"Global Planning & Me Space Using"|translate}} {{Global|number}} % </p>
+                        </div>
+                        <ngx-charts-pie-chart [view]="view" [scheme]="colorScheme" [results]="dbsize" [legend]="true"
+                            [legendPosition]="'bottom'" [legendTitle]="''" [arcWidth]=".5" [doughnut]="true">
+                        </ngx-charts-pie-chart>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </mat-tab>
+
+    <!-- Company Details  -->
+    <ng-container *ngIf="AdminStatus=='true'">
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <div class="tabclas">
+                    <span [ngClass]="{'btn-blue': tabnumber == 4}">
+                        <mat-icon [ngClass]="{'btn-blue': tabnumber == 4}">home</mat-icon>
+                        <span>{{'Company Details'|translate}}</span>
+                    </span>
+                </div>
+            </ng-template>
+            <div class="row mb-2 justify-content-center">
+                <div class="col-2">
+                    <div class="avatar">
+                        <img class="companylogostyle"
+                            [src]="profilePickForCompany ? profilePickForCompany:'assets/logo/login-logo.png'">
+                        <span class="Editoption">
+                            <mat-icon class="Editicon"> edit </mat-icon>
+                            <input class="editfileselaction" (change)="onFileSelectincompany($event,chooseOption)" type="file" />
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <form [formGroup]="companyForm" style="width: 100%; margin-top:50px;">
+                    <div class="row justify-content-start">
+                        <div class="col-2">
+                        </div>
+                        <div class="col-10">
+                            <mat-slide-toggle (change)="maintainstock($event,stockmaintain)" formControlName="StockManagement"
+                                style="font-size: 20px;">{{"Stock Management"|translate}}</mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center  mt-4">
+                        <div class="col-10 col-sm-10  col-md-10 col-lg-5 col-xl-5">
+                            <mat-form-field class="w-100">
+                                <mat-label> {{"Company Name"|translate}} </mat-label>
+                                <input matInput type="text"  formControlName="companyName">
+                            </mat-form-field>
+                        </div>
+                        <div class="col-10 col-sm-10  col-md-10 col-lg-5 col-xl-5">
+                            <mat-form-field class="w-100">
+                                <mat-label> {{"Registration Number"|translate}} </mat-label>
+                                <input matInput type="number" 
+                                    formControlName="Registrationnumber">
+                            </mat-form-field>
+                        </div>
+                        <div class="row justify-content-center ">
+                            <div class="col-10">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"Phone Number"|translate}} </mat-label>
+                                    <input matInput type="number" 
+                                        formControlName="Phonenumber">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center ">
+                            <div class="col-10">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"Address"|translate}} </mat-label>
+                                    <input ngx-google-places-autocomplete [options]='options' #placesRef="ngx-places"
+                                        (onAddressChange)="handleAddressChange($event,'company')" matInput type="text"
+                                         formControlName="Address">
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <div class="row mt-2 justify-content-center ">
+                            <div class="col-10 col-sm-10  col-md-10 col-lg-4 col-xl-4 ">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"Country"|translate}} </mat-label>
+                                    <input matInput type="text"  formControlName="country">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-10 col-sm-10  col-md-10 col-lg-4 col-xl-4">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"City"|translate}} </mat-label>
+                                    <input matInput type="text"  formControlName="city">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-10 col-sm-10  col-md-10 col-lg-2 col-xl-2">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"zipcode"|translate}} </mat-label>
+                                    <input matInput type="number"  formControlName="zipcode">
+                                </mat-form-field>
+                            </div>
+                        </div>
+
+                        <div class="row justify-content-center ">
+                            <div class="col-10 col-sm-10  col-md-10 col-lg-10 col-xl-10">
+                                <mat-form-field class="w-100">
+                                    <mat-label> {{"Organization Details"|translate}} </mat-label>
+                                    <input matInput type="text" 
+                                        formControlName="organizationDetails">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                     <div class="row justify-content-center">
+                        <div class="col-10">
+                            <div class="row">
+                                <div class="col-9">
+                                    <button  mat-raised-button class="R-blue">{{"Cancel Subscription"|translate}}</button>
+                                </div>
+                                <div class="col-3">
+                                    <button mat-raised-button class="b-blue"
+                                        (click)="UpdateCompanyDetails()">{{"Update"|translate}}</button>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+
+                    </div>
+                </form>
+            </div>
+        </mat-tab>
+    </ng-container>
+</mat-tab-group>
+
+
+
+<ng-template #Connection class="container">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <mat-icon mat-dialog-close (click)="closedialogbox()">keyboard_backspace</mat-icon>
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{'App Integration'|translate}}</h2>
+        <mat-icon mat-dialog-close (click)="closedialogbox()">close</mat-icon>
+    </div>
+
+    <form [formGroup]="form">
+        <mat-dialog-content class="viewDialog pading " style=" margin: 0px !important;height:300px; width: 500px;">
+
+            <div class="row m-t-10">
+                <mat-checkbox formControlName="isConnectionActive">{{"Activate The Connection"|translate}}</mat-checkbox>
+            </div>
+
+            <div class="row m-t-10">
+                <div class="col-6 p-0">
+                    <mat-checkbox formControlName="canWeImport">{{'Import The Data'|translate}}</mat-checkbox>
+                </div>
+
+                <div class="col-6">
+                    <mat-checkbox formControlName="canWeExport">{{'Export The Data'|translate}}</mat-checkbox>
+                </div>
+            </div>
+
+            <mat-form-field appearance="fill" class="w-100 m-t-10">
+                <mat-label>{{'Connector'|translate}}</mat-label>
+                <mat-select formControlName="connectorId">
+                    <mat-option *ngFor="let drive of Connectortype" [value]="drive.id"
+                        (click)="onDisplayTypeChanged(drive)">
+                        {{drive.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="w-100 m-t-10">
+                <mat-label>{{'Title'|translate}}</mat-label>
+                <input matInput type="text"  formControlName="title">
+                <mat-error *ngIf="form.controls['title'].hasError('required')">
+                    {{"Title is required"|translate}}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-100">
+                <mat-label>{{'Description'|translate}}</mat-label>
+                <input matInput type="text"  formControlName="description">
+                <mat-error *ngIf="form.controls['description'].hasError('required')">
+                    {{"Description is required"|translate}}
+                </mat-error>
+            </mat-form-field>
+
+        </mat-dialog-content>
+        <mat-dialog-action>
+            <div class="row" style="margin-bottom: 8px;">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6"></div>
+                <button mat-raised-button mat-dialog-close (click)="closedialogbox()">{{"Cancel"|translate}}</button> &nbsp; &nbsp;
+                <button mat-raised-button class="b-blue" (click)="drivelogin()">{{"Login"|translate}}</button>
+            </div>
+
+        </mat-dialog-action>
+    </form>
+</ng-template>
+
+
+<ng-template #paymentMode>
+    <div class="d-flex flex-row align-items-center modal-header">
+        <mat-icon mat-dialog-close (click)="closedialogbox()">keyboard_backspace</mat-icon>
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"Payment Options"|translate}}</h2>
+        <mat-icon mat-dialog-close (click)="closedialogbox()">close</mat-icon>
+    </div>
+    <mat-dialog-content class="p-3 m-2" id="file-note-popup justify-content-center">
+        <div class="row m-2 justify-content-center">
+            <div class="col-1">
+                <mat-icon style="color: red;">home</mat-icon>
+            </div>
+            <div class="col-5 pointer">
+                <span (click)="selactpaymentMode($event)" class="fw-600 color_grey">{{"Bank"|translate}}</span>
+            </div>
+        </div>
+        <div class="row m-2 justify-content-center">
+            <div class="col-1">
+                <mat-icon style="color: blue;">credit_card</mat-icon>
+            </div>
+            <div class="col-5 pointer">
+                <span class="fw-600 color_grey" (click)="selactpaymentMode($event)">{{"Check"|translate}}</span>
+            </div>
+        </div>
+        <div class="row m-2 justify-content-center">
+            <div class="col-1">
+                <mat-icon style="color: green;">money</mat-icon>
+            </div>
+            <div class="col-5 pointer">
+                <span class="fw-600 color_grey" (click)="selactpaymentMode($event)">{{"QR Code"|translate}}</span>
+            </div>
+        </div>
+
+    </mat-dialog-content>
+</ng-template>
+
+
+<ng-template #stockmaintain>
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Configuration</h2>
+    </div>
+    <mat-dialog-content class="viewDialog pading "style="padding: 0px  !important; margin: 0px !important;height:60px">
+            <p style="text-align: center;padding-top: 10px;">{{stockmaintainmess|titlecase}}</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end" class="my-1">
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8">
+                <button mat-button mat-dialog-close (click)="closedialogbox()">{{'Cancel'|translate}}</button>
+                <button mat-raised-button class="b-blue" (click)="stockmaintainmessUpdate()">{{"Apply"|translate}}</button>
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </mat-dialog-actions>
+</ng-template>
+
+
+
+
+<ng-template #chooseOption>
+    <div class="d-flex flex-row align-items-center modal-header">
+        <mat-icon mat-dialog-close (click)="closedialogbox()">keyboard_backspace</mat-icon>
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Confirmation</h2>
+        <mat-icon mat-dialog-close (click)="closedialogbox()">close</mat-icon>
+    </div>
+        <div class="container">
+            <div class="row mt-2 mb-2 justify-content-start">
+                <div class="col-10">
+              <h4>Update Profile Image</h4>
+                </div>
+            </div>
+            <div class="row mb-2 justify-content-end">
+                <div class="col-4">
+                    <button mat-button mat-dialog-close (click)="closedialogbox()">Cancel</button>
+                </div>
+                <div class="col-4">
+                    <button mat-raised-button class="b-blue" 
+                        (click)="UpdateOranizationProfile()">Apply</button>
+                </div>
+            </div>
+        </div>
+</ng-template>

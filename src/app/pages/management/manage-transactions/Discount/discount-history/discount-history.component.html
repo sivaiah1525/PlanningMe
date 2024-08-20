@@ -1,0 +1,153 @@
+<!-- DiscountHistory  -->
+<ng-container *ngIf="screenType=='DiscountHistory'">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+            {{'Discount History'|translate}}
+        </h2>
+        <mat-icon mat-dialog-close>close</mat-icon>
+    </div>
+    <mat-dialog-content class="mr-0 ml-0">
+        <div class="row justify-content-center">
+            <div class="col-1">
+                <span *ngIf="discontDetails.isPublic ==false">
+                    <img style="border-radius: 50%; width: 50px; height: 50px;"
+                        src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                </span>
+                <span *ngIf="discontDetails.isPublic ==true">
+                    <img style="border-radius: 50%; width: 50px; height: 50px;"
+                        src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                </span>
+            </div>
+        </div>
+        <div>
+            <h2 class="name_red" style="text-align: center;">{{discontDetails.name|titlecase}}</h2>
+
+        </div>
+        <div class="row">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">{{'Order Id'|translate}}</th>
+                        <th scope="col">{{'Transaction'|translate}}Ref</th>
+                        <th scope="col">{{'Transaction'|translate}}Date</th>
+                        <th scope="col">{{'Applied'|translate}} To</th>
+                        <th scope="col">{{'Percentage'|translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let discount of disconthistoryDetails;let i = index" style="height:50px !important;">
+                        <td>{{discount.orderId}}</td>
+                        <td>{{discount.transactionReference}}</td>
+                        <td>{{discount.transactionDate| date:'dd-MMM-yyyy H:mm'}}</td>
+                        <td style="width: 350px;">
+                            <ng-container *ngIf="discount.entity=='Contact'">
+                                <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                    [src]="discount?.entityProfile ? discount.entityProfile:'assets/avatar.svg'"
+                                    onError="this.src='assets/avatar.svg'">
+                                {{discount.entityName|titlecase}}
+                            </ng-container>
+                            <ng-container *ngIf="discount.entity=='Site'">
+                                <span>
+                                    <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                                </span>
+                                {{discount.entityName|titlecase}}
+                            </ng-container>
+                            <ng-container *ngIf="discount.entity=='Product'">
+                                <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                    [src]="discount?.entityProfile ? discount.entityProfile:'assets/images/iconsForsvg/icon_product.svg '"
+                                    onError="this.src='assets/images/iconsForsvg/icon_product.svg '">
+                                {{discount.entityName|titlecase}}
+                            </ng-container>
+                            <ng-container *ngIf="discount.entity=='Transaction'">
+                                <mat-icon>shopping_cart</mat-icon>
+                                {{'Manually Added'|translate}}
+                            </ng-container>
+                        </td>
+                        <td>{{discount.discountPercent+' '+'%'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="overlay" *ngIf="Loadspinner">
+            <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+            </mat-progress-spinner>
+        </div>
+        <div class="row mb-4 justify-content-end">
+            <div class="col-10">
+                <mat-paginator [pageSize]="100" [length]="DataLength" (page)="next($event)"></mat-paginator>
+            </div>
+        </div>
+
+    </mat-dialog-content>
+</ng-container>
+
+<!-- DiscountMatrix  -->
+<ng-container *ngIf="screenType=='DiscountMatrix'">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+            {{'Discount Matrix'|translate}}
+        </h2>
+        <mat-icon mat-dialog-close>close</mat-icon>
+    </div>
+    <mat-dialog-content class="mr-0 ml-0">
+        <div class="row justify-content-center">
+            <div class="col-1">
+                <span *ngIf="discontDetails.isPublic ==false">
+                    <img style="border-radius: 50%; width: 50px; height: 50px;"
+                        src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                </span>
+                <span *ngIf="discontDetails.isPublic ==true">
+                    <img style="border-radius: 50%; width: 50px; height: 50px;"
+                        src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                </span>
+            </div>
+        </div>
+        <div>
+            <h2 class="name_red" style="text-align: center;">{{discontDetails.name|titlecase}}</h2>
+
+        </div>
+
+        <div class="row">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">{{'Start Date'|translate}}</th>
+                        <th scope="col">{{'End Date'|translate}}</th>
+                        <th scope="col">{{'Code'|translate}}</th>
+                        <th scope="col">{{'Amount'|translate}}</th>
+                        <th scope="col">{{'Limit'|translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let discount of disconthistoryDetails;let i = index" style="height:50px !important;">
+                        <td>
+                            <span *ngIf="discount.isPublic ==false">
+                                <img style="border-radius: 50%;"
+                                    src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                            </span>
+                            <span *ngIf="discount.isPublic ==true">
+                                <img style="border-radius: 50%;" src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                            </span>
+                        </td>
+                        <td>{{discount.startDate| date:'dd-MMM-yyyy H:mm'}}</td>
+                        <td>{{discount.endDate| date:'dd-MMM-yyyy H:mm'}}</td>
+                        <td>{{discount.discountCode}}</td>
+                        <td>{{discount.amount+' '+'%'}}</td>
+                        <td>{{discount.limit}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="overlay" *ngIf="Loadspinner">
+            <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+            </mat-progress-spinner>
+        </div>
+        <div class="row mb-4 justify-content-end">
+            <div class="col-10">
+                <mat-paginator [pageSize]="100" [length]="DataLength" (page)="next($event)"></mat-paginator>
+            </div>
+        </div>
+
+    </mat-dialog-content>
+</ng-container>

@@ -1,0 +1,154 @@
+<header>
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{'Invoice'|translate}}</h2>
+        <mat-icon mat-dialog-close>close</mat-icon>
+    </div>
+</header>
+<section class="bodysection">
+    <div class="container">
+        <div class="row mt-3 justify-content-around">
+            <div class="col-10">
+                <div class="ion-margin-start cust-bdr">
+                    <img [src]='invoicedata.companyLogo' async width="100">
+                </div>
+            </div>
+            <div class="col-2 p-0">
+                <section>
+                    <div class="example-button-row">
+                        <button mat-raised-button class="mr-3" (click)="downloadpdf()">
+                            <mat-icon>download</mat-icon>
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div class="row mt-3 mb-3 justify-content-around">
+            <div class="col-8">
+                <div class="ion-margin-end bdr">
+                    <div class="fw-600">{{invoicedata.companyName}}</div>
+                    <div class="fs-12">
+                        {{invoicedata.mainAddress|titlecase}}
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="ion-margin-start bdr-all">
+                    <div class="fw-600">{{invoicedata.siteName|titlecase}}</div>
+                    <div class="fs-12">
+                        {{invoicedata.customerAddress|titlecase}}<br />
+                    {{invoicedata.customerCity|titlecase}},{{invoicedata.customerZipcode}},<br>{{invoicedata.customerCountry|titlecase}} </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row mt-3 mb-3 justify-content-around">
+            <div class="col-8">
+                <div class="ion-margin-end bdr-all">
+                    <div *ngIf="id.orderQuoteStatus!=='Pending'">
+                        <span class="fw-600"> {{'Order ID'|translate }} :</span>{{invoicedata.orderId}}
+                    </div>
+                    <div *ngIf="id.orderQuoteStatus!=='Validated'">
+                        <span class="fw-600"> {{'Quote ID'|translate }} : </span>{{invoicedata.orderId}}
+                    </div>
+                </div>
+                <div class="ion-margin-end bdr-all">
+                    <span class="fw-600"> {{'Contact Name'|translate}} :</span>
+                    {{invoicedata.customerFirstName|titlecase}} {{invoicedata.customerLastName|titlecase}}
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="ion-margin-end bdr-all">
+                    <div> <span class="fw-600">{{'Issue Date'|translate}} : </span>{{ invoicedata.issueDate | date:'dd-MMM-yyyy'}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- table table  -->
+        <div class="row mt-3 mb-3">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead style="background-color: red; color:white; ">
+                            <tr class="tablehead">
+                                <th>{{'Transaction'|translate}} Ref</th>
+                                <th> {{'Name'|translate}}</th>
+                                <th>{{'Quantity'|translate}}</th>
+                                <th>{{'VAT'|translate}}</th>
+                                <th>{{'Unit Price'|translate}}</th>
+                                <th>{{'Total Amount'|translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="mt-2" *ngFor="let x of invoicedata.orders;let i=index">
+                            <tr>
+                                <td><span style="font-weight:bold;">{{x.transactionReference}}</span></td>
+                                <td>{{x.name|titlecase}} </td>
+                                <td>{{x.quantity}}</td>
+                                <td>{{x.vat +'%'}}</td>
+                                <td>{{x.unitPrice}}{{x.currencySymbol}}</td>
+                                <td>{{ transform(x.totalAmount)}} {{x.currencySymbol}}</td>
+                            </tr>
+                            <tr *ngFor="let f of x.discountOrderDtos;let i=index">
+                                <td></td>
+                                <td> {{f.discountName|titlecase}} -({{f.discountPercentage}})-Applied to <span
+                                        style="font-weight: bold; font-style: italic;">{{f.entityName|titlecase}}</span>
+                                </td>
+                                <td>{{f.discountQuantity}}</td>
+                                <td></td>
+                                <td>{{ transform(f.discount)}} {{x.currencySymbol}}</td>
+                                <td>{{ transform(f.discount)}} {{x.currencySymbol}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-3 mb-3 justify-content-around">
+            <div class="row m-2 justify-content-center">
+                <div class="col-10">{{'VAT amount in euros'|translate}} </div>
+                <div class="col-2 value">{{transform(invoicedata.vatAmountInEuros)}} {{'€'}}</div>
+            </div>
+            <div class="row m-2 justify-content-center">
+                <div class="col-10">{{'Total amount in euros without VAT'|translate}}</div>
+                <div class="col-2 value">{{transform(invoicedata.totalAmountInEurosWithoutVAT)}} {{'€'}}</div>
+            </div>
+            <div class="row m-2 justify-content-center  fw-600">
+                <div class="col-10 ">{{'Total amount in euros with VAT'|translate}} </div>
+                <div class="col-2 value">{{transform(invoicedata.totalAmountInEurosWithVAT)}} {{'€'}}</div>
+            </div>
+        </div>
+        <div>
+            <span>
+                {{'Nous vous remercions d établir le paiement par chèque à l adresse indiquée ci-dessus ou par virement aux coordonnées suivantes'|translate}}
+            </span>
+        </div>
+
+        <div class="row mt-3 mb-3 justify-content-center">
+            <div class="col-6 p-1 justify-content-center fw-600 "
+                style="background-color: red; color:white;text-align: center">
+                <span>{{invoicedata.getBankAccounts}}</span>
+            </div>
+        </div>
+
+        <div class="row mt-3 mb-3">
+            <div class="col-6"> <span class="fw-600">{{'Payment deadline'|translate}} : </span>{{ invoicedata.paymentDeadLine |
+                date:'dd-MMM-yyyy'}} </div>
+        </div>
+
+        <div class="row mt-3 mb-3">
+            <p class="fs-12" style="text-align: center;">
+ {{"Le faux des penalities exigibles a compter du ler decembre 2013 en l absence de paiement est egalau faux de refinancement de la BCE (Banque Centrale Europeenne) majore de 10 poins, soit 10,25%. Indemnite forfaitaire pour frais de recouvrement en cas de retard de paiement: 40 euro. Nos conditions de vente ne prevoient pas d escompte pour "|translate}},</p>
+        </div>
+
+        <div class="row mt-5 mb-1 ">
+            <div class="col-12 mt-5 justify-content-center">
+                <p class="fs-12" style="color:rgb(211, 210, 210) ; text-align: center; font-size: 8px;">
+                    {{invoicedata.footerMention|titlecase}}
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>

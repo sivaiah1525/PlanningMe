@@ -1,0 +1,210 @@
+.conditionsstyle {
+    margin: 0 !important;
+    padding: 0 !important;
+  
+    .col-3 {
+      margin: 0 !important;
+      padding: 3px !important;
+    }
+    .col-2 {
+      margin: 0 !important;
+      padding: 3px !important;
+    }
+    .col-4 {
+      margin: 0 !important;
+      padding: 3px !important;
+    }
+  }
+  
+  .cardsection {
+    .col-6 {
+      margin: 0 !important;
+      padding: 3px !important;
+    }
+  }
+  
+  #strategy {
+    // margin:20px 0;
+    .strategy-text {
+      position: relative;
+    }
+  
+    .visbility {
+      background: white !important;
+      border: none !important;
+      vertical-align: bottom !important;
+    }
+  
+    .mat-list-base .mat-list-item,
+    .mat-list-base .mat-list-option {
+      height: auto !important;
+      margin-bottom: 14px;
+    }
+  
+    #strategy-option {
+      text-align: right;
+    }
+  
+    .strategy-list {
+      color: #fff;
+      border-radius: 14px;
+      padding: 1px;
+      font-size: 12px;
+      width: 80px;
+      text-align: center;
+      margin-right: 4px;
+      display: inline-block;
+  
+      &.primary {
+        background: #00a2e8;
+      }
+  
+      &.secondary {
+        background: #2dd994;
+      }
+  
+      &.danger {
+        background: #f44336;
+      }
+  
+      &.grey {
+        background-color: #f1e2e1;
+      }
+  
+      &.tertiary {
+        background: #da8781;
+      }
+    }
+  
+    .m-t-15 {
+      margin-top: 15px;
+    }
+  
+    .typecolor {
+      background-color: blue;
+      border-radius: 10px;
+    }
+  
+    .closePoint {
+      cursor: pointer !important;
+    }
+  }
+  
+  ::ng-deep.viewDialog {
+    width: 400px !important;
+    height: 70px !important;
+  }
+  
+  ::ng-deep.pading.mat-dialog-container {
+    height: auto !important;
+    padding: 24px !important;
+  }
+  
+  #create-strategy {
+    &.mat-dialog-content {
+      margin: 0;
+    }
+  }
+  
+  .con-btn {
+    color: white;
+    background-color: deeppink;
+    border-radius: 24px;
+    width: 32%;
+  }
+  
+  .f-size-18 {
+    font-size: 18px;
+    margin-left: 0px !important;
+    margin-top: 10px;
+  
+    // margin: 12px;
+  }
+  ::ng-deep .mat-card-header-text {
+    margin: 0 !important;
+    width: 100% !important;
+}
+  
+  .m-l-2 {
+    margin-left: 2px !important;
+  }
+  
+  .cardsize {
+    margin: 5px !important;
+    cursor: pointer;
+  }
+  .m-l-60 {
+    margin-left: 20px;
+  }
+  
+  .divider {
+    background-color: #fb4444;
+    height: 5px;
+  }
+  
+  .p-0 {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+  }
+  
+  .chip {
+    width: 50%;
+    background-color: #fb4444;
+    color: white;
+  }
+  
+  .m-l-16 {
+    margin-left: 16px;
+  }
+  
+  .m-b-0 {
+    margin-bottom: 0px;
+  }
+  
+  ::ng-deep.condition.mat-chip-list-wrapper {
+    margin-left: 16px;
+  }
+  
+  .color {
+    color: lightgrey;
+    font-size: 12px;
+  }
+  
+  .height-116 {
+    height: 133px !important;
+    overflow: auto !important;
+  }
+  
+  .font-color {
+    color: grey;
+    font-weight: bold;
+  }
+  
+  .mat-card-header-text {
+    margin: 0 !important;
+  }
+  
+  .mat-card {
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    display: block;
+    position: relative;
+    padding: 5px !important;
+    border-radius: 4px;
+  }
+  
+  .cardrowstyle {
+    height: auto;
+    overflow: scroll;
+    overflow-x: hidden;
+    .col-md-6,
+    .col-lg-4,
+    .col-xl-4 {
+      position: relative;
+      width: 100%;
+      padding-right: 3px !important;
+      padding-left: 3px !important;
+    }
+  }
+  

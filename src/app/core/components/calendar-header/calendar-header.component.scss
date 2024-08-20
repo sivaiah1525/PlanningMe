@@ -1,0 +1,58 @@
+#calender {
+    .active {
+        background: #3880ff;
+        color: #fff;
+    }
+    .inactive {
+        background: #989aa2 !important;
+        color: #fff !important;
+    }
+    section {
+        display: table;
+        float: right;
+        margin:0;
+    }
+    .calender-button-row {
+        display: table-cell;
+    }
+    .calender-button-row button {
+        display: table-cell;
+        margin-right: 4px;
+    }
+    .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
+        line-height: 28px;
+        padding: 0 6px;
+    }
+    .mat-raised-button {
+        line-height: 30px;
+    }
+    .float_right{
+        float: right;
+    }
+    .btn_color{
+        background-color: #3880ff;
+        color: white;
+    }
+}
+
+
+
+
+#calender{
+    width: 100% !important;
+}
+
+@media only screen and (max-width: 768px) {
+    #calender {
+        .mat-raised-button {
+            min-width: 38px;
+            line-height: 29px;
+            padding: 0 14px;
+        }
+    }
+}
+
+.alldata {
+    background: #989aa2 !important;
+    color: #fff !important;
+}

@@ -1,0 +1,46 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title style="text-align: center;" class="m-0 dialog-title w-100">{{"Time Zone Change Alert"|translate}}</h2>
+</div>
+<mat-dialog-content class="mr-0 ml-0">
+ 
+    <div class="row mt-4 mb-2 justify-content-start">
+        <span style="padding: 0px 10px 9px 5px;">
+            <mat-icon style="color: #fb4444;margin-left: 5px;">error</mat-icon></span>
+            <span><p style="text-align: center;">{{"Do you wish to change your current timezone in your account ?"|translate}} </p></span>
+    </div>
+    <div class="row mt-4">
+        <div class="col-5">
+            <div class="row">
+                <div class="col-4">
+                    <img style="width: 30px;height: 25px;" [src]="data?.flagUrl1" >
+                </div>
+                <div class="col-8">
+                    <p style="text-align: start;"><b>{{data?.TimeZone2}} </b></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <p style="text-align: center;">{{"To"|translate}}</p>
+        </div>
+        <div class="col-5">
+            <div class="row">
+                <div class="col-4">
+                    <img style="width: 30px;height: 25px;" [src]="data?.flagUrl2" >
+                </div>
+                <div class="col-8">
+                    <p style="text-align: start;"><b>{{data?.TimeZone}}</b></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="my-1">
+    <div class="row justify-content-center">
+        <div class="col-5">
+            <button mat-button mat-dialog-close class="R-blue" (click)="cancel()" >{{"Refuse"|translate}}</button>
+        </div>
+        <div class="col-5">
+            <button mat-raised-button class="b-blue" (click)="onSubmit()" >{{"Accept"|translate}}</button>
+        </div>
+    </div>
+</mat-dialog-actions>

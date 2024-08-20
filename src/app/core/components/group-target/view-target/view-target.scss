@@ -1,0 +1,77 @@
+.border-box {
+    border: 2px solid green;
+    padding: 5px 10px;
+    display: inline-block;
+    border-radius: 8px;
+    color:green;
+    margin-left: 5px;
+    text-transform: capitalize;
+  }
+  .border-box1 {
+    border: 2px solid black;
+    padding: 3px 9px;
+    display: inline-block;
+    border-radius: 8px;
+    color: black;
+    margin-left: 5px;
+    text-transform: capitalize;
+  }
+
+  .border-box-complete {
+    border: 2px solid green;
+    padding: 5px 10px;
+    display: inline-block;
+    border-radius: 8px;
+    margin-left: 5px;
+    text-transform: capitalize;
+    background-color: green;
+    color: #fff;
+  }
+
+  .circular-progress-bar {
+    position: relative;
+    width: 50px; /* Adjust the width as needed */
+    height: 50px; /* Adjust the height as needed */
+}
+
+.circular-progress-bar svg {
+    width: 100%;
+    height: 100%;
+}
+
+.circular-progress-bar circle {
+  fill: none;
+  stroke-width: 10; /* Adjust the stroke width as needed */
+}
+
+.circular-progress-bar .progress-bar-background {
+  stroke: #e0e0e0; /* Background color for the progress bar */
+}
+
+.border-box {
+  border: 2px solid #528bf1;
+  padding: 3px 9px;
+  display: inline-block;
+  border-radius: 8px;
+  color: #528bf1;
+  margin-left: 5px;
+  text-transform: capitalize;
+}
+
+.circular-progress-bar text {
+  font-size: 18px; /* Adjust font size as needed */
+  font-weight: 900 !important;
+
+}
+
+.circular-progress-bar .counttitle {
+  text-align: center;
+  margin-top: 5px; /* Adjust margin as needed */
+}
+
+.avatar1 {
+  height: 45px;
+    width: 45px;
+    margin-right: 10px;
+    border-radius: 50%;
+}

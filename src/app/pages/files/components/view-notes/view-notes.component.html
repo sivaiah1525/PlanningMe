@@ -1,0 +1,181 @@
+<div class="d-flex flex-row align-items-center modal-header">
+  <h3 *ngIf="notesData.isPrivate == false" mat-dialog-title class="m-0 dialog-title text-center w-100">{{ noteType }}
+  </h3>
+  <h3 *ngIf="notesData.isPrivate != false" mat-dialog-title class="f-weight m-0 dialog-title w-100" id="private">
+    <span *ngIf="notesData.isPrivate != false" class="f-weight">
+      <mat-icon style="color: white;">lock</mat-icon>
+      <img style="border-radius: 50%;" width="30" height="30"
+        [src]="notesData.creatorProfile!= null ? notesData.creatorProfile : 'assets/avatar.svg'">
+      {{notesData.creatorFirstName + ' ' +notesData.creatorLastName}} </span>
+  </h3>
+  <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+<mat-dialog-content class="mr-0 ml-0">
+
+<!-- title  -->
+<div class="row" style="margin-top:10px;margin-bottom: 16px;">
+  <div class="col-8">
+    <div class="title f-weight">{{ notesData?.title|titlecase}}</div>
+  </div>
+  <div class="col-2">
+    <mat-icon class="icon-options" [matMenuTriggerFor]="beforeMenu">more_vert</mat-icon>
+  </div>
+  <div class="col-2">
+    <mat-icon  (click)="addSubNote()">add_box</mat-icon>
+  </div>
+  <mat-menu #beforeMenu="matMenu" xPosition="before">
+    <button class="fw-600" mat-menu-item (click)="editNotes(notesData.id)">
+      <mat-icon>edit</mat-icon> {{"Edit"|translate}}
+    </button>
+    <button class="fw-600 " mat-menu-item>
+      <mat-icon>filter</mat-icon> {{"Filter"|translate}}
+    </button>
+    <button class="fw-600 " mat-menu-item>
+      <mat-icon>search</mat-icon> {{"Search"|translate}}
+    </button>
+    <button class="fw-600 " mat-menu-item>
+      <mat-icon>perm_media</mat-icon> {{"Add media"|translate}}
+    </button>
+    <button class="fw-600 " mat-menu-item (click)="printhtml(html)">
+      <mat-icon>print</mat-icon> {{"Print"|translate}}
+    </button>
+  </mat-menu>
+</div>
+<!-- <div class="row">
+  <mat-paginator [pageSize]="20" [length]="totalnotescount" (page)="next($event)"></mat-paginator>
+</div> -->
+
+<!-- main Note  -->
+    <div>
+      <div style="background-color: #DDF1F8;display: flex;border-bottom: 1px solid black;border-top: 1px solid black;">
+        <div style="width:15%;">
+          <img class="user_profile" onError="this.src='assets/avatar.svg'" style="width:40px;height:40px;border-radius:50%;"
+          [src]="notesData?.creatorProfile ? notesData?.creatorProfile:'assets/avatar.svg'" />
+        </div>
+        <div style="width:30%;">
+          <p class="user_name" style="font-weight:600;margin-top:5px;font-size: 12px;">{{notesData.creatorFirstName+' '+notesData.creatorLastName}}</p>
+        </div>
+        <div style="width: 35%;">
+          <div class="row" style="margin-top:8px">
+            <p style="font-size: 12px;margin-right:8px;">{{notesData.created| date:'dd-MMM-yyyy'}}</p>
+            <p style="font-size: 12px;margin: 0 !important;">{{notesData.created| date:'HH:mm'}}</p>
+          </div>
+        </div>
+        <div style="width:22%;">
+          <button class="m-8 m-b-10" (click)="subnoteedit(notesData)"
+            style="padding: 0 10px;border-radius: 10px;background-color: #528bf1;margin-right:5px;color:#fff;border: none;margin-top:5px;font-size: 10px;padding: 3px 8px;">Edit</button>
+          <button class="m-8" (click)="subnoteDelete(notesData)"
+            style="padding: 0 10px;border-radius: 10px;background-color: red;color:#fff;border: none;margin-top:5px;font-size: 10px;padding: 3px 8px;">delete</button>
+        </div>
+      </div>
+      <div class="rich-text mt-2 mb-2" style="margin:10px" [innerHTML]="httpGet(notesData.notes)">>
+      </div>
+    </div>
+  <!-- sub Note  -->
+    <ng-container *ngIf="notesData.subNoteDtos.length!=0">
+      <div *ngFor="let x of notesData.subNoteDtos">
+        <!-- mediaType  -->
+        <ng-container *ngIf="x.isMediaLinked==false">
+          <div>
+            <div
+            style="background-color: #DDF1F8;display: flex;border-bottom: 1px solid black;border-top: 1px solid black;">
+            <div style="width:15%;">
+              <img class="user_profile" onError="this.src='assets/avatar.svg'" style="width:40px;height:40px;border-radius:50%;"
+          [src]="x?.creatorProfile ? x?.creatorProfile:'assets/avatar.svg'" />
+            </div>
+            <div style="width:30%;">
+              <p class="user_name" style="font-weight:600;margin-top:5px;font-size: 12px;">{{x.creatorLastName+' '+x.creatorFirstName}}</p>
+            </div>
+            <div style="width: 35%;">
+              <div class="row" style="margin-top:8px">
+                <p style="font-size: 12px;margin-right:8px;">{{x.created| date:'dd-MMM-yyyy'}}</p>
+                <p style="font-size: 12px;margin: 0 !important;">{{x.created| date:'HH:mm'}}</p>
+              </div>
+              
+            </div>
+            <div style="width:22%;">
+              <button class="m-2" (click)="subnoteedit(x)"
+                class="editbutton">Edit</button>
+              <button class="m-2" (click)="subnoteDelete(x)"
+               class="deletebutton">delete</button>
+            </div>
+          </div>
+          <div class="rich-text mt-2" style="margin:10px" [innerHTML]="httpGet(x.subNoteUrl)">
+          </div>
+          <ng-container *ngIf="x.subNoteAttachments.length!=0">
+            <p>subNoteAttachments</p>
+          </ng-container>
+          </div>
+        </ng-container>
+        <!-- mediaType  -->
+        <ng-container *ngIf="x.isMediaLinked==true">
+          <div>
+            <div
+            style="background-color: #DDF1F8;display: flex;border-bottom: 1px solid black;border-top: 1px solid black;">
+            <div style="width:13%;">
+              <img class="user_profile" [src]="x?.senderprofile ? x.senderprofile :'assets/avatar.svg'" style="width:40px;height:40px;border-radius:50%;">
+            </div>
+            <div style="width:40%;">
+              <p class="user_name" *ngIf="x.senderName == ''" style="font-weight:600;font-size: 12px;margin: 0 !important">{{x.creatorLastName+' '+x.creatorFirstName}}</p>
+              <p class="user_name" [title]="x.senderName" style="font-weight:600;color:black; font-size: 12px;margin: 0 !important">{{(x.senderName)}}</p>
+              <p class="user_name" [title]="x.senderEmail" style="font-weight:600;color:gray; font-size: 12px;margin: 0 !important">{{getsenderemail(x.senderEmail)}}</p>
+
+            </div>
+            <div style="width: 35%;">
+              <div class="row" style="margin-top:8px">
+                <p style="font-size: 12px;margin-right:8px;">{{x.created| date:'dd-MMM-yyyy'}}</p>
+                <p style="font-size: 12px;margin: 0 !important;">{{x.created| date:'HH:mm'}}</p>
+              </div>
+              
+            </div>
+            <div style="width:25%;">
+              <button class="m-2" (click)="subnoteDelete(x)"
+             class="deletebutton">delete</button>
+                 <ng-container *ngIf="x.mediaType=='Gmail'||x.mediaType==null">
+                     <img class="drowdownimage" src="../../../../../assets/notecreateicons/Gmail.svg">
+                 </ng-container>
+                 <ng-container *ngIf="x.mediaType=='Outlook'">
+                  <img class="drowdownimage" src="../../../../../assets/notecreateicons/Outlook.svg">
+                 </ng-container>
+            </div>
+          </div>
+          <div style="margin-top: 10px !important;margin-bottom: 10px !important;">
+            <span class="styleforcontent">{{x.subject|titlecase}}</span>
+          </div>
+          <div *ngIf="x.ccRecipients != ''">
+            <h5 style="color: grey;font-weight: 900;">CC : {{x.ccRecipients}}</h5>
+          </div>
+          <div class="rich-text mt-2" style="margin:10px" [innerHTML]="httpGet(x.subNoteUrl)">
+          </div>
+          <ng-container *ngIf="x.subNoteAttachments.length!=0">
+            <div class="row mb-2">
+              <div class="col-4" style="padding: 0 !important;" *ngFor="let x of x.subNoteAttachments">
+                 <div style="display: flex;">
+                  <div>
+                    <img src="../../../../../assets/notecreateicons/doc-svgrepo-com.svg" *ngIf="getfiletype(x.fileName)=='docx'" class="drowdownimage" >
+                    <img src="../../../../../assets/notecreateicons/png-svgrepo-com.svg" *ngIf="getfiletype(x.fileName)=='png'" class="drowdownimage" >
+                    <img src="../../../../../assets/notecreateicons/png-svgrepo-com.svg" *ngIf="getfiletype(x.fileName)=='PNG'" class="drowdownimage" >
+                    <img src="../../../../../assets/notecreateicons/jpg-svgrepo-com.svg" *ngIf="getfiletype(x.fileName)=='jpg'" class="drowdownimage" >
+                    <img src="../../../../../assets/notecreateicons/xls-svgrepo-com.svg" *ngIf="getfiletype(x.fileName)=='xlsx'" class="drowdownimage" >
+                    <img src="../../../../../assets/notecreateicons/avi-svgrepo-com.svg" *ngIf="getfiletype(x.fileName)=='avi'" class="drowdownimage" >
+                    <img src="../../../../../assets/notecreateicons/pdf-svgrepo-com.svg" *ngIf="getfiletype(x.fileName)=='pdf'" class="drowdownimage" >
+                    <img src="../../../../../assets/notecreateicons/ppt-svgrepo-com.svg" *ngIf="getfiletype(x.fileName)=='powerpoint'" class="drowdownimage" >
+                    <img src="../../../../../assets/notecreateicons/html-svgrepo-com.svg" *ngIf="getfiletype(x.fileName)=='html'" class="drowdownimage" >
+                    <img src="../../../../../assets/notecreateicons/csv-svgrepo-com.svg" (click)="View(data)" *ngIf="getfiletype(x.fileName)=='csv'" class="drowdownimage" >
+                  </div>
+                  <div>
+                    <span style="font-size: 12px;"><b>{{x.fileName|titlecase}}</b></span>
+                  </div>
+                 </div>
+              </div>
+            </div>
+          </ng-container>
+           </div>
+        </ng-container>
+      </div>
+    </ng-container>
+    <div class="overlay" *ngIf="loader">
+      <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+      </mat-progress-spinner>
+  </div>
+</mat-dialog-content>

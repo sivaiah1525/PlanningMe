@@ -1,0 +1,73 @@
+.create-button-row {
+    display: table-cell;
+    position: relative;
+}
+
+.create-button-row button {
+    display: table-cell;
+    margin-right: 8px;
+    position: fixed;
+    right: 0;
+    z-index: 1;
+    bottom: 9px;
+}
+
+.create-flex-container {
+    display: flex;
+    justify-content: space-between;
+    width: 480px;
+}
+
+.create-button-container {
+    display: flex;
+    justify-content: center;
+    width: 120px;
+
+    .mat-icon {
+        color: #fff;
+    }
+}
+
+
+.drowdownimage {
+    width: 50px;
+    height: 56px;
+    object-fit: contain;
+  }
+
+.fileicon {
+    font-size: 60px !important;
+    color: #528bf1;
+}
+
+.noteicon {
+    font-size: 62px !important;
+    color: rgb(255, 193, 111);
+}
+
+.Lockicon {
+    mat-icon {
+        font-size: 20px !important;
+        position: absolute !important;
+        left: 55px !important;
+        top: 37px !important;
+    }
+
+    img {
+        font-size: 60px !important;
+        position: absolute !important;
+        left: 55px !important;
+        top: 38px !important;
+    }
+}
+
+.docx {
+    color: #528bf1;
+}
+
+
+
+
+  
+  
+  

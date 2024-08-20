@@ -1,0 +1,71 @@
+// ion-item {
+//   --padding-start: 0px !important;
+//   --inner-padding-end: 0px !important;
+//   --background-focused: transparent;
+// }
+
+// ion-row {
+//   padding: var(--ion-no-padding);
+// }
+
+// // form { 
+// //   font-weight: bold;
+// // }
+
+// .example-form { 
+//   font-weight: 900;
+// }
+
+// .mat-form-field {
+//   font-weight: bold;
+// }
+
+// .mat-radio-button, p {
+//   font-weight: bold;
+// }
+ion-item {
+  --padding-start: 0px !important;
+  --inner-padding-end: 0px !important;
+  --background-focused: transparent;
+}
+
+ion-row {
+  padding: var(--ion-no-padding);
+}
+.labelBeforeSlide {
+  vertical-align: top;
+  line-height: 24px; 
+  margin-right:0.5rem;
+  margin-bottom:0.5rem;
+}
+.mat-radio-button, p {
+  font-weight: bold;
+}
+.example-radio-group {
+  display: flex; flex-direction: column;
+  /* display: inline-grid; */ 
+  /* display: grid; */
+  margin: 5px 0;
+}
+.targetMargin{
+  margin-left: 20px;
+}
+.acheivedMargin{
+  margin-left: 35px;
+}
+.example-chip-list {
+  width: 100%;
+}
+
+.m-r{
+  margin-right: 0px !important;
+}
+
+.TargetBase{
+  margin: 0;
+  border: 1px solid rgb(90, 87, 87);
+}
+.example-chip-list {
+  width: 100%;
+}
+

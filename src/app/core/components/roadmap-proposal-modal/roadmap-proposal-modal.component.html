@@ -1,0 +1,79 @@
+<div class="d-flex flex-row align-items-center modal-header">
+  <button mat-icon-button mat-dialog-close class="back-arrow"><mat-icon>keyboard_backspace</mat-icon></button>
+  <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Roadmap Proposal</h2>
+</div>
+<form [formGroup]="roadMapForm" id="road-map-form">
+    <mat-dialog-content>
+        <mat-form-field class="w-100" appearance="legacy">
+            <mat-label>The distance between sites <span class="danger">* </span></mat-label>
+            <input matInput type="number" placeholder="The distance between sites" formControlName="distanceBtw">
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-100">
+            <mat-label>The event critic level <span class="danger">* </span></mat-label>
+            <mat-select formControlName="eventCriticalId">
+                <mat-option *ngFor="let opt of [1,2,3,4,5]" [value]="opt">{{opt}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div class="w-100 mb-3">
+            <mat-label class="d-block mb-1">Event recurrence <span class="danger">* </span></mat-label>
+            <mat-radio-group formControlName="eventRecurrence" (change)="eventRecurrence($event)">
+                <mat-radio-button value="1" class="mr-4">Yes</mat-radio-button>
+                <mat-radio-button value="0" class="mr-4">No</mat-radio-button>
+            </mat-radio-group>
+        </div>
+        <mat-dialog-actions align="end" class="my-1">
+            <button mat-button mat-dialog-close>Cancel</button>
+            <button (click)="roadmap()" mat-raised-button cdkFocusInitial color="primary">Apply Filter</button>
+        </mat-dialog-actions>
+    </mat-dialog-content>
+</form>
+
+<!-- <ion-content padding>
+  <ion-list>
+
+    <ion-item>
+      <ion-label position="floating">The distance between sites <ion-text class="danger">*</ion-text>
+      </ion-label>
+      <ion-input type="number" step="5" min="0" clearInput></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">The event critic level <ion-text class="danger">* </ion-text>
+      </ion-label>
+      <ion-select interface="popover" mode="md" placeholder="The event critic level">
+        <ion-select-option *ngFor="let opt of [1,2,3,4,5]" [value]="opt">{{opt}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-grid class="ion-padding-top">
+      <ion-row>
+        <ion-label class="fs-12">Event recurrence <ion-text class="danger">*</ion-text>
+        </ion-label>
+      </ion-row>
+      <ion-row>
+        <ion-radio-group (ionChange)="eventRecurrence($event)">
+          <ion-col size="auto">
+            <ion-item lines="none">
+              <ion-label>Yes</ion-label>
+              <ion-radio slot="start" value="1"></ion-radio>
+            </ion-item>
+          </ion-col>
+          <ion-col size="auto">
+            <ion-item lines="none">
+              <ion-label>No</ion-label>
+              <ion-radio slot="start" value="0"></ion-radio>
+            </ion-item>
+          </ion-col>
+        </ion-radio-group>
+      </ion-row>
+    </ion-grid>
+
+    <div class="ion-padding-vertical ion-text-right">
+      <ion-button (click)="dismiss()" color="medium">Cancel</ion-button>
+      <ion-button (click)="roadmap()">Apply Filter</ion-button>
+    </div>
+
+  </ion-list>
+
+</ion-content> -->

@@ -1,0 +1,616 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;"> assignment</mat-icon>
+        <span *ngIf="screenType=='CreateOrder'">
+            {{'Order Creation'|translate}}
+        </span>
+        <span *ngIf="screenType=='EditOrder'">
+            {{'Update Order'|translate}}
+        </span>
+        <span *ngIf="screenType=='CreateduplicateOrder'">
+            {{'Duplicate Order'|translate}}
+        </span>
+    </h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+
+<mat-dialog-content class="mr-0 ml-0">
+    <form [formGroup]="orderForm">
+        <!-- orderId -->
+        <div class="row mt-2 ">
+            <mat-form-field class="w-100">
+                <input matInput type="text" [(ngModel)]="unqOrderId" placeholder="OrderId *" formControlName="orderId">
+                <mat-icon matSuffix (click)="genrattingNewCode()" style="cursor: pointer;">refresh</mat-icon>
+            </mat-form-field>
+        </div>
+        <!-- User  -->
+        <div class="row">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>{{"Users"|translate}} *</mat-label>
+                <mat-select (openedChange)="filterOptions('','users')" #select formControlName="UserId">
+                  <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'users')" placeholder="Filter" />
+                  <mat-option *ngFor="let user of filteredusers" [value]="user.id">
+                    <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                        [src]="user?.profilePicture ? user.profilePicture:'assets/avatar.svg'"
+                        onError="this.src='assets/avatar.svg'">
+                    {{ user.firstName| titlecase}} {{user.lastName|titlecase}}
+                </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+        </div>
+
+        <!-- ContactsId -->
+        <div class="row">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>{{'Contact'|translate}} *</mat-label>
+            <mat-select (openedChange)="filterOptions('','Contacts')" #select formControlName="clientId">
+                <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'Contacts')" placeholder="Filter" />
+                <mat-option *ngFor="let contact of filteredcontacts" [value]="contact.id"
+                (click)="getDiscountValue(contact,'Contacts')">
+                <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                    [src]="contact?.profilePicture ? contact.profilePicture:'assets/avatar.svg'"
+                    onError="this.src='assets/avatar.svg'">
+                {{ contact.firstName|titlecase }} {{contact.lastName|titlecase}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+        </div>
+
+        <!-- SiteId -->
+        <div class="row">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>{{"Site"|translate}} *</mat-label>
+                <mat-select (openedChange)="filterOptions('','Sites')" #select formControlName="SiteId">
+                  <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'Sites')" placeholder="Filter" />
+                  <mat-option *ngFor="let site of filteredsites" [value]="site.id"
+                  (click)="getDiscountValue(site,'Sites')">
+                  <span>
+                      <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                  </span>
+                  {{site.companyName|titlecase}}
+              </mat-option>
+          </mat-select>
+              </mat-form-field>
+        </div>
+
+
+     <!-- ------------  -->
+            <!-- --------------  -->
+            <!-- Address  -->
+            <div class="row p-0">
+                <mat-form-field class="w-100">
+                    <mat-label>{{"Address"|translate}}</mat-label>
+                    <input ngx-google-places-autocomplete [options]='options' #placesRef="ngx-places"
+                        (onAddressChange)="handleAddressChange($event)" matInput type="text" formControlName="Address">
+                </mat-form-field>
+            </div>
+            <!-- City Country Zipcode  -->
+            <div class="row mt-2 countryCityZipCode">
+                <div class=" col-4 col-md-4 col-sm-12">
+                    <mat-form-field class="w-100 p-0">
+                        <mat-label>{{"City"|translate}}</mat-label>
+                        <input matInput type="text" formControlName="City">
+                    </mat-form-field>
+                </div>
+                <div class="col-4 col-md-4 col-sm-12">
+                    <mat-form-field class="w-100 p-0">
+                        <mat-label>{{"Country"|translate}}</mat-label>
+                        <input matInput type="text" formControlName="Country">
+                    </mat-form-field>
+                </div>
+                <div class="col-4 col-md-4 col-sm-12">
+                    <mat-form-field class="w-100 p-0">
+                        <mat-label>{{"Zipcode"|translate}}</mat-label>
+                        <input matInput type="text" formControlName="ZipCode">
+                    </mat-form-field>
+                </div>
+            </div>
+
+
+
+        <div class="row mt-2">
+            <mat-form-field class="w-100">
+                <mat-label>{{'Status Of Transaction'|translate}} *</mat-label>
+                <mat-select formControlName="statusOfTransaction">
+                    <mat-option [value]="0" (click)="statusOfTransaction('pending')">{{'Pending'|translate}}</mat-option>
+                    <mat-option [value]="1" (click)="statusOfTransaction('Validated')">{{'Validated'|translate}}</mat-option>
+                    <!-- <mat-option [value]="2">Cancelled</mat-option> -->
+                </mat-select> 
+            </mat-form-field>
+        </div>
+        <!-- TransactionTypeId -->
+        <!-- PaymentTypeId --> 
+        <div class="row firstAndLastName">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{'Transaction Type'|translate}} :</mat-label>
+                    <mat-select formControlName="TransactionTypeId" placeholder="Select">
+                        <mat-option *ngFor="let type of TransactionType"
+                            [value]="type.id">{{type.name|titlecase}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{"Payment Type"|translate}} *</mat-label>
+                    <mat-select formControlName="paymentTypeId">
+                        <mat-option *ngFor="let paymentType of paymentTypes$ | async" [value]="paymentType.id">
+                            {{paymentType.name|titlecase}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- currencyId  -->
+        <div class="row">
+            <mat-form-field class="w-100">
+                <mat-label>{{'Currency'|translate}} :</mat-label>
+                <mat-select formControlName="currencyId">
+                    <mat-option *ngFor="let type of Currency" [value]="type.id">{{type.name|titlecase}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <!-- date  -->
+        <div class="row firstAndLastName">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{'Transaction Date'|translate}}</mat-label>
+                    <input matInput [matDatepicker]="issueDate" placeholder="Transaction Date"
+                        formControlName="issueDate">
+                    <mat-datepicker-toggle matSuffix [for]="issueDate"></mat-datepicker-toggle>
+                    <mat-datepicker #issueDate></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{'Expiration Date'|translate}}</mat-label>
+                    <input matInput [matDatepicker]="dueDate" placeholder="Expiration Date" formControlName="dueDate">
+                    <mat-datepicker-toggle matSuffix [for]="dueDate"></mat-datepicker-toggle>
+                    <mat-datepicker #dueDate></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- paymentDate  -->
+        <div class="row">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>{{'payment Date'|translate}}</mat-label>
+                <input matInput [matDatepicker]="paymentDate" placeholder="payment Date" formControlName="paymentDate">
+                <mat-datepicker-toggle matSuffix [for]="paymentDate"></mat-datepicker-toggle>
+                <mat-datepicker #paymentDate></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <!-- ListOfDiscount  -->
+        <div class="row" formArrayName="ListOfDiscount">
+            <div class="row" *ngFor="let discountBody of getDiscountBody().controls; let i=index" [formGroupName]="i">
+                <ng-container *ngIf="getDiscountTpye(i)=='Site'">
+                    <div class="row mt-2 mb-2 ">
+                        <div class="col-3">
+                            <mat-form-field class="w-100">
+                                <mat-label>{{'Discount'|translate}}</mat-label>
+                                <mat-select single formControlName="discountid">
+                                    <mat-option class="f-weight" [value]="list.id" (click)="changeDiscount(i,list)"
+                                        *ngFor="let list of SitediscountDetails;">
+                                        <span *ngIf="list.isPublic ==true">
+                                            <img style="border-radius: 50%;"
+                                                src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                        </span>
+                                        <span *ngIf="list.isPublic !=true">
+                                            <img style="border-radius: 50%;"
+                                                src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                        </span>
+                                        {{list.codeAndName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="col-2">
+                            <mat-form-field class="w-100">
+                                <input matInput formControlName="discountAmmount" readonly>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-2">
+                            <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                        </div>
+                        <div class="col-4">
+                            <mat-form-field class="w-100">
+                                <input matInput formControlName="Name" readonly>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-1">
+                            <mat-icon (click)="removeDiscount(i)">delete</mat-icon>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf=" getDiscountTpye(i)=='Contact'">
+                    <div class="row mt-2 mb-2 ">
+                        <div class="col-3">
+                            <mat-form-field class="w-100">
+                                <mat-label>{{'Discount'|translate}}</mat-label>
+                                <mat-select single formControlName="discountid">
+                                    <mat-option class="f-weight" [value]="list.id" (click)="changeDiscount(i,list)"
+                                        *ngFor="let list of ContactdiscountDetails;">
+                                        <span *ngIf="list.isPublic ==true">
+                                            <img style="border-radius: 50%;"
+                                                src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                        </span>
+                                        <span *ngIf="list.isPublic !=true">
+                                            <img style="border-radius: 50%;"
+                                                src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                        </span>
+                                        {{list.codeAndName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-2">
+                            <mat-form-field class="w-100">
+                                <input matInput formControlName="discountAmmount" readonly>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-2">
+                            <img [src]="contactimg" style="border-radius: 50%; width: 20px; height: 20px;" 
+                                onError="this.src='assets/avatar.svg'">
+                        </div>
+                        <div class="col-4">
+                            <mat-form-field class="w-100">
+                                <input matInput formControlName="Name" readonly>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-1">
+                            <mat-icon (click)="removeDiscount(i)">delete</mat-icon>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+
+
+
+
+
+        
+        <!-- Keywords  -->
+        <div class="row">
+            <mat-form-field class="example-chip-list">
+                <mat-label>{{'keyword'|translate}}</mat-label><br>
+                <mat-chip-list #chipGridforkeyword aria-label="Fruit selection" class="keywordlist">
+                    <mat-chip-row class="keywordrow" *ngFor="let keyword of keywordlist">
+                        <button style="border: none; border-radius:20px; background-color: #7ec8e3;color:#0000ff;">
+                            <span class="keywordpostion">{{keyword}}</span>
+                            <mat-icon
+                                style="cursor: pointer; position: relative; top:2px;left: 7px; font-size: 20px; color:#0000ff"
+                                (click)="remove(keyword)">cancel</mat-icon></button>
+                    </mat-chip-row>
+                </mat-chip-list>
+                <input [matChipInputFor]="chipGridforkeyword" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    (matChipInputTokenEnd)="add($event)" />
+            </mat-form-field>
+        </div>
+
+
+
+
+
+
+        <!-- Comments -->
+        <div class="row">
+            <mat-form-field class="w-100">
+                <input matInput type="text" placeholder="Comments" formControlName="comments">
+                <mat-error *ngIf="orderForm.controls['comments'].hasError('required')">
+                    {{'Comments'|translate}} is <strong>{{'required'|translate}}</strong>
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Transaction Create  -->
+        <ng-container *ngIf="screenType=='CreateOrder'"> 
+            <div formArrayName="TransactionViewModel">
+                <div class="row p-2 justify-content-around"
+                    style="color: white; background-color:#f6272e; font-weight: 600;">
+                    <div class="col-6">{{'Create New Transaction'|translate}} </div>
+                    <div class="col-2">
+                        <mat-icon style="color: white;" (click)="addCondition()">add_box</mat-icon>
+                    </div>
+                </div>
+                <div style="border: 1px solid gray ;" class="row "
+                    *ngFor="let c of gettransactionBody().controls; let i= index" [formGroupName]="i">
+                    <div class="row p-2 justify-content-around"
+                        style=" background-color:#f3f3f7b8; font-weight: 600;">
+                        <div class="col-6"> {{'Transaction'|translate}}-{{i+1}}</div>
+                        <div class="col-2">
+                            <mat-icon (click)="removeTransation()">delete</mat-icon>
+                        </div>
+                    </div>
+                    <!-- Products  -->
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"Products"|translate}} *</mat-label>
+                            <mat-select (openedChange)="filterOptions('','Products')" #select formControlName="ProductsId">
+                                <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'Products')" placeholder="Filter" />
+                                <mat-option *ngFor="let product of filteredproducts" [value]="product.id"
+                                (click)="getDiscountValue(product,i)">
+                                <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                    [src]="Product?.profilePicture ? Product.profilePicture:'assets/images/iconsForsvg/icon_product.svg '"
+                                    onError="this.src='assets/images/iconsForsvg/icon_product.svg '">
+                                {{product.productName|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                        </div>
+                    </div>
+                    <!-- Quantity UnitPrice  -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row firstAndLastName">
+                                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                                    <mat-form-field class="w-100">
+                                        <mat-label>{{'Quantity'|translate}} *</mat-label>
+                                        <input matInput type="number" (ngModelChange)="GetQuantity($event,i)"
+                                            placeholder="Quantity *" formControlName="Quantity">
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                                    <mat-form-field class="w-100">
+                                        <mat-label>{{'Unit Price'|translate}} *</mat-label>
+                                        <input matInput type="number" (ngModelChange)="GetUnitPrice($event,i)" placeholder="Unit Price *"
+                                            formControlName="UnitPrice">
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- FinalPrice  -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row ">
+                                <mat-form-field class="w-100">
+                                    <mat-label>{{'Final Price'|translate}} *</mat-label>
+                                    <input matInput type="number" readonly placeholder="Final Price *"
+                                        formControlName="FinalPrice">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- keywords  -->
+                    <div class="row">
+                        <div class="col-12">
+                            <mat-form-field class="example-chip-list">
+                                <label style="color: grey;">{{'keywords'|translate}}</label> <br>
+                                <mat-chip-list #chipGridforkeyword class="keywordlist">
+                                    <mat-chip-row class="keywordrow">
+                                        <span *ngFor="let x of keywordlist">
+                                            <button class="transactionReff">
+                                                {{x|titlecase}}
+                                                <mat-icon class="keywordcanceliconfortransation"
+                                                    (click)="remove(x)">cancel</mat-icon>
+                                            </button>
+                                        </span>
+                                        <span *ngFor="let x of getkeywordsfortransactin(i)">
+                                            <button class="transactionReff">
+                                                {{x|titlecase}}
+                                                <mat-icon class="keywordcanceliconfortransation"
+                                                    (click)="removekeywordfortransaction(x,i)">cancel</mat-icon>
+                                            </button>
+                                        </span>
+                                    </mat-chip-row>
+                                </mat-chip-list>
+                                <input [matChipInputFor]="chipGridforkeyword"
+                                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                    (matChipInputTokenEnd)="addkeywordfortransaction($event,i)" />
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <!-- ListOfDiscount  -->
+                    <div class="row" formArrayName="discount"> 
+                        <div class="row"
+                            *ngFor="let discountBody of gettransactionBodyfordiscount(i).controls; let j=index"
+                            [formGroupName]="j">
+                            <ng-container *ngIf="getDiscountTpyeintransaction(i,j)=='Product' ">
+                                <div class="row mt-2 mb-2 ">
+                                    <div class="col-3">
+                                        <mat-form-field class="w-100">
+                                            <mat-label>{{'Discount'|translate}}</mat-label>
+                                            <mat-select single formControlName="discountid">
+                                                <mat-option class="f-weight" [value]="list.id"
+                                                    (click)="changeDiscountintransaction(i,j,list)"
+                                                    *ngFor="let list of ProductdiscountDetails;">
+                                                    <span *ngIf="list.isPublic ==true">
+                                                        <img style="border-radius: 50%;"
+                                                            src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                                    </span>
+                                                    <span *ngIf="list.isPublic !=true">
+                                                        <img style="border-radius: 50%;"
+                                                            src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                                    </span>
+                                                    {{list.codeAndName|titlecase}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div class="col-2">
+                                        <mat-form-field class="w-100">
+                                            <input matInput formControlName="discountAmmount" readonly>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-2">
+                                        <img [src]="Productimg"
+                                            onError="this.src='assets/images/iconsForsvg/icon_product.svg'"
+                                            style="border-radius: 50%; width: 20px; height: 20px;" >
+                                    </div>
+                                    <div class="col-4">
+                                        <mat-form-field class="w-100">
+                                            <input matInput formControlName="Name" readonly>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-1">
+                                        <mat-icon (click)="removeDiscountfortransction(i,j)">delete</mat-icon>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="getDiscountTpyeintransaction(i,j)=='Transation'">
+                                <div class="row mt-2 mb-2 ">
+                                    <div class="col-3">
+                                        <mat-form-field class="w-100">
+                                            <input matInput formControlName="discountName" readonly>
+                                        </mat-form-field>
+                                    </div>
+
+                                    <div class="col-2">
+                                        <mat-form-field class="w-100">
+                                            <input matInput formControlName="discountAmmount" readonly>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-2">
+                                        <mat-icon> shopping_cart</mat-icon>
+                                    </div>
+                                    <div class="col-4">
+                                        <mat-form-field class="w-100">
+                                            <input matInput formControlName="Name" readonly>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-1">
+                                        <mat-icon (click)="removeDiscountfortransction(i,j)">delete</mat-icon>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <!-- Manually add Discount Name -->
+                    <div class="row">
+                        <div class="col-12">
+                            <mat-form-field class="w-100 ">
+                                <mat-label>{{'Manually add a discount for transation'|translate}}</mat-label>
+                                <mat-select single>
+                                    <mat-option selected="true" value="ChooseDiscount" [disabled]="true"><span
+                                            style="color: black;font-weight: bold;">
+                                            {{'Choose Discount'|translate}}</span></mat-option>
+                                    <mat-option class="f-weight" *ngFor="let list of discountDetails;"
+                                        (click)="selectDiscountManually(list,i)">
+                                        <span *ngIf="list.isPublic ==true">
+                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                        </span>
+                                        <span *ngIf="list.isPublic !=true">
+                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                        </span>
+                                        {{list.codeAndName|titlecase}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <!-- show tags  -->
+                    <div class="row" formArrayName="tagViewModels">
+                        <div class="row"
+                            *ngFor="let conditionsBodyGroup of gettransactionBodyfortag(i).controls; let h=index"
+                            [formGroupName]="h">
+                            <div class="row">
+                                <!-- Bool  -->
+                                <ng-container *ngIf="fieldType(i,h)=='Bool'">
+                                    <div class="col-10">
+                                        <mat-checkbox formControlName="fieldValue" class="w-100">
+                                            {{fieldname(i,h)}}
+                                        </mat-checkbox>
+                                    </div>
+                                </ng-container>
+                                <!-- Text  -->
+                                <ng-container *ngIf="fieldType(i,h)=='Text'">
+                                    <div class="col-10">
+                                        <mat-form-field class="w-100">
+                                            <mat-label>{{fieldname(i,h)}}</mat-label>
+                                            <input matInput type="text" placeholder="value"
+                                                formControlName="fieldValue">
+                                        </mat-form-field>
+                                    </div>
+                                </ng-container>
+                                <!-- Number  -->
+                                <ng-container *ngIf="fieldType(i,h)=='Number'">
+                                    <div class="col-10">
+                                        <mat-form-field class="w-100">
+                                            <mat-label>{{fieldname(i,h)}}</mat-label>
+                                            <input matInput type="Number" placeholder="value"
+                                                formControlName="fieldValue">
+                                        </mat-form-field>
+                                    </div>
+                                </ng-container>
+                                <!-- Dropdown -->
+                                <ng-container *ngIf="fieldType(i,h)=='Dropdown'">
+                                    <div class="col-10">
+                                        <mat-form-field appearance="fill" class="w-100">
+                                            <mat-label>{{fieldname(i,h)}}</mat-label>
+                                            <mat-select placeholder="value" formControlName="dropdownValues">
+                                                <mat-option [value]="x.dropdownvalue"
+                                                    *ngFor="let x of dropdownvaluetotal(i,h)">
+                                                    {{x.dropdownvalue|titlecase}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                </ng-container>
+                                <div class="col-2">
+                                    <mat-icon class="pointer" (click)="removetagfortransction(i,h)">delete</mat-icon>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10">
+                            <h4 class="m-0" style="color: grey;"><b>{{'Add another feild'|translate}}</b></h4>
+                        </div>
+                        <div class="col-2">
+                            <mat-icon (click)="showdropdown(i)">add_box</mat-icon>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="my-1">
+    <div class="row mt-2 justify-content-center">
+        <div class="col-4">
+            <button mat-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-4">
+            <button mat-raised-button class="b-blue"
+                *ngIf="(screenType=='CreateOrder'||screenType=='CreateduplicateOrder')"
+                (click)="onSubmit()">{{'Create'|translate}}</button>
+            <button mat-raised-button class="b-blue" *ngIf="screenType=='EditOrder'"
+                (click)="onSubmit()">{{'Update'|translate}}</button>
+        </div>
+    </div>
+</mat-dialog-actions>
+
+
+<!-- 1111111111111111 ------------  -->
+
+<ng-template #orderDialog class="container">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Confirmation</h2>
+    </div>
+    <mat-dialog-content class="viewDialog pading "
+        style="padding: 0px  !important; margin: 0px !important;height: 110px;; width:450px;">
+        <div class="row mt-3 mb-3 justify-content-center">
+            <h3 style="text-align:center ;">we don't have any transaction in order ID, <br> so create transaction first
+            </h3>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-action>
+        <div class="row justify-content-around align-items-center" style="margin-bottom: 8px;">
+            <div class="col 1">
+                <!-- <button  mat-raised-button [mat-dialog-close]="true">Cancel</button> -->
+            </div>
+            <div class="col 1">
+                <button mat-raised-button class="b-blue" (click)="creatTransaction()">{{'Creat'|translate}}</button>
+            </div>
+        </div>
+
+    </mat-dialog-action>
+    <!-- </div> -->
+</ng-template>

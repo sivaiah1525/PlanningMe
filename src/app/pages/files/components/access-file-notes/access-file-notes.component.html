@@ -1,0 +1,51 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon class="icon-options">lock_open</mat-icon>{{"Access"|translate}}
+    </h2>
+    <mat-icon matDialogClose>close</mat-icon>
+</div>
+<mat-dialog-content style="padding: 10px  !important; margin: 0px !important; width: 500px;">
+    <form [formGroup]="myForm">
+        <div class="row">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>{{"Users"|translate}}</mat-label>
+                <mat-select placeholder="Users" multiple id="UserId" formControlName="users">
+                    <mat-select-filter [placeholder]="'Filter'" [displayMember]="'firstName'" [array]="users$"
+                        (filteredReturn)="filteredList1 =$event"></mat-select-filter>
+                    <mat-option #alluserSelected (click)="toggleAllUserSelection()" [value]="0">{{"All"|translate}}</mat-option>
+                    <mat-option [value]="user.id" *ngFor="let user of filteredList1">
+                        <img style="border-radius: 50%;" width="30" height="30"
+                            [src]="user.profilePicture!= null ? user.profilePicture : 'assets/avatar.svg'">
+                        {{user.firstName|titlecase}} {{user.lastName|titlecase}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div class="row">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>{{"User Group Name"|translate}}</mat-label>
+                <mat-select id="userGroupName" multiple formControlName="GroupId">
+                    <mat-select-filter [placeholder]="'Filter'" [displayMember]="'userGroupName'" [array]="userGroups$"
+                        (filteredReturn)="filteredList4 =$event"></mat-select-filter>
+                    <mat-option #allgroupSelected (click)="toggleAllGroupSelection()" [value]="0">All</mat-option>
+                    <mat-option [value]="userGroup.id" *ngFor="let userGroup of filteredList4">
+                        {{userGroup.userGroupName|titlecase}}
+                    </mat-option>
+
+                </mat-select>
+
+            </mat-form-field>
+        </div>
+    </form>
+    <mat-dialog-actions class="my-1">
+        <div class="row mt-2">
+            <div class="col-6"></div>
+            <div class="col-6">
+                <button mat-button mat-dialog-close>{{"Cancel"|translate}}</button>
+                <button mat-raised-button class="b-blue" (click)="submit()">{{"Apply"|translate}}</button>
+                <!-- <button mat-raised-button cdkFocusInitial color="primary" (click)="shareLink()">Share</button> -->
+            </div>
+        </div>
+    </mat-dialog-actions>
+</mat-dialog-content>

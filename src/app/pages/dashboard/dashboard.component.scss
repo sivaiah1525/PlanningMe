@@ -1,0 +1,95 @@
+.btncls{
+    background-color: white;
+    border: none;
+}
+.showall{
+    background-color: #fb4444;
+    color: white;
+    border: none;
+    height: 26px;
+    margin-top: 5px;
+    font-size: 10px !important;
+}
+
+::ng-deep  .mat-expansion-panel-header:not([aria-disabled=true]) {
+    cursor: pointer;
+    border-top: 0 !important;
+}
+
+
+.menu-width.mat-menu-panel {
+    // min-width: 112px;
+     max-width: 315px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    // max-height: calc(100vh - 48px);
+    border-radius: 4px;
+    outline: 0;
+    // min-height: 64px;
+    width: 315px;
+    height: 260px;
+}
+
+.m-t-14{
+    margin-top: 14px;
+}
+.m-0{
+    margin: 0px;
+}
+
+.navbartitleWeb{
+    position: relative;
+    top:4px;
+    font-size: 18px;
+}
+.navbartitleMobile{
+    position: relative;
+    top:2px;
+    font-size: 14px;
+}
+.navbaricon{
+    position: relative;
+    top: 4px;
+}
+
+.count{
+    background-color: red;
+    color: white;
+    border-radius: 18px;
+}
+.btn-black{
+    color: black;
+}
+
+.flag {
+    width: 16px;
+    margin-right: 20px;
+    margin-bottom: -2px;
+    box-sizing: border-box;
+  }
+
+
+  .moving-text-container{
+    background-color: #FF7F27;
+    width: 100%;
+    position: fixed;
+    top: 94vh;
+    z-index: 1;
+    opacity: 0.9;
+    .moving-text{
+        color: white;
+        font-weight: bold;
+        font-size: 16px;
+        padding: 10px;
+        position: relative;
+        text-align: center;
+        animation: move linear 5.5s infinite;
+    }
+  }
+
+  @keyframes move {
+    from { left: -10%; }
+    to { left: 10%; }
+  }
+  
+  

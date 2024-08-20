@@ -1,0 +1,132 @@
+<!-- <p>prospectsearch works!</p> -->
+
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Prospect Search Configuration</h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+
+<form [formGroup]="form">
+    <mat-dialog-content class="container">
+
+        <div class="row m-t-10">
+            <mat-checkbox formControlName="isConnectionActive">Activate The Connection</mat-checkbox>
+        </div>
+
+        <mat-form-field class="w-100 ">
+            <mat-label>Siret</mat-label>
+            <input matInput type="number" placeholder="Siret" id="Siret" formControlName="Siret">
+        </mat-form-field>
+
+        <mat-form-field class="w-100 ">
+            <mat-label>CodePostal</mat-label>
+            <input matInput type="text" placeholder="CodePostal" id="CodePostal" formControlName="CodePostal">
+        </mat-form-field>
+
+        <mat-form-field class="w-100 ">
+            <mat-label>Raison Sociale</mat-label>
+            <input matInput type="text" placeholder="RaisonSociale" id="RaisonSociale" formControlName="RaisonSociale">
+        </mat-form-field>
+
+        <mat-form-field class="w-100 ">
+            <mat-label>Region</mat-label>
+            <mat-select formControlName="region">
+                <mat-option *ngFor="let reg of region" [value]="reg" class="dropdown_color">
+                    {{reg}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="w-100 ">
+            <mat-label>Department</mat-label>
+            <mat-select formControlName="department">
+                <mat-option *ngFor="let dep of department" [value]="dep" class="dropdown_color">
+                    {{dep}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="w-100 ">
+            <mat-label>Effectif Tranche</mat-label>
+            <mat-select formControlName="effectif_Tranche">
+                <mat-option *ngFor="let eff of effectif_Tranche" [value]="eff" class="dropdown_color">
+                    {{eff}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="w-100 ">
+            <mat-label>Code NAF</mat-label>
+            <mat-select formControlName="codeNaf">
+                <mat-option *ngFor="let code of codeNaf" [value]="code" class="dropdown_color">
+                    {{code}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="w-100 ">
+            <mat-label>Statut</mat-label>
+            <mat-select formControlName="status">
+                <mat-option *ngFor="let stat of status" [value]="stat" class="dropdown_color">
+                    {{stat}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <div class="row firstAndLastName">
+            <div class="col-6">
+                <mat-form-field class="w-100">
+                    <mat-label>Start Date & Time </mat-label>
+                    <input matInput type="datetime-local" placeholder="Start Date & Time" id="StartDate"
+                        formControlName="StartDate">
+                </mat-form-field>
+            </div>
+            <div class="col-6">
+                <mat-form-field class="w-100">
+                    <mat-label>End Date & Time </mat-label>
+                    <input matInput type="datetime-local" placeholder="End Date & Time" id="EndDate"
+                        formControlName="EndDate">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <mat-form-field class="w-100 ">
+            <mat-label>Fonction</mat-label>
+            <mat-select formControlName="funtion">
+                <mat-option *ngFor="let fun of funtion" [value]="fun" class="dropdown_color">
+                    {{fun}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <div class="row firstAndLastName">
+            <div class="col-6">
+                <mat-form-field class="w-100 ">
+                    <mat-label>FileName</mat-label>
+                    <input matInput type="text" placeholder="FileName" id="FileName" formControlName="FileName">
+                </mat-form-field>
+            </div>
+            <div class="col-6">
+                <mat-form-field class="w-100 ">
+                    <mat-label>Format</mat-label>
+                    <mat-select formControlName="Format">
+                        <mat-option *ngFor="let Format of Format" [value]="Format.value" class="dropdown_color">
+                            {{Format.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+        </div>
+        <mat-dialog-actions>
+            <div class="row">
+                <div class="col-6"></div>
+                <button mat-raised-button mat-dialog-close>Cancel</button>
+                <button mat-raised-button (click)="getProspectConfiguration()" class="b-blue">Search</button>
+            </div>
+        </mat-dialog-actions>
+
+    </mat-dialog-content>
+
+
+
+</form>

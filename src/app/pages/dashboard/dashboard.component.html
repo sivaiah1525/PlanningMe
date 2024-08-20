@@ -1,0 +1,426 @@
+<mat-sidenav-container [hasBackdrop]="mode === 'side' ? false : true">
+  <mat-sidenav #sideNav fixedInViewport [mode]="mode" [opened]="opened"
+    class="shadow-1"
+    [ngClass]="{'side-desktop-view': sideNav.mode === 'side'}">
+    <div class="brand-panel" *ngIf="sideNav.opened" (click)="gotodashboard()">
+      <img src="assets/logo/logo-full.png" />
+    </div>
+    <div class="brand-panel-sm"
+      *ngIf="!sideNav.opened && sideNav.mode === 'side'"
+      (click)="gotodashboard()">
+      <img src="assets/logo/logo-sm.png" />
+    </div>
+    <div class="user-panel" *ngIf="sideNav.opened">
+      <div class="user-image">
+        <img
+          [src]="this.userDetails?.profilePicture ? this.userDetails.profilePicture:'assets/avatar.svg'"
+          onError="this.src='assets/avatar.svg'">
+      </div>
+      <h4 class="m-0 mt-3"><strong>{{userDetails?.firstName}}
+          {{userDetails?.lastName}}</strong></h4>
+      <p style="color: grey;"><strong>{{userDetails?.position}}</strong></p>
+    </div>
+
+    <!-- alll screens  -->
+    <mat-nav-list *ngIf="sideNav.mode==='side'">
+      <div *ngFor="let menu of sideMenus">
+        <!-- Management screen  -->
+        <mat-accordion *ngIf="menu.title === 'Management'">
+          <mat-expansion-panel class="mat-elevation-z0">
+            <mat-expansion-panel-header (click)="managementlist(menu.title)">
+              <mat-panel-title class="align-items-center"
+                (click)="showheading(menu)">
+                <mat-icon style="vertical-align: middle;"
+                  [ngStyle]="{'color': menu.color}" class=" mr-2">{{menu.icon}}
+                </mat-icon>
+                <span style="vertical-align: middle;" class="menu-label"
+                  *ngIf="sideNav.opened"><strong>{{menu.title|translate}}</strong></span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div *ngFor="let subMenu of menu.subMenus">
+              <a class="ml-3" mat-list-item (click)="showheading(subMenu)"
+                *ngIf="menu.subMenus"
+                routerLink="management/m/{{subMenu.url}}"
+                [matTooltip]="subMenu.title" matTooltipPosition="right"
+                [matTooltipDisabled]="sideNav.opened"
+                matTooltipClass="menu-tooltip">
+                <mat-icon style="vertical-align: middle;"
+                  [ngStyle]="{'color': subMenu.color}" class=" mr-2">
+                  {{subMenu.icon}}</mat-icon>
+                <span style="vertical-align: middle;" class="menu-label"
+                  *ngIf="sideNav.opened"><strong>{{subMenu.title|translate}}</strong></span>
+              </a>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+
+        <!--Planning, Carte, Activity Reports -->
+        <ng-container>
+          <button (click)="showheading(menu)" class="btncls"
+            *ngIf="menu.title !== 'Management' && menu.title !== 'Settings'"
+            mat-list-item routerLink="{{menu.url}}"
+            [matTooltip]="menu.title" matTooltipPosition="right"
+            [matTooltipDisabled]="sideNav.opened"
+            matTooltipClass="menu-tooltip">
+            <mat-icon style="vertical-align: middle;"
+              [ngStyle]="{'color': menu.color}" class=" mr-2">{{menu.icon}}
+            </mat-icon>
+            <span style="vertical-align: middle;" class="menu-label"
+              *ngIf="sideNav.opened"><strong>{{menu.title|translate}}</strong></span>
+          </button>
+        </ng-container>
+        <!-- Settings screen  -->
+        <ng-container>
+          <mat-accordion *ngIf="menu.title === 'Settings'">
+            <mat-expansion-panel class="mat-elevation-z0">
+              <mat-expansion-panel-header>
+                <mat-panel-title class="align-items-center"
+                  (click)="showheading(menu)">
+                  <mat-icon style="vertical-align: middle;"
+                    [ngStyle]="{'color': menu.color}" class=" mr-2">
+                    {{menu.icon}}
+                  </mat-icon>
+                  <span style="vertical-align: middle;" class="menu-label"
+                    *ngIf="sideNav.opened"><strong>{{menu.title|translate}}</strong></span>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <!-- Settings screen   -->
+              <div *ngFor="let subMenu of menu.settingMenus">
+                <a class="ml-3" mat-list-item (click)="showheading(subMenu)"
+                  *ngIf="menu.settingMenus"
+                  routerLink="/app/home/settings/s/{{subMenu.url}}"
+                  [matTooltip]="subMenu.title"
+                  matTooltipPosition="right"
+                  [matTooltipDisabled]="sideNav.opened"
+                  matTooltipClass="menu-tooltip">
+                  <mat-icon style="vertical-align: middle;"
+                    [ngStyle]="{'color': subMenu.color}" class=" mr-2">
+                    {{subMenu.icon}}</mat-icon>
+                  <span style="vertical-align: middle;" class="menu-label"
+                    *ngIf="sideNav.opened">
+                    <strong>{{subMenu.title|translate}}</strong>
+                  </span>
+                </a>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </ng-container>
+      </div>
+    </mat-nav-list>
+
+    <!-- --------------  -->
+    <!-- over  -->
+    <mat-nav-list *ngIf="sideNav.mode === 'over'">
+      <div *ngFor="let menu of sideMenus">
+        <!-- Management  -->
+        <mat-accordion *ngIf="menu.title === 'Management'">
+          <mat-expansion-panel class="mat-elevation-z0">
+            <mat-expansion-panel-header>
+              <mat-panel-title class="align-items-center">
+                <mat-icon style="vertical-align: middle;"
+                  [ngStyle]="{'color': menu.color}" class=" mr-2">{{menu.icon}}
+                </mat-icon>
+                <span style="vertical-align: middle;" class="menu-label">{{menu.title|translate}}</span>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div *ngFor="let subMenu of menu.subMenus">
+              <a class="ml-3" mat-list-item *ngIf="menu.subMenus"
+                (click)="showheading(subMenu)"
+                routerLink="management/m/{{subMenu.url}}"
+                [matTooltip]="subMenu.title" matTooltipPosition="right"
+                [matTooltipDisabled]="sideNav.opened"
+                matTooltipClass="menu-tooltip">
+                <mat-icon style="vertical-align: middle;"
+                  [ngStyle]="{'color': subMenu.color}" class=" mr-2">
+                  {{subMenu.icon}}</mat-icon>
+                <span style="vertical-align: middle;" class="menu-label">{{subMenu.title|translate}}</span>
+              </a>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+        <!--Planning, Carte, Activity Reports -->
+        <ng-container *ngIf="PlanningCarteActivityReports">
+          <a *ngIf="menu.title !== 'Management'&& menu.title !== 'Settings'"
+            mat-list-item routerLink="{{menu.url}}"
+            [matTooltip]="menu.title" matTooltipPosition="right"
+            [matTooltipDisabled]="sideNav.opened"
+            matTooltipClass="menu-tooltip">
+            <mat-icon style="vertical-align: middle;"
+              [ngStyle]="{'color': menu.color}" class=" mr-2">{{menu.icon}}
+            </mat-icon>
+            <span style="vertical-align: middle;" class="menu-label"
+              (click)="showheading(menu)">{{menu.title|translate}}</span>
+          </a>
+        </ng-container>
+
+        <!-- Settings screen  -->
+        <ng-container *ngIf="Settingsscreen">
+          <mat-accordion *ngIf="menu.title === 'Settings'">
+            <mat-expansion-panel class="mat-elevation-z0">
+              <mat-expansion-panel-header>
+                <mat-panel-title class="align-items-center"
+                  (click)="showheading(menu)">
+                  <mat-icon style="vertical-align: middle;"
+                    [ngStyle]="{'color': menu.color}"
+                    class=" mr-2">{{menu.icon}}
+                  </mat-icon>
+                  <span style="vertical-align: middle;" class="menu-label"
+                    *ngIf="sideNav.opened"><strong>{{menu.title|translate}}</strong></span>
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <!-- Settings screen list  -->
+              <div *ngFor="let subMenu of menu.settingMenus">
+                <a class="ml-3" mat-list-item (click)="showheading(subMenu)"
+                  *ngIf="menu.settingMenus"
+                  routerLink="/app/home/settings/s/{{subMenu.url}}"
+                  [matTooltip]="subMenu.title"
+                  matTooltipPosition="right"
+                  [matTooltipDisabled]="sideNav.opened"
+                  matTooltipClass="menu-tooltip">
+                  <mat-icon style="vertical-align: middle;"
+                    [ngStyle]="{'color': subMenu.color}" class=" mr-2">
+                    {{subMenu.icon}}</mat-icon>
+                  <span style="vertical-align: middle;" class="menu-label"
+                    *ngIf="sideNav.opened"><strong>{{subMenu.title|translate}}</strong></span>
+                </a>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </ng-container>
+      </div>
+    </mat-nav-list>
+
+    <!-- language change     -->
+
+    <mat-form-field class="mat-select-hide-underline">
+      <mat-select [value]="language.value"
+        (valueChange)="selectLanguage($event)">
+        <mat-select-trigger>
+          <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px"
+            style="padding: 0 16px">
+            <img [src]="language.img" class="flagstyle" />
+            <span style="margin-left: 10px;">{{language.label }}</span>
+          </div>
+        </mat-select-trigger>
+        <mat-option *ngFor="let opt of languages" [value]="opt.value">
+          <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+            <img [src]="opt.img" class="flagstyle" />
+            <span style="margin-left: 10px;">{{ opt.label }}</span>
+          </div>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-sidenav>
+  <!-- ------  -->
+  <mat-sidenav-content class="no-bg"
+    [ngClass]="{'side-nav-content-icon-only': !sideNav.opened && sideNav.mode === 'side'}">
+    <mat-toolbar class="no-bg shadow-1">
+      <mat-toolbar-row class="d-flex ">
+        <!-- 0000 -->
+        <div class="col-2 col-sm-2  col-md-1 col-lg-1 col-xl-1 pl-0 " style="padding-left: 0 !important;">
+          <button type="button" mat-icon-button (click)="sideNav.toggle()">
+            <mat-icon>menu</mat-icon>
+          </button>
+        </div>
+        <!-- 222 -->
+        <div class="col-5 col-sm-5  col-md-8 col-lg-8 col-xl-8">
+          <div style="display:flex;justify-content:center;">
+            <mat-icon [ngStyle]="{'color': color}"
+              [ngClass]="iconandtitlestyle('icon')">{{icon}}</mat-icon>
+            <span class="mx-1 border-right">&nbsp;</span>
+            <span [ngClass]="iconandtitlestyle('title')">{{heading|translate}}</span>
+          </div>
+        </div>
+        <!-- 333 -->
+        <div class="col-2 col-sm-2  col-md-1 col-lg-1 col-xl-1 ">
+          <!-- 00  -->
+          <button mat-stroked-button [matMenuTriggerFor]="beforeMenu"
+            class="mr-1">
+            <mat-icon>add</mat-icon>
+          </button>
+          <!-- 111  -->
+          <mat-menu #beforeMenu="matMenu" xPosition="before">
+            <!-- Create User  -->
+            <ng-container *ngIf="CreateUser">
+              <button class="fw-600" mat-menu-item (click)="openCreateUser()">
+                <mat-icon>person</mat-icon>
+                {{'Create User'|translate}}
+              </button>
+            </ng-container>
+            <!-- Create Contact  -->
+            <ng-container *ngIf="CreateContact">
+              <button class="fw-600" mat-menu-item (click)="openCreateContact()">
+                <mat-icon style="color: #6495ed;">contacts</mat-icon>
+
+                {{'Create Contact'|translate}}
+
+              </button>
+            </ng-container>
+            <!-- Create Site  -->
+            <ng-container *ngIf="CreateSite">
+              <button class="fw-600" mat-menu-item (click)="openCreateSite()">
+                <img class="m-l-15"
+                  src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                <span style="padding-left:20px;">
+                  {{'Create Sites'|translate}}
+                </span>
+              </button>
+            </ng-container>
+            <!-- Create Product  -->
+            <ng-container *ngIf="CreateProduct">
+              <button class="fw-600" mat-menu-item (click)="openCreateProduct()">
+                <mat-icon>business_center</mat-icon>
+
+                {{'Create Product'|translate}}
+
+              </button>
+            </ng-container>
+            <!-- Create Transaction  -->
+            <ng-container *ngIf="CreateTransaction">
+              <button class="fw-600" mat-menu-item
+                (click)="openCreateTransaction()">
+                <mat-icon style="color: #6495ed;">shopping_cart</mat-icon>
+
+                {{'Create Transaction'|translate}}
+
+              </button>
+            </ng-container>
+            <!-- CreateOrder  -->
+            <ng-container *ngIf="CreateTransaction">
+              <button class="fw-600" mat-menu-item (click)="openCreateOrder()">
+                <mat-icon style=" color: #8ab2ef;">assignment</mat-icon>
+
+                {{'Create Order'|translate}}
+
+              </button>
+            </ng-container>
+            <button class="fw-600" mat-menu-item (click)="openCreateEvent()">
+              <mat-icon>event</mat-icon>
+
+              {{'Create Event'|translate}}
+
+            </button>
+          </mat-menu>
+        </div>
+        <!-- 4444 -->
+        <div class="col-2 col-sm-2  col-md-1 col-lg-1 col-xl-1 ">
+          <button type="button" [matMenuTriggerFor]="showMenu" mat-icon-button
+            class="mr-1" (click)="getNotification()">
+            <mat-icon>campaign</mat-icon>
+            <span class="count" *ngIf="count!=0">{{count}}</span>
+          </button>
+          <!-- 222222  -->
+          <mat-menu class="menu-width" #showMenu="matMenu" xPosition="before">
+            <div class="row">
+              <div class="col-8 p-0">
+                <h5 style="padding: 0; margin: 5px;">Vouz avez {{count}}
+                  nouvelles alertes </h5>
+              </div>
+              <div class="col-4 p-0">
+                <button class="showall w-75" (click)="showMore = !showMore"
+                  (click)="$event.stopPropagation()">
+                  Show All
+                </button>
+              </div>
+            </div>
+            <hr>
+            <div *ngIf="showMore == false">
+              <div class="row mt-2 pointer"
+                *ngFor="let item of notificationdata | slice:0:3 "
+                (click)="updatenotification(item)">
+                <div class="col-2">
+                  <mat-icon *ngIf="item.actionName === 'Transaction'"
+                    style="color: #6495ed;">shopping_cart</mat-icon>
+                  <mat-icon *ngIf="item.actionName === 'Import'"
+                    style="color: green;">import_export</mat-icon>
+                  <mat-icon *ngIf="item.actionName === 'Event'"
+                    style="color: red;">calendar_today</mat-icon>
+                  <mat-icon *ngIf="item.isTargetNotification == true"
+                    style="color: #800080;">track_changes</mat-icon>
+                  <mat-icon *ngIf="item.actionName === 'EventProposal'"
+                    style="color: #0b0b0b;">help</mat-icon>
+                </div>
+                <div class="col-10 p-0" (click)="importtransationdetails(item)">
+                  <span style="font-size: 18px;"> <b>{{item.actionName}} :</b></span><span>{{item.message}}</span>
+                </div>
+                <p
+                  style="text-align: end;font-size: 10px;border-bottom: 1px solid gray;width: 100%;">{{item.messageReceivedAt}}</p>
+              </div>
+            </div>
+            <div *ngIf="showMore == true">
+              <div class="row mt-2 pointer"
+                *ngFor="let item of notificationdata "
+                (click)="updatenotification(item)">
+                <div class="col-2">
+                  <mat-icon *ngIf="item.actionName === 'Transaction'"
+                    style="color: #6495ed;">shopping_cart</mat-icon>
+                  <mat-icon *ngIf="item.actionName === 'Import'"
+                    style="color: green;">import_export</mat-icon>
+                  <mat-icon *ngIf="item.actionName === 'Event'"
+                    style="color: red;">calendar_today</mat-icon>
+                  <mat-icon *ngIf="item.isTargetNotification == true"
+                    style="color: #800080;">track_changes</mat-icon>
+                  <mat-icon *ngIf="item.actionName === 'EventProposal'"
+                    style="color: #0b0b0b;">help</mat-icon>
+                </div>
+                <div class="col-10" (click)="importtransationdetails(item)">
+                  <span style="font-size: 18px;">
+                     <b>{{item.actionName}} :</b>
+                    </span><span>{{item.message}}</span>
+                </div>
+                <p style="text-align: end;font-size: 10px;border-bottom: 1px solid gray;width: 100%;">
+                  {{item.messageReceivedAt}}
+                </p>
+              </div>
+            </div>
+          </mat-menu>
+        </div>
+        <!-- 5555 -->
+        <div class="col-1 col-sm-1  col-md-1 col-lg-1 col-xl-1 ">
+          <button type="button" mat-icon-button
+            (click)="logoutdialog(viewDialog)">
+            <mat-icon>power_settings_new</mat-icon>
+          </button>
+        </div>
+
+      </mat-toolbar-row>
+    </mat-toolbar>
+    <div class="container-fluid">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+<ng-container *ngIf="ShowBanner">
+  <div class="moving-text-container" (click)="showlimit()">
+    <p *ngIf="ShowBannerdetails.isExpired==false" class="moving-text">
+      {{"Trail period will end in"|translate}}{{' '+ShowBannerdetails.days+' '}}{{"days and"|translate}}{{' '+ShowBannerdetails.hours+' '}}{{"hours"|translate}}  -
+      {{"Trail period will end in"|translate}}{{' '+ShowBannerdetails.days+' '}}{{"days and"|translate}}{{' '+ShowBannerdetails.hours+' '}}{{"hours"|translate}}  -
+      {{"Trail period will end in"|translate}}{{' '+ShowBannerdetails.days+' '}}{{"days and"|translate}}{{' '+ShowBannerdetails.hours+' '}}{{"hours"|translate}}
+      </p>
+      <p *ngIf="ShowBannerdetails.isExpired==true">{{"Your trial period has concluded. Please provide payment information to continue using the service."|translate}}</p>
+  </div>
+</ng-container>
+
+<!-- Are you sure you want to logout?  -->
+<ng-template #viewDialog class="container">
+  <div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"Confirmation"|translate}}</h2>
+  </div>
+  <mat-dialog-content class="mr-0 ml-0">
+    <div class="row">
+      <h3 style=" margin-top: 14px; margin-left: 10px;">{{'Are you sure you want to logout?'|translate}}</h3>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-action>
+    <div class="row mt-2 mb-4 justify-content-center">
+      <div class="col-4">
+        <button mat-raised-button (click)="closedialogbox()">{{'No'|translate}}</button>
+      </div>
+      <div class="col-4">
+        <button mat-raised-button  class="b-blue" (click)="logout()">{{'Yes'|translate}}</button>
+      </div>
+  </div>
+  </mat-dialog-action>
+  <!-- </div> -->
+</ng-template>

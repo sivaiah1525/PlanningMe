@@ -1,0 +1,72 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;"> business_center</mat-icon>
+        {{'Create Product Group'|translate}}
+    </h2>
+    <mat-icon matDialogClose>close</mat-icon>
+</div>
+
+<mat-dialog-content class="mr-0 ml-0">
+    <form [formGroup]="productCreateForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+            <mat-form-field class="w-100">
+                <mat-label>{{"Product Group Name"|translate}}</mat-label>
+                <input matInput type="text" formControlName="productGroupName">
+                <mat-error *ngIf="productCreateForm.controls['productGroupName'].hasError('required')">
+                    Product group name is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="w-100">
+                <mat-label>{{"Description"|translate}}</mat-label>
+                <input matInput type="text"  formControlName="description">
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="example-chip-list" style="width: 100% !important;">
+                <mat-label>{{"keyword"|translate}}</mat-label><br>
+                <mat-chip-list #chipGridforkeyword aria-label="Fruit selection" class="keywordlist">
+                    <mat-chip-row class="keywordrow" *ngFor="let keyword of keywordlist">
+                        <button class="keywordbutton">
+                            <span class="keywordpostion">{{keyword|titlecase}}</span>
+                            <mat-icon class="keywordcancelicon" (click)="remove(keyword)">cancel</mat-icon>
+                        </button>
+                    </mat-chip-row>
+                </mat-chip-list>
+                <input  [matChipInputFor]="chipGridforkeyword"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="add($event)" />
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="w-100">
+                <mat-label>{{'Select product'|translate}}</mat-label>
+                <input type="text"  aria-label="Select product " matInput
+                    [matAutocomplete]="auto" [formControl]="userControl">
+            </mat-form-field>
+        </div>
+
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" formControlName="productId">
+            <mat-option *ngFor="let user of filteredUsers | async" [value]="user.id">
+                <div (click)="optionClicked($event, user)">
+                    <mat-checkbox [checked]="user.selected" (change)="toggleSelection(user)"
+                        (click)="$event.stopPropagation()">
+                        <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                            [src]="user?.profilePicture ? user.profilePicture:'assets/images/iconsForsvg/icon_product.svg '"
+                            onError="this.src='assets/images/iconsForsvg/icon_product.svg '"> {{ user.productName }}
+                    </mat-checkbox>
+                </div>
+            </mat-option>
+        </mat-autocomplete>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="my-1">
+    <div class="row mt-2 justify-content-center">
+        <div class="col-4">
+            <button mat-button mat-dialog-close>{{"Cancel"|translate}}</button>
+        </div>
+        <div class="col-4">
+            <button mat-raised-button type="submit" class="b-blue" (click)="onSubmit()">{{"Create"|translate}}</button>
+        </div>
+    </div>
+</mat-dialog-actions>

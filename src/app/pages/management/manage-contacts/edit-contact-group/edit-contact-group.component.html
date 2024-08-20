@@ -1,0 +1,79 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <mat-icon (click)="close()">keyboard_backspace</mat-icon>
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;"> contacts</mat-icon>
+        {{'Update Contact Group'|translate}}
+    </h2>
+    <mat-icon (click)="close()">close</mat-icon>
+</div>
+
+<form [formGroup]="editContactForm" (ngSubmit)="onSubmit()">
+    <mat-dialog-content class="mr-0 ml-0">
+        <div class="row">
+            <mat-form-field class="w-100">
+                <mat-label>{{'Contact Group Name'|translate}}</mat-label>
+                <input matInput type="text"  formControlName="contactGroupName">
+                <mat-error *ngIf="editContactForm.controls['contactGroupName'].hasError('required')">
+                    {{'Contact group name'|translate}} is <strong>{{"required"|translate}}</strong>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="w-100">
+                <mat-label>{{'Description'|translate}}</mat-label>
+                <input matInput type="text"  formControlName="description">
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="example-chip-list" style="width: 100% !important;">
+                <mat-label>keyword</mat-label><br>
+                <mat-chip-list #chipGridforkeyword class="keywordlist">
+                    <mat-chip-row class="keywordrow" *ngFor="let keyword of keywordlist">
+                        <button class="keywordbutton">
+                            <span class="keywordpostion">{{keyword|titlecase}}</span>
+                            <mat-icon class="keywordcancelicon" (click)="remove(keyword)">cancel</mat-icon>
+                        </button>
+                    </mat-chip-row>
+                </mat-chip-list>
+                <input  [matChipInputFor]="chipGridforkeyword"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="add($event)" />
+            </mat-form-field>
+        </div>
+
+        <div class="row">
+            <mat-form-field class="w-100">
+                <mat-label>{{"Contact"|translate}} *</mat-label>
+                <mat-select multiple formControlName="contactsId">
+                    <mat-option *ngFor="let contact of contacts$ | async" [value]="contact.id"
+                        (click)="onChange(contact)">
+                        {{ contact.firstName }} {{contact.lastName}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <mat-list>
+            <div mat-subheader>{{"Contacts"|translate}}</div>
+            <div *ngFor="let contact of contacts">
+                <mat-list-item>
+                    <div class="w-100 d-flex flex-row justify-content-between">
+                        <span class="d-flex flex-row align-items-center">
+                            <div class="avatar">
+                                <img class="avatar"
+                                    [src]="contact?.profilePicture ? contact.profilePicture:'assets/avatar.svg'">
+                            </div>
+                            <span>{{contact.firstName}}</span>
+                        </span>
+                    </div>
+                </mat-list-item>
+                <mat-divider></mat-divider>
+            </div>
+        </mat-list>
+
+    </mat-dialog-content>
+    <mat-dialog-actions align="end" class="mb-1 pr-5">
+        <button mat-raised-button mat-dialog-close>{{'Cancel'|translate}}</button>
+        <button mat-raised-button [disabled]="!editContactForm.valid" class="b-blue">{{'Update'|translate}}</button>
+    </mat-dialog-actions>
+
+</form>

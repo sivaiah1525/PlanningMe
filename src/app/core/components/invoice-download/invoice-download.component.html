@@ -1,0 +1,26 @@
+
+
+<!-- initiating.component.html -->
+<ng-container *ngIf="Initiating">
+    <div class="initiating-container">
+        <mat-spinner diameter="50"></mat-spinner><br>
+        <p class="loading-text">Initiating Download...</p>
+      </div>    
+</ng-container>
+
+<!-- success.component.html -->
+<ng-container *ngIf="Successful">
+    <div class="success-container">
+        <mat-icon class="success-icon">check_circle</mat-icon><br><br>
+        <p class="success-text">Download Successful!</p>
+      </div>    
+</ng-container>
+
+
+<!-- failure.component.html -->
+<ng-container *ngIf="Failed">
+    <div class="failure-container">
+        <mat-icon class="failure-icon">error</mat-icon><br><br>
+        <p class="failure-text">Download Failed!</p>
+      </div>    
+</ng-container>

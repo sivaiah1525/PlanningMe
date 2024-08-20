@@ -1,0 +1,162 @@
+<div class="row  modal-header" *ngIf="ScreenType=='otherUserPlanning'">
+    <div class="col-10 col-sm-10  col-md-10 col-lg-11 col-xl-11 mt-2 " style="display: flex;">
+        <div>
+            <img class="avatarprofile"
+                [src]="OtherpepleData.User?.profilePicture ? OtherpepleData.User.profilePicture:'assets/avatar.svg'"
+                onError="this.src='assets/avatar.svg'" />
+        </div>
+        <div
+            style="color: rgb(252, 251, 251);font-size: 18px;font-weight: bold;">
+            {{OtherpepleData.User?.firstName|titlecase}}
+            {{OtherpepleData.User?.lastName|titlecase}}
+        </div>
+    </div>
+    <div class="col-2 col-sm-2  col-md-2 col-lg-1 col-xl-1 mt-2 ">
+        <mat-icon (click)="RemovePlanningFilter()">close</mat-icon>
+    </div>
+</div>
+<!-- 000000011111111111222222222222333333333333444444444444  -->
+<div class="mt-4 calender_height" id="pm-calender">
+    <pm-calendar-header (calendarViewChanged)="calendarViewChanged($event)"
+        [(view)]="calendarView"
+        [(viewDate)]="viewDate" [smallDevice]="smallDevice"
+        [OtherpeplePlanningStatus]="OtherpeplePlanning">
+    </pm-calendar-header>
+    <div class="row p-0">
+        <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12 p-1 pr-1 pl-1">
+            <!-- 0000000000000  -->
+            <ng-container *ngIf="calendarView === CalendarView.Month">
+                <mwl-calendar-month-view [viewDate]="viewDate" [events]="events"
+                    [cellTemplate]="eventNameMonthTemplate"
+                    (beforeViewRender)="beforeMonthViewRender($event)"
+                    (eventClicked)="eventClicked($event.event)"
+                    [refresh]="refresh">
+                </mwl-calendar-month-view> 
+            </ng-container> 
+            <!-- 111111111111111  -->
+            <ng-container *ngIf="calendarView === CalendarView.Week">
+                <mwl-calendar-week-view [viewDate]="viewDate" [events]="events"
+                    [dayStartHour]="0" [dayEndHour]="23"
+                    [eventTitleTemplate]="eventTitleTemplateWeek"
+                    (eventClicked)="eventClicked($event.event)"
+                    [refresh]="refresh">
+                </mwl-calendar-week-view>
+            </ng-container>
+            <!-- 222222222222222  -->
+            <ng-container *ngIf="calendarView === CalendarView.Day">
+                <mwl-calendar-day-view [viewDate]="viewDate" [events]="events"
+                    [dayStartHour]="0" [dayEndHour]="23"
+                    [eventTitleTemplate]="eventTitleTemplateDay"
+                    (eventClicked)="eventClicked($event.event)"
+                    [refresh]="refresh">
+                </mwl-calendar-day-view>
+            </ng-container>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12 pr-0 pl-0">
+            <pm-event-lists [OtherpeplePlanningStatus]="OtherpeplePlanning"
+                [event]="events"></pm-event-lists> 
+        </div>
+    </div>
+
+    <span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+        <button id="add-button1" mat-fab (click)="SynchronizationData()">
+            <mat-icon style="color: white;">sync</mat-icon>
+        </button><br><br>
+        <button id="add-button2" mat-fab (click)="openAddEventDialog()">
+            <mat-icon style="color: white;">add</mat-icon>
+        </button>
+    </span>
+</div>
+<!-- ------------------  -->
+<!-- month view  -->
+<ng-template #eventNameMonthTemplate let-day="day" let-locale="locale">
+    <div *ngIf="!events.isSimulation" class="cal-cell-top">
+        <span class="cal-day-number">{{ day.date | calendarDate:'monthViewDayNumber':locale
+            }}</span>
+    </div>
+    <span *ngFor="let event of day.events">
+        <div *ngIf="event.isSimulation" class="event-name mb-2 p-1 fs-14 fw-500"
+            style="background-color: white;color: black;font-style: italic;"
+            (click)="openEvents(event)">
+            <span class="fw-600 flex-74">{{' '+event?.start | date:'H:mm'+' '}}</span>
+            <span><mat-icon style="font-size: 20px;">visibility</mat-icon></span>
+            <br>
+            <span>{{event.title|titlecase}}</span>
+        </div>
+        <div *ngIf="!event.isSimulation"
+            class="event-name mb-2 p-1 fs-14 fw-500"
+            [style.background]="event.color.secondary"
+            [style.color]="event.color.primary" (click)="openEvents(event)">
+            <div class="row">
+                <div class="col-9"> <span class="fw-600 "
+                        style="font-size:11px;">{{' '+event?.start | date:'H:mm'+' '}}</span></div>
+                <div class="col-3">
+                    <span
+                        *ngIf="event.isExternalEvent === true && event.source ==='Google Calendar'">
+                        <img style="border-radius: 50%;" width="15" height="15"
+                            src="assets/logo/GoogleCalendar.png">
+                    </span>
+                    <span
+                        *ngIf="event.isExternalEvent === true && event.source ==='Outlook Calendar'">
+                        <img style="border-radius: 50%;" width="15" height="15"   
+                            src="assets/logo/OutlookCalendar.png">
+                    </span>
+                    <span *ngIf="event.isConvertedFromTask">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" >
+                            <path [attr.fill]="event.color.primary" d="M600-80v-80h160v-400H200v160h-80v-320q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H600ZM320 0l-56-56 103-104H40v-80h327L264-344l56-56 200 200L320 0ZM200-640h560v-80H200v80Zm0 0v-80 80Z"/>
+                        </svg>                      </span>
+                </div>
+            </div>
+            <span style="font-size:11px;">{{eventtitle(event.title)|titlecase}}</span>
+        </div>
+    </span>
+</ng-template>
+<!-- Week View  -->
+<ng-template #eventTitleTemplateWeek let-event="event">
+    <div class="week-view-event" (click)="openEvents(event)">
+        <div class="cal-event-title" [style.background]="event.color.secondary"
+            [style.color]="event.color.primary">
+            <span
+                *ngIf="event.isExternalEvent === true && event.source ==='Google Calendar'">
+                <img style="border-radius: 50%;" width="15" height="15"
+                    src="assets/logo/GoogleCalendar.png">
+            </span>
+            <span
+                *ngIf="event.isExternalEvent === true && event.source ==='Outlook Calendar'">
+                <img style="border-radius: 50%;" width="15" height="15"
+                    src="assets/logo/OutlookCalendar.png">
+            </span>
+            <span *ngIf="event.isConvertedFromTask">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" >
+                    <path [attr.fill]="event.color.primary" d="M600-80v-80h160v-400H200v160h-80v-320q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H600ZM320 0l-56-56 103-104H40v-80h327L264-344l56-56 200 200L320 0ZM200-640h560v-80H200v80Zm0 0v-80 80Z"/>
+                </svg>              </span>
+            <span style="font-size:11px;"> {{
+                eventtitle(event.title)|titlecase}} </span>
+        </div>
+    </div>
+</ng-template>
+<!-- day view  -->
+<ng-template #eventTitleTemplateDay let-event="event">
+    <div class="day-view-event" (click)="openEvents(event)">
+        <div class="cal-event-title" [style.background]="event.color.secondary"
+            [style.color]="event.color.primary">
+            <span
+                *ngIf="event.isExternalEvent === true && event.source ==='Google Calendar'">
+                <img style="border-radius: 50%;" width="15" height="15"
+                    src="assets/logo/GoogleCalendar.png">
+            </span>
+            <span
+                *ngIf="event.isExternalEvent === true && event.source ==='Outlook Calendar'">
+                <img style="border-radius: 50%;" width="15" height="15"
+                    src="assets/logo/OutlookCalendar.png">
+            </span>
+            <span *ngIf="event.isConvertedFromTask">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" >
+                    <path [attr.fill]="event.color.primary" d="M600-80v-80h160v-400H200v160h-80v-320q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H600ZM320 0l-56-56 103-104H40v-80h327L264-344l56-56 200 200L320 0ZM200-640h560v-80H200v80Zm0 0v-80 80Z"/>
+                </svg>
+              </span>
+            <span style="font-size:11px;"> {{
+                eventtitle(event.title)|titlecase}} </span>
+        </div>
+    </div>
+</ng-template>

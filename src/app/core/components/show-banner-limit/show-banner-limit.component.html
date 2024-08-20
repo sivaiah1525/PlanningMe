@@ -1,0 +1,47 @@
+<div class="d-flex flex-row align-items-center modal-header-in-error ">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{'Usage Limits'|translate}}</h2>
+    <mat-icon matDialogClose>close</mat-icon>
+</div>
+<mat-dialog-content class="mr-0 ml-0 p-0">
+    <div class="row mt-2 mb-2 justify-content-start">
+        <div class="col-12 p-0">
+            <img style="margin: auto;" src="../../assets/logo/logo.png" class="imagestyle" >
+        </div>
+        <div class="col-12 mt-2">
+            <h3 style="text-align: start; align-items: start;">
+                {{"In this account you are allowed to create "|translate}}
+            </h3>
+            <h3 style="text-align: start; align-items: start;">
+                5 {{"Users"|translate}} 
+            </h3>
+            <h3 style="text-align: start; align-items: start;">
+                10 {{"Contacts"|translate}} 
+            </h3>
+            <h3 style="text-align: start; align-items: start;">
+                10 {{"Products"|translate}} 
+            </h3>
+            <h3 style="text-align: start; align-items: start;">
+                10 {{"Sites"|translate}} 
+            </h3>
+            <h3 style="text-align: start; align-items: start;">
+                10 {{"Orders (max 10 transactions per order)"|translate}}
+            </h3>
+            <h3 style="text-align: start; align-items: start;">
+                10 {{"Events per user"|translate}}
+            </h3>
+            <h3 style="text-align: start; align-items: start;">
+                10 {{"Files & 10 Notes(10 subnotes per note)"|translate}}
+            </h3>
+            <h3 style="text-align: start; align-items: start;">
+                4 {{"Reports per user"|translate}}
+            </h3>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="my-1">
+    <div class="row justify-content-end">
+        <div class="col-7">
+            <button mat-raised-button (click)="paymentCardPopup()" class="b-blue">{{'Pay for full usage'|translate}}</button>
+        </div>
+    </div>
+</mat-dialog-actions>

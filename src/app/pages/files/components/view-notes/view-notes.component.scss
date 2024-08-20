@@ -1,0 +1,175 @@
+.back-arrow {
+  margin-right: 24px;
+}
+
+.content-heading {
+  div.title {
+    float: left;
+    font-size: 20px;
+  }
+
+  .edit-dots {
+    float: right;
+  }
+}
+.fileicon {
+  font-size: 40px !important;
+  color: #528bf1;
+  size: 10px;
+  width: 50px;
+  height: 50px;
+}
+
+.drowdownimage {
+  width: 45px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.styleforcontent {
+  padding: 5px 10px;
+  background-color: #fef4df;
+  color: #fb9f43;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.editbutton{
+  padding: 0 10px;
+    border-radius: 10px;
+    background-color: #528bf1;
+    color: #fff;
+    border: none;
+    margin-top: 5px;
+    font-size: 10px;
+    padding: 2px 6px;
+}
+
+.deletebutton{
+  border-radius: 10px;
+  background-color: red;
+  color: #fff;
+  border: none;
+  margin-top: 5px;
+  font-size: 10px;
+  padding: 2px 6px;
+}
+
+
+element.style {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50%;
+  margin-top: 5px;
+}
+
+#private {
+  p,
+  span {
+    float: left;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 0px;
+  }
+}
+
+.clearfix {
+  clear: both;
+}
+
+.modal-header {
+  span {
+    padding: 0 8px;
+    font-size: 20px;
+  }
+}
+
+.create-button-row {
+  display: table-cell;
+  position: relative;
+}
+
+.create-button-row button {
+  display: table-cell;
+  margin-right: 8px;
+  position: absolute;
+  right: 0;
+  z-index: 1;
+  bottom: 9px;
+}
+
+.create-flex-container {
+  display: flex;
+  justify-content: space-between;
+  width: 480px;
+}
+
+.create-button-container {
+  display: flex;
+  justify-content: center;
+  width: 120px;
+
+  .mat-icon {
+    color: #fff;
+  }
+}
+
+::ng-deep .right {
+  float: right;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+::ng-deep .md-button {
+  border: none;
+  outline: none;
+  background-color: #528bf1;
+  border: none;
+  color: white;
+  padding: 1px 8px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 8px;
+  font-weight: 700;
+  margin: 4px 2px;
+  border-radius: 10px;
+}
+::ng-deep .delete-button {
+  border: none;
+  outline: none;
+  background-color: #f42811;
+  border: none;
+  color: white;
+  padding: 1px 8px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 8px;
+  font-weight: 700;
+  margin: 4px 2px;
+  border-radius: 10px;
+}
+
+::ng-deep .edit-dots {
+  display: flex;
+  justify-content: end;
+}
+
+.subNotesHeading {
+  // height: 55px;
+  // background-color: #dcf2f8;
+  // border-color: lightgrey;
+
+  height: 55px;
+  background-color: #dcf2f8;
+  border: 1px solid grey;
+}
+
+.m-t-5 {
+  margin-top: 5px !important;
+}
+
+.b-blue {
+  background-color: #528bf1;
+  color: white;
+}

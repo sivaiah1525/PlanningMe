@@ -1,0 +1,391 @@
+<ng-container *ngIf="screenType=='OrderQuote'">
+    <div class="User-group">
+        <div class="d-flex flex-row align-items-center modal-header">
+            <mat-icon style="color: white;" (click)="dismiss()">keyboard_backspace</mat-icon>
+            <h2 *ngIf="orderId.orderQuoteStatus!=='Pending'" mat-dialog-title
+                class="m-0 dialog-title text-center w-100">
+                <mat-icon style="position: relative;right: 10px;"> assignment</mat-icon>
+                {{'Order Details'|translate}}
+            </h2>
+            <h2 *ngIf="orderId.orderQuoteStatus!=='Validated'" mat-dialog-title
+                class="m-0 dialog-title text-center w-100">
+                <mat-icon style="position: relative;right: 10px;"> assignment</mat-icon>
+                {{'Quote Details'|translate}}
+            </h2>
+        </div>
+        <mat-dialog-content class="mr-0 ml-0">
+            <div class="row mt-3 mr-3 justify-content-center red">
+                <div class="col-10">
+                    <div>
+                        <span style="color: red;" *ngIf="orderId.orderQuoteStatus!=='Pending'" mat-dialog-title
+                            class="m-0 dialog-title text-center w-100">{{'Order ID'|translate}} :
+                            {{OrderData?.orderId}}</span>
+                        <span style="color: red;" *ngIf="orderId.orderQuoteStatus!=='Validated'" mat-dialog-title
+                            class="m-0 dialog-title text-center w-100">{{'Quote ID'|translate}} :{{OrderData?.orderId}}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <mat-icon [matMenuTriggerFor]="moreMenu" class="icon-options">more_vert</mat-icon>
+                    <mat-menu #moreMenu="matMenu" class="eventlist">
+                        <ng-template matMenuContent>
+                            <button class="fw-600" mat-menu-item (click)="EditorderDialog(OrderData)">
+                                <mat-icon class="icon-options">edit</mat-icon>{{'Edit'|translate}}
+                            </button>
+                            <button class="fw-600" mat-menu-item
+                                (click)="deleteDialogConfirmation(OrderData,'deleteorder')">
+                                <mat-icon class="icon-options">delete</mat-icon>{{'Delete'|translate}}
+                            </button>
+                            <button class="fw-600" mat-menu-item (click)="download(OrderData)">
+                                <mat-icon style="vertical-align: middle">download</mat-icon>{{'Download'|translate}}
+                            </button>
+                            <button class="fw-600" mat-menu-item *ngIf="orderId.orderQuoteStatus !=='Pending'"
+                                (click)="ViewPdf(OrderData)">
+                                <mat-icon style="vertical-align: middle">picture_as_pdf</mat-icon>{{'View Invoice'|translate}}
+                            </button>
+                        </ng-template>
+                    </mat-menu>
+                </div>
+
+            </div>
+            <div class="row mt-3 mr-3 justify-content-center">
+                <div>
+                    <span style="background-color:#8ab2ef;padding: 0px 50px;border-radius: 35px; color: blue;"
+                        *ngIf="orderId.orderQuoteStatus!=='Pending'" mat-dialog-title
+                        class="m-0 dialog-title text-center w-100">{{'Order'|translate}} </span>
+                    <span style=" background-color:#ebcc71;padding: 0px 50px;border-radius: 35px; color:yellow;"
+                        *ngIf="orderId.orderQuoteStatus!=='Validated'" mat-dialog-title
+                        class="m-0 dialog-title text-center w-100">{{'Quote'|translate}} </span>
+                </div>
+            </div>
+            <ng-container *ngIf="(OrderData?.totalDiscountPercentage!=0&&OrderData?.totalDiscountPercentage!=null)">
+                <h3 class="fw-600 pointer" (click)="viewdiscountForTransation(OrderData,true,true)"
+                    style="text-align: center; align-items: center;">
+                    {{'Total Discount'|translate}} : <span
+                        class=" fw-600 color_grey">{{OrderData?.totalDiscountPercentage}}{{'%'}}</span>
+                    <mat-icon>touch_app</mat-icon>
+                </h3>
+            </ng-container>
+            <section class="detail-wrapper">
+                <mat-list>
+                    <mat-list-item *ngIf="OrderData?.clientFirstName!=null||0">
+                        <div class="fw-600">
+                            <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                [src]="OrderData?.clientProfile ? OrderData.clientProfile:'assets/avatar.svg'"
+                                onError="this.src='assets/avatar.svg'"><span>{{'Contact'|translate}} : </span>
+                        </div>
+                        <span class="ml-3 fw-600 color_grey">
+                            {{OrderData?.clientLastName|titlecase}} {{OrderData?.clientFirstName|titlecase}}
+                        </span>
+                    </mat-list-item>
+
+                    <mat-list-item *ngIf="OrderData?.creatorFirstName!=null||0">
+                        <div class="fw-600">
+                            <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                [src]="OrderData?.creatorProfile ? OrderData.creatorProfile:'assets/avatar.svg'"
+                                onError="this.src='assets/avatar.svg'"><span>{{'User'|translate}} : </span>
+                        </div>
+                        <span class="ml-3 fw-600 color_grey">
+                            {{OrderData?.creatorFirstName|titlecase}} {{OrderData?.creatorLastName|titlecase}}
+                        </span>
+                    </mat-list-item>
+                    <mat-list-item *ngIf="OrderData?.siteName!=null||0||''">
+                        <div class="fw-600">
+                            <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                            <span class="ml-2">Site :</span>
+                        </div>
+                        <span class="ml-3 fw-600 color_grey">{{OrderData?.siteName|titlecase}}</span>
+                    </mat-list-item>
+                    <!-- Products -->
+                    <mat-list-item>
+                        <div class="fw-600">
+                            <mat-icon class="red vertical-bottom">business_center</mat-icon> {{'Products'|translate}} :
+                        </div>
+                        <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+                            [ngClass]="{'color_grey': FindProductsByOrderQuote.length > 0,'name_red':  FindProductsByOrderQuote.length == 0 }"
+                            (click)="findProductLinked()">
+                            {{ FindProductsByOrderQuote.length}}
+                            {{ FindProductsByOrderQuote.length > 1 ? 'Products' : 'Product'}}</span>
+                    </mat-list-item>
+                    <div class="row justify-content-end">
+                        <div class="col-12" *ngIf="showProduct"
+                            [ngClass]="{'auto_height':  FindProductsByOrderQuote.length> 4,'overflow':  FindProductsByOrderQuote.length < 4 }">
+                            <div class="row m-t-10" *ngFor="let product of FindProductsByOrderQuote ; let i = index">
+                                <div class="col-2">
+                                    <img style="border-radius: 50%; cursor: pointer;" width="30" height="30"
+                                        (click)="ShowProductDetails(product,'product')"
+                                        onError="this.src='assets/images/iconsForsvg/icon_product.svg'"
+                                        [src]="product?.profile ? product?.profile :'assets/images/iconsForsvg/icon_product.svg'">
+                                </div>
+                                <div class="col-10 p-1">
+                                    <span class="p-l-10 fw-600 color_grey" style="cursor: pointer;"
+                                        (click)="ShowProductDetails(product,'product')">{{product.name|titlecase}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Transactions -->
+                    <mat-list-item>
+                        <div class="fw-600">
+                            <mat-icon class="red vertical-bottom"> shopping_cart</mat-icon> {{'Transactions'|translate}}
+                            :
+                        </div>
+                        <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+                            [ngClass]="{'color_grey': OrderData?.transactionIds.length > 0,'name_red':  OrderData?.transactionIds.length == 0 }"
+                            (click)="findTransationLinked(OrderData?.transactionIds)">
+                            {{ OrderData?.transactionIds.length}}
+                            {{ OrderData?.transactionIds.length > 1 ? 'Transactions' : 'Transaction'}}</span>
+                    </mat-list-item>
+                    <div class="col-12 p-0"
+                        [ngClass]="{'auto_height': OrderData?.transactionIds.length > 2,'auto_height1':  OrderData?.transactionIds.length == 1 }"
+                        *ngIf="showTransaction">
+                        <div class="row" *ngFor="let eve of FindtransationsByOrderQuote ; let i = index">
+                            <div class="col-1">
+                                <mat-icon style="vertical-align: middle; color: #8ab2ef; position: relative; top:30px;">
+                                    assignment</mat-icon>
+                            </div>
+                            <div class="col-11">
+                                <mat-list-item style="height:30px !important;">
+                                    <div class="fw-600">{{'Transaction'|translate}} Ref :</div>
+                                    <span class="ml-3 fw-600 color_grey">{{eve.transactionReference}}</span>
+                                </mat-list-item>
+                                <mat-list-item style="height: 30px !important;">
+                                    <div class="fw-600">
+                                        <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                            [src]="eve?.productProfile ? eve.productProfile:'assets/images/iconsForsvg/icon_product.svg '"
+                                            onError="this.src='assets/images/iconsForsvg/icon_product.svg'">
+                                    </div>
+                                    <span class="ml-3 fw-600 color_grey">{{eve.productName|titlecase}}</span>
+                                </mat-list-item>
+                                <mat-list-item style="height: 30px !important;">
+                                    <div class="fw-600">{{'Total Amount'|translate}} :</div>
+                                    <span class="ml-3 fw-600 color_grey">{{transform(eve.finalPrice)+' '+'€'}}</span>
+                                </mat-list-item>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Files -->
+                    <mat-list-item>
+                        <div class="fw-600">
+                            <mat-icon class="vertical-bottom"
+                                style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                            {{'Files'}} :
+                        </div>
+                        <a class="ml-3 fw-600 color_grey m-t-6 pointer"
+                            [ngClass]="{'color_grey': OrderData?.fileCount > 0,'name_red': OrderData?.fileCount == 0 }"
+                            (click)="findfilesLinked(OrderData?.fileCount,'Files')">
+                            {{OrderData?.fileCount}} {{OrderData?.fileCount > 1 ? 'Files' : 'File'}}</a>
+                    </mat-list-item>
+                    <div class="col-10 p-0   m-b-15" *ngIf="showfile"
+                        [ngClass]="{'auto_height': OrderData?.fileCount > 4,'overflow': OrderData?.fileCount < 4 }">
+                        <div class="row m-l-10  m-t-10 " *ngFor="let file of getfile ; let i = index">
+                            <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                            <a style="cursor:pointer;" (click)="gotofiles(file)"
+                                class="color_grey m-l-10">{{file.title}}</a>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <mat-list-item>
+                        <div class="fw-600">
+                            <mat-icon class="vertical-bottom" style="color:rgb(255,193,111) ;">speaker_notes </mat-icon>
+                            {{'Notes'}} :
+                        </div>
+                        <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+                            [ngClass]="{'color_grey': OrderData?.noteCount > 0,'name_red': OrderData?.noteCount == 0 }"
+                            (click)="findnotesLinked(OrderData?.noteCount,'Notes')">{{OrderData?.noteCount}}
+                            {{OrderData?.noteCount > 1 ? 'Notes' : 'Note'}}</span>
+                    </mat-list-item>
+                    <div class="col-10 p-0 pointer " *ngIf="shownotes"
+                        [ngClass]="{'auto_height': OrderData?.noteCount > 4,'overflow': OrderData?.noteCount < 4 }">
+                        <div (click)="ShowNote(notes.id)" class="row  m-t-10  m-l-10 fw-600  "
+                            *ngFor="let notes of getnotes ; let i = index">
+                            <mat-icon style="color:rgb(255,193,111) ;" class=" vertical-bottom">speaker_notes</mat-icon>
+                            <span class="m-l-10 color_grey">{{notes.title|titlecase}}</span>
+                        </div>
+                    </div>
+
+
+                    <mat-list-item *ngIf="OrderData?.transactionTypeName!=null||0">
+                        <div class="fw-600"> {{'Transaction Type'|translate}} : </div>
+                        <span class="ml-3 fw-600 color_grey">{{OrderData?.transactionTypeName|titlecase}}</span>
+                    </mat-list-item>
+                    <mat-list-item *ngIf="OrderData?.paymentTypeName!=null||0">
+                        <div class="fw-600">{{'Payment Type'|translate}} : </div>
+                        <span class="ml-3 fw-600 color_grey">{{OrderData?.paymentTypeName|titlecase}}</span>
+                    </mat-list-item>
+                    <mat-list-item *ngIf="OrderData?.marginPrice!=null||0">
+                        <div class="fw-600">{{'Margin'|translate}}: </div>
+                        <span class="ml-3 fw-600 color_grey">
+                            {{transform(OrderData.marginPrice)}} {{OrderData.currencyName}}
+                            <span style="color: #307edc !important;">
+                                ({{numberdigimal(OrderData.marginPrice/OrderData.finalPrice*100)+'%'}})
+                            </span>
+                        </span>
+                    </mat-list-item>
+                    <mat-list-item *ngIf="OrderData?.totalAmount!=null||0">
+                        <div class="fw-600">{{'Final Price'|translate}} : </div>
+                        <span class="ml-3 fw-600 color_grey">
+                            {{transform(OrderData?.totalAmount)}} {{OrderData?.currencyName}}
+                        </span>
+                    </mat-list-item>
+                    <mat-list-item
+                        *ngIf="OrderData?.keywords!=null&&OrderData?.keywords!=0&&OrderData?.keywords.length!=0">
+                        <div class="fw-600">{{'keywords'|translate}} :</div>
+                        <span class="ml-3 fw-600 color_grey">
+                            <span *ngFor="let x of OrderData?.keywords ;let i=index">
+                                <button
+                                    style="border: none; border-radius:20px; background-color: rgb(228, 223, 223); padding:3px 15px; margin: 5px;">
+                                    <span>{{x|titlecase}}</span>
+                                </button>
+                            </span>
+                        </span>
+                    </mat-list-item>
+                    <mat-list-item *ngIf="OrderData?.dueDate!=null||0">
+                        <div class="fw-600">{{'Due Date'|translate}} : </div>
+                        <span class="ml-3 fw-600 color_grey">{{OrderData?.dueDate | date:'dd-MMM-yyyy,h:mm'}}</span>
+                    </mat-list-item>
+                    <mat-list-item *ngIf="OrderData?.issueDate!=null||0">
+                        <div class="fw-600">{{'Issue Date'|translate}} : </div>
+                        <span class="ml-3 fw-600 color_grey">{{OrderData?.issueDate | date:'dd-MMM-yyyy,h:mm'}}</span>
+                    </mat-list-item>
+                    <mat-list-item *ngIf="OrderData?.paymentDate!=null">
+                        <div class="fw-600">{{'Payment Date'|translate}} :</div>
+                        <span class="ml-3 fw-600 color_grey">{{OrderData?.paymentDate | date:'dd-MMM-yyyy,h:mm'}}</span>
+                    </mat-list-item>
+                </mat-list>
+            </section>
+        </mat-dialog-content>
+    </div>
+</ng-container>
+
+
+
+
+
+
+
+
+
+<ng-container *ngIf="screenType=='discounttable'">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+            <mat-icon style="position: relative;right: 10px;"> loyalty</mat-icon>
+            {{'Discount Details'|translate}}
+        </h2>
+        <mat-icon mat-dialog-close>close</mat-icon>
+    </div>
+    <mat-dialog-content class="mr-0 ml-0">
+        <div class="row mt-3">
+            <table class="tableDiscount" style="margin-bottom: 10px;">
+                <thead>
+                    <tr style="height:50px !important;">
+                        <th></th>
+                        <th>{{'Profile'|translate}}</th>
+                        <th>{{'Name'|translate}}</th>
+                        <th>{{'Code'|translate}}</th>
+                        <th>{{'Percentage'|translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let x of ListOfDiscount" style="height:50px !important;">
+                        <td>
+                            <span *ngIf="x.isPublic ==true">
+                                <img style="border-radius: 50%;" src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                            </span>
+                            <span *ngIf="x.isPublic !=true">
+                                <img style="border-radius: 50%;"
+                                    src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                            </span>
+                        </td>
+                        <td>
+                            <mat-icon *ngIf="x.tableName=='Transactions'"> shopping_cart</mat-icon>
+                            <img *ngIf="x.tableName=='Sites'"
+                                src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                            <img *ngIf="x.tableName=='Products'" class="avatar-profile "
+                                [src]="x.profile ? x.profile:'assets/images/iconsForsvg/icon_product.svg'"
+                                onError="this.src='assets/images/iconsForsvg/icon_product.svg'">
+                            <img *ngIf="x.tableName=='Contacts'" class="avatar-profile "
+                                [src]="x?.profile ? x.profile:'assets/avatar.svg'"
+                                onError="this.src='assets/avatar.svg'">
+                        </td>
+                        <td style="white-space:normal !important;">{{x?.entityName? x?.entityName:'Manully Added' }}
+                        </td>
+                        <td>{{x.discountName|titlecase}}</td>
+                        <td>{{x.percentage}}{{'%'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </mat-dialog-content>
+</ng-container>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="overlay" *ngIf="spinner.isVisible() | async">
+    <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+    </mat-progress-spinner>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ng-template #QuoteToOrderDialog class="container">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Confirmation</h2>
+    </div>
+    <mat-dialog-content class="viewDialog pading "
+        style="padding: 0px  !important; margin: 0px !important;height:80px; width:380px;">
+        <div class="row">
+            <h3 style="margin-top: 14px;margin-left: 34px; ">Are you sure you want Change Quote To Order</h3>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-action>
+        <div class="row justify-content-center" style="margin-bottom: 8px;">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6"></div>
+            <button mat-raised-button mat-dialog-close style="margin: 10px;" (click)="closedialogbox()">Cancel</button>
+            <button mat-raised-button style="margin: 10px;" color="primary" (click)="ChangeQuoteToOrder()">Ok</button>
+        </div>
+    </mat-dialog-action>
+</ng-template>

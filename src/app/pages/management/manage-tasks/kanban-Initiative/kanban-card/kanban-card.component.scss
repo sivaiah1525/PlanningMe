@@ -1,0 +1,81 @@
+.kanban-card {
+    margin-bottom: 8px;
+    padding: 8px;
+    border-radius: 4px;
+    // background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adjust the shadow as needed */
+    cursor: move;
+  }
+
+  .kanban-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .kanban-card-title {
+    font-weight: bold;
+  }
+  
+  .mat-icon-sm {
+    font-size: 16px; /* Adjust the font size as needed */
+  }
+  
+  .cdk-drag-preview {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cdk-drag-placeholder {
+    opacity: 0.5;
+    border: 2px dashed #aaa;
+    border-radius: 4px;
+  }
+
+  .btn-container {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+
+
+  .circular-progress-bar {
+    position: relative;
+    width: 50px; /* Adjust the width as needed */
+    height: 50px; /* Adjust the height as needed */
+}
+
+.circular-progress-bar svg {
+    width: 100%;
+    height: 100%;
+}
+
+.circular-progress-bar circle {
+    fill: none;
+    stroke-width: 10; /* Adjust the stroke width as needed */
+}
+
+.circular-progress-bar .progress-bar-background {
+    stroke: #e0e0e0; /* Background color for the progress bar */
+}
+
+.circular-progress-bar .progress-bar-Send {
+    stroke: #4caf50; /* Color for the progress bar */
+    transition: stroke-dashoffset 0.35s; /* Add animation transition for progress */
+}
+
+.circular-progress-bar text {
+    font-size: 18px; /* Adjust font size as needed */
+    font-weight: 900 !important;
+
+}
+
+.circular-progress-bar .counttitle {
+    text-align: center;
+    margin-top: 5px; /* Adjust margin as needed */
+}
+
+.keywords{
+  background-color: lightgray;
+    padding: 5px 10px;
+    border-radius: 50px;
+}

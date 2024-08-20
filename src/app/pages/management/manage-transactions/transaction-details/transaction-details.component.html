@@ -1,0 +1,354 @@
+<ng-container *ngIf="screenType=='transation'">
+    <div class="User-group">
+        <div class="d-flex flex-row align-items-center modal-header">
+            <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+                <mat-icon style="position: relative;right: 10px;"> shopping_cart</mat-icon>
+                {{'Transaction Details'|translate}}
+            </h2>
+            <mat-icon mat-dialog-close>close</mat-icon>
+        </div>
+        <mat-dialog-content class="mr-0 ml-0" *ngIf="transaction">
+            <div class="row m-t-14">
+                <div class="col-10" style="align-items: center;text-align: center;">
+                    <span style="text-align: center;font-size: 20px;" class="name_red m-t-14">
+                        {{'Transaction'|translate}} Ref : {{transaction.transactionReference}}
+                    </span>
+                </div>
+
+                <div class="col-2">
+                    <button [matMenuTriggerFor]="beforeMenu" class="mr-1 b-color">
+                        <mat-icon class="icon-options">more_vert</mat-icon>
+                    </button>
+                    <mat-menu #beforeMenu="matMenu" xPosition="before">
+                        <button class="fw-600" mat-menu-item *ngIf="(AdminStatus=='true'||transaction?.isCreator==true)"
+                            (click)="deleteDialogConfirmation(transaction,'deleteTransation')">
+                            <mat-icon>delete</mat-icon> {{'Delete'|translate}}
+                        </button>
+                        <ng-container *ngIf="(AdminStatus=='true'||transaction?.isCreator==true)">
+                            <button class="fw-600" mat-menu-item *ngIf="transaction?.statusName=='Pending'"
+                                (click)="updatetransactionDialog(transaction)">
+                                <mat-icon>edit</mat-icon> {{'Edit'|translate}}
+                            </button>
+                        </ng-container>
+                        <button class="fw-600" mat-menu-item (click)="openAddEventDialog()">
+                            <mat-icon>event</mat-icon> {{'Create an Event'|translate}}
+                        </button>
+                        <button class="fw-600" mat-menu-item (click)="ActivityReport()">
+                            <mat-icon>bar_chart</mat-icon> {{'Create an Activity Report'|translate}}
+                        </button>
+                        <button class="fw-600" mat-menu-item (click)="CreateStratergy()">
+                            <mat-icon>wb_incandescent</mat-icon> {{'Create Stratergy'|translate}}
+                        </button>
+                        <button class="fw-600" mat-menu-item (click)="AddFile(transaction)">
+                            <mat-icon style="color:rgb(66,135,245) ;">
+                                insert_drive_file</mat-icon>
+                            {{'Add File'|translate}}
+                        </button>
+                        <button class="fw-600" mat-menu-item (click)="AddNote(transaction)">
+                            <mat-icon style="color:rgb(255,193,111) ;">
+                                speaker_notes </mat-icon>
+                            {{'Add Note'|translate}}
+                        </button>
+                    </mat-menu>
+                </div>
+            </div>
+            <ng-container *ngIf="(transaction.totalDiscountAmount !=0 && transaction.totalDiscountAmount !=null)">
+                <div class="container">
+                    <div class="row justify-content-md-center justify-content-center">
+                        <div class="col-10 col-md-5 m-2">
+                            <span class="remise">Discount:{{transaction.totalDiscountAmount}}%</span>
+                        </div>
+                        <div class="col-10 col-md-5 m-2 ">
+                            <span style="color:#ffc148;  background-color:#fff9e6;"
+                                *ngIf="transaction.statusName == 'Pending'" class="status">{{'Pending'|translate}}</span>
+                            <span style="color:#3f87f5 ;  background-color:#ebf3fe;"
+                                *ngIf="transaction.statusName == 'Validated'" class="status">{{'Validated'|translate}}</span>
+                            <span style="color: #de4436;  background-color:#fdf5f5;"
+                                *ngIf="transaction.statusName == 'Cancelled'" class="status">{{'Canceled'|translate}}</span>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="(transaction?.totalDiscountPercentage!=0&&transaction?.totalDiscountPercentage!=null)">
+                <h3 class="fw-600 pointer" (click)="viewdiscountForTransation(transaction,transaction?.totalPublicDiscountPercentage==0?false:true,transaction?.totalPrivateDiscountPercentage==0?false:true,transaction?.externalDiscountAmount==0?false:true)"
+                    style="text-align: center; align-items: center;">
+                    {{'Total Discount'|translate}} : <span
+                        class=" fw-600 color_grey">{{transaction?.totalDiscountPercentage}}{{'%'}}</span>
+                    <mat-icon>touch_app</mat-icon>
+                </h3>
+            </ng-container>
+            <!-- user  -->
+            <section class="detail-wrapper">
+                <mat-list>
+                    <mat-list-item *ngIf="transaction?.userFirstName!=null||0">
+                        <div class="fw-600">
+                            <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                [src]="transaction?.userProfile ? transaction.userProfile:'assets/avatar.svg'"
+                                onError="this.src='assets/avatar.svg'"><span>{{'User'|translate}} : </span>
+                        </div>
+                        <span class="ml-3 fw-600 color_grey">
+                            {{transaction.userFirstName|titlecase}} {{transaction.userLastName|titlecase}}</span>
+                    </mat-list-item>
+
+                    <mat-list-item *ngIf="transaction?.contactFirstName!=null||0">
+                        <div class="fw-600">
+                            <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                [src]="transaction?.contactProfile ? transaction.contactProfile:'assets/avatar.svg'"
+                                onError="this.src='assets/avatar.svg'"><span>{{'Contact'|translate}} :</span>
+                        </div>
+                        <span class="ml-3 fw-600 color_grey">
+                            {{transaction.contactFirstName|titlecase}} {{transaction.contactLastName|titlecase}}</span>
+                    </mat-list-item>
+
+                    <mat-list-item *ngIf="transaction?.siteName!=null||0">
+                        <div class="fw-600">
+                            <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                        </div>
+                        <span class="ml-3 fw-600 color_grey">
+                            {{transaction.siteName|titlecase}}</span>
+                    </mat-list-item>
+
+                    <mat-list-item *ngIf="transaction?.productName!=null||0">
+                        <div class="fw-600">
+                            <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                [src]="transaction?.productProfile ? transaction.productProfile:'assets/images/iconsForsvg/icon_product.svg '"
+                                onError="this.src='assets/images/iconsForsvg/icon_product.svg'">
+                        </div>
+                        <span class="ml-3 fw-600 color_grey">
+                            {{transaction.productName|titlecase}}</span>
+                    </mat-list-item>
+    <!-- Files -->
+    <mat-list-item>
+        <div class="fw-600">
+            <mat-icon class="vertical-bottom" style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+            {{'Files'}} :
+        </div>
+        <a class="ml-3 fw-600 color_grey m-t-6 pointer"
+            [ngClass]="{'color_grey': transaction?.filesCount > 0,'name_red': transaction.filesCount == 0 }"
+            (click)="findfilesLinked(transaction.filesCount,'Files')">
+            {{transaction.filesCount}} {{transaction.filesCount > 1 ? 'Files' : 'File'}}</a>
+    </mat-list-item>
+    <div class="col-10 p-0   m-b-15" *ngIf="showfile"
+        [ngClass]="{'auto_height': transaction.filesCount > 4,'overflow': transaction.filesCount < 4 }">
+        <div class="row m-l-10  m-t-10 " *ngFor="let file of getfile ; let i = index">
+            <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+            <a style="cursor:pointer;" (click)="gotofiles(file)"
+                class="color_grey m-l-10">{{file.title}}</a>
+        </div>
+    </div>
+
+    <!-- Notes -->
+    <mat-list-item>
+        <div class="fw-600">
+            <mat-icon class="vertical-bottom" style="color:rgb(255,193,111) ;">speaker_notes </mat-icon>
+            {{'Notes'}} :
+        </div>
+        <span class="ml-3 fw-600 color_grey m-t-6 pointer"
+            [ngClass]="{'color_grey': transaction?.notesCount > 0,'name_red': transaction.notesCount == 0 }"
+            (click)="findnotesLinked(transaction.notesCount,'Notes')">{{transaction.notesCount}}
+            {{transaction.notesCount > 1 ? 'Notes' : 'Note'}}</span>
+    </mat-list-item>
+    <div class="col-10 p-0 pointer " *ngIf="shownotes"
+        [ngClass]="{'auto_height': transaction.notesCount > 4,'overflow': transaction.notesCount < 4 }">
+        <div (click)="ShowNote(notes.id)" class="row  m-t-10  m-l-10 fw-600  "
+            *ngFor="let notes of getnotes ; let i = index">
+            <mat-icon style="color:rgb(255,193,111) ;" class=" vertical-bottom">speaker_notes</mat-icon>
+            <span class="m-l-10 color_grey">{{notes.title|titlecase}}</span>
+        </div>
+    </div>
+
+                    <!-- address  -->
+                    <mat-list-item *ngIf="transaction.address!=null">
+                        <div class="fw-600">{{'Address'|translate}}: </div>
+                        <span class="ml-3 fw-600 color_grey">{{transaction.address|titlecase}}</span>
+                    </mat-list-item>
+
+                    <mat-list-item *ngIf="transaction?.quantity!=null||0">
+                        <div class="fw-600">{{'Quantity'|translate}}: </div>
+                        <span class="ml-3 fw-600 color_grey">{{transaction.quantity}} {{transaction.unit}}</span>
+                    </mat-list-item>
+                    <mat-list-item >
+                        <div class="fw-600">{{'Order Id'|translate}}: </div>
+                        <span class="ml-3 fw-600 color_grey"> {{transaction?.orderId}} </span>
+                    </mat-list-item>
+                    <!-- sale type  -->
+                    <ng-container *ngIf="transaction?.transactionTypeName=='Sale'">
+                        <mat-list-item *ngIf="transaction?.unitPrice!=null||0">
+                            <div class="fw-600"> {{'Selling Unit Price'|translate}}: </div>
+                            <span class="ml-3 fw-600 color_grey">
+                                {{transform(transaction.unitPrice)}} {{transaction.currencyName}}
+                            </span>
+                        </mat-list-item> 
+                        <mat-list-item *ngIf="transaction?.marginPrice!=null||0">
+                            <div class="fw-600">{{'Margin'|translate}}: </div>
+                            <span class="ml-3 fw-600 color_grey">
+                                {{transform(transaction.marginPrice)}} {{transaction.currencyName}}
+                                <span style="color: #307edc !important;">
+                                    ({{numberdigimal(transaction.marginPrice/transaction.finalPrice*100)+'%'}})
+                                </span>
+                            </span>
+                        </mat-list-item>               
+                        <mat-list-item *ngIf="transaction?.finalPrice!=null||0">
+                            <div class="fw-600">{{'Final Price'|translate}}: </div>
+                            <span class="ml-3 fw-600 color_grey">
+                                {{transform(transaction.finalPrice)}} {{transaction.currencyName}}
+                            </span>
+                        </mat-list-item>
+                    </ng-container>
+                    <!-- buy type  -->
+                    <ng-container *ngIf="transaction?.transactionTypeName=='Buy'">
+                        <mat-list-item *ngIf="transaction?.unitPrice!=null||0">
+                            <div class="fw-600">{{'Buying Unit Price'|translate}}: </div>
+                            <span class="ml-3 fw-600 color_grey">
+                                {{transform(transaction.unitPrice)}} {{transaction.currencyName}}
+                            </span>
+                        </mat-list-item>
+                        <mat-list-item *ngIf="transaction?.finalPrice!=null||0">
+                            <div class="fw-600">{{'Final Price'|translate}}: </div>
+                            <span class="ml-3 fw-600 color_grey">
+                                {{transform(transaction.finalPrice)}} {{transaction.currencyName}}
+                            </span>
+                        </mat-list-item>
+                    </ng-container>
+
+                    <mat-list-item *ngIf="transaction?.transactionTypeName!=null||0">
+                        <div class="fw-600">{{'Transaction Type'|translate}}: </div>
+                        <span class="ml-3 fw-600 color_grey">
+                            <span matBadgeOverlap="false">{{transaction.transactionTypeName|titlecase}}</span>
+                        </span>
+                    </mat-list-item>
+                    <mat-list-item>
+                        <div class="fw-600">{{'Transaction Status'|translate}}: </div>
+                        <span class="ml-3 fw-600 color_grey">
+                            <span matBadgeOverlap="false">{{transaction.statusName|titlecase}}</span>
+                        </span>
+                    </mat-list-item>
+
+                    <mat-list-item *ngIf="transaction?.transactionDate!=null||0">
+                        <div class="fw-600">{{'Transaction Date'|translate}}: </div>
+                        <span class="ml-3 fw-600 color_grey">{{transaction.transactionDate |
+                            date:'dd-MMM-yyyy'}}</span>
+                    </mat-list-item>
+                    <mat-list-item *ngIf="transaction?.expirationDate!=null||0">
+                        <div class="fw-600">{{'Expiration Date'|translate}}: </div>
+                        <span class="ml-3 fw-600 color_grey">{{transaction.expirationDate
+                            |date:'dd-MMM-yyyy'}}</span>
+                    </mat-list-item>
+                    <!-- 004982  -->
+                    <mat-list-item>
+                        <div class="fw-600">{{'keywords'|translate}} :</div>
+                        <span class="ml-3 fw-600 color_grey">
+                            <span>
+                                <button class="transactionReff">
+                                    <span>{{transaction?.transactionReference|titlecase}}</span>
+                                </button>
+                            </span>
+                            <span *ngFor="let x of transaction?.keywords ;let i=index">
+                                <button class="normalkeyword">
+                                    <span>{{x|titlecase}}</span>
+                                </button>
+                            </span>
+                        </span> 
+                    </mat-list-item>
+                    <ng-container *ngIf="transaction?.tagViewModels.length!=0">
+                        <div class="row m-t-10 m-b-10" *ngFor="let tags of transaction.tagViewModels">
+                            <div id="main" class="fw-600" style="font-size:16px;" *ngIf="tags.fieldValue !== ''">
+                                <div>{{tags.fieldName|titlecase}}: </div>
+                                <div class=" fw-600 color_grey" style="font-size:16px; text-align: center;"
+                                    *ngIf="tags.fieldValue !== ''">
+                                    {{tags.fieldValue|titlecase}}</div>
+                                <div class="fw-600 color_grey" style="font-size:16px; text-align: center;"
+                                    *ngIf="tags.fieldValue !== ''">
+                                    {{tags.dropdownValues|titlecase}}</div>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                </mat-list>
+            </section>
+            <div class="overlay" *ngIf="loader">
+                <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+                </mat-progress-spinner>
+            </div>
+        </mat-dialog-content>
+    </div>
+</ng-container>
+
+
+ 
+
+
+<ng-container *ngIf="screenType=='discounttable'">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+            <mat-icon style="position: relative;right: 10px;"> loyalty</mat-icon>
+            {{'Discount Details'|translate}}
+        </h2>
+        <mat-icon mat-dialog-close>close</mat-icon>
+    </div>
+    <mat-dialog-content class="mr-0 ml-0">
+        <div class="row mt-3">
+            <table class="tableDiscount" style="margin-bottom: 10px;">
+                <thead>
+                    <tr style="height:50px !important;">
+                        <th></th>
+                        <th>{{'Profile'|translate}}</th>
+                        <th>{{'Name'|translate}}</th>
+                        <th>{{'Code'|translate}}</th>
+                        <th>{{'Percentage'|translate}}</th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let x of ListOfDiscount">
+                    <tr  style="height:50px !important;" *ngIf="x.externalDiscountPercentage!=0 ||x.percentage!=0">
+                            <td >
+                                <span *ngIf="x.isPublic ==true &&x.isExternalDiscount ==false">
+                                    <img style="border-radius: 50%;" src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                </span>
+                                <span *ngIf="x.isPrivate ==true&&x.isExternalDiscount ==false">
+                                    <img style="border-radius: 50%;"
+                                        src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                </span>
+                                <span *ngIf="x.isExternalDiscount ==true">
+                                    <img style="border-radius: 50%;"
+                                    src="assets/images/iconsForsvg/discount-icon-yellow.svg">
+                                </span>
+                            </td>
+                            <td >
+                                <mat-icon *ngIf="x.tableName=='Transactions'"> shopping_cart</mat-icon>
+                                <img *ngIf="x.tableName=='Sites'"
+                                    src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                                <img *ngIf="x.tableName=='Products'" class="avatar-profile "
+                                    [src]="x.profile ? x.profile:'assets/images/iconsForsvg/icon_product.svg'"
+                                    onError="this.src='assets/images/iconsForsvg/icon_product.svg'">
+                                <img *ngIf="x.tableName=='Contacts'" class="avatar-profile "
+                                    [src]="x?.profile ? x.profile:'assets/avatar.svg'"
+                                    onError="this.src='assets/avatar.svg'">
+                            </td>
+                            <td  style="white-space:normal !important;">
+                                {{x?.entityName? x?.entityName:'Manully Added' }}
+                            </td>
+                            <td >{{x.discountName|titlecase}}</td>
+                            <td > 
+                                <span *ngIf="x.isExternalDiscount==true">{{x.externalDiscountPercentage| number:'1.2-2'}}{{'%'}}</span>
+                                <span *ngIf="x.isExternalDiscount==false">{{x.percentage| number:'1.2-2'}}{{'%'}}</span>
+                            </td>                       
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="overlay" *ngIf="loader">
+            <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+            </mat-progress-spinner>
+        </div> 
+    </mat-dialog-content>
+</ng-container>
+
+
+
+
+
+
+
+
+
+

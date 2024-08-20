@@ -1,0 +1,18 @@
+@font-face {
+    font-family: 'Adelle Sans EXT';
+    src: url('AdelleSansEXT-Bold.woff2') format('woff2'),
+        url('AdelleSansEXT-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Adelle Sans EXT';
+    src: url('AdelleSansEXT-Regular.woff2') format('woff2'),
+        url('AdelleSansEXT-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

@@ -1,0 +1,54 @@
+<div id="calender" class="mb-4">
+    <div class="row justify-content-center">
+        <div class="col-6 col-sm-6  col-md-2 col-lg-2 col-xl-2      mt-10 calender-nav text-sm-center text-md-left text-lg-left text-xl-left">
+            <mat-button-toggle-group #group="matButtonToggleGroup" *ngIf="alldata !== '2'">
+                <mat-button-toggle value="center" aria-label="" mwlCalendarPreviousView [view]="view"
+                    [(viewDate)]="viewDate" (viewDateChange)="calDayChanged(viewDate)">
+                    <mat-icon [disabled]="alldata == 2">keyboard_arrow_left</mat-icon>
+                </mat-button-toggle>
+                <mat-button-toggle value="center" aria-label="" mwlCalendarNextView [view]="view"
+                    [(viewDate)]="viewDate" (viewDateChange)="calDayChanged(viewDate)">
+                    <mat-icon>keyboard_arrow_right</mat-icon>
+                </mat-button-toggle>
+                <mat-button-toggle value="center" aria-label="" mwlCalendarToday [(viewDate)]="viewDate"
+                    (viewDateChange)="calDayChanged(viewDate)">
+                    <span class="ion-ios-today fw-600"> {{'TODAY'|translate}}</span>
+                </mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+        <div class="col-6 col-sm-6  col-md-6 col-lg-6 col-xl-6   text-center fw-600">
+            <span *ngIf="alldata !== '2'"> {{ viewDate |  date:'MMM-yyyy' }}  </span>
+            <button *ngIf="checkFilter()" mat-raised-button (click)="removeFilter()" class="float_right btn_color">
+                {{'Remove Filters'|translate}}</button>
+        </div>
+        <div class="col-12 col-sm-12  col-md-4 col-lg-4 col-xl-4  no-padding calender-btn pl-0 pr-0" style="display: flex;justify-content: center;">
+            <section class="">
+                <div class="calender-button-row">
+                    <ng-container *ngIf="screen">
+                        <button mat-raised-button (click)="calViewChanged(CalendarView.Month)"
+                            [ngClass]="(alldata !== '2') ? 'active' : 'inactive'"
+                            [ngClass]="(view === CalendarView.Month) ? 'active' : 'inactive'" [disabled]="alldata == 2"> {{'Month'|translate}}</button>
+                    </ng-container>
+                    <button mat-raised-button (click)="calViewChanged(CalendarView.Week)"
+                        [ngClass]="(view === CalendarView.Week) ? 'active' : 'inactive'" [disabled]="alldata == 2">{{'Week'|translate}}</button>
+                    <button mat-raised-button color="warn" (click)="calViewChanged(CalendarView.Day)"
+                        [ngClass]="(view === CalendarView.Day) ? 'active' : 'inactive'" [disabled]="alldata == 2">{{'Day'|translate}}</button>
+                    <ng-container *ngIf="screen">
+                    <button mat-icon-button [matMenuTriggerFor]="moreMenu" (click)="calendarFilter()">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    </ng-container>
+                </div>
+
+                <mat-menu #moreMenu="matMenu">
+                    <ng-template matMenuContent>
+                        <pm-calendar-more [dateformat]="firstdayformat" [lastdateformat]="lastdayformat"
+                            [carte]="isCarte" [OtherpeplePlanning]="OtherpeplePlanningStatus"
+                            [Otherpeplemap]="OtherpeplemapStatus">
+                        </pm-calendar-more>
+                    </ng-template>
+                </mat-menu>
+            </section>
+        </div>
+    </div>
+</div>

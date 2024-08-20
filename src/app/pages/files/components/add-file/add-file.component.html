@@ -1,0 +1,361 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;"> insert_drive_file</mat-icon>
+        <span *ngIf="Updatebutton==false">{{"Add File"|translate}} </span><span *ngIf="Updatebutton==true"> {{"Update File"|translate}}</span>
+    </h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+
+<mat-dialog-content class="mr-0 ml-0">
+    <form [formGroup]="fileForm">
+        <div class="row" formArrayName="fileBody">
+            <!-- conditionsBodyGroup  -->
+            <div class="row  Conditionsbody " *ngFor="let conditionsBodyGroup of getfileBody().controls; let i=index"
+                [formGroupName]="i">
+                <!-- Title  -->
+                <div class="row">
+                    <div class="col-12">
+                        <mat-form-field class="w-100">
+                            <mat-label>{{"Title"|translate}}</mat-label>
+                            <input matInput formControlName="title">
+                        </mat-form-field>
+                    </div>
+                    <div *ngIf="i!=0" class="col-2">
+                        <mat-icon (click)="removeConditionalBody(i)">delete</mat-icon>
+                    </div>
+                </div>
+                <div class="row ">
+                    <div class="col-12"> 
+                        <mat-form-field class="example-chip-list" style="width: 100% !important;">
+                            <mat-label>{{"keyword"|translate}}</mat-label><br>
+                            <mat-chip-list #chipGridforkeyword aria-label="Fruit selection" class="keywordlist">
+                                <mat-chip-row class="keywordrow" *ngFor="let keyword of keywordlist">
+                                    <button class="keywordbutton">
+                                        <span class="keywordpostion">{{keyword|titlecase}}</span>
+                                        <mat-icon class="keywordcancelicon" (click)="remove(keyword)">cancel</mat-icon>
+                                    </button>
+                                </mat-chip-row>
+                            </mat-chip-list>
+                            <input [matChipInputFor]="chipGridforkeyword"
+                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                (matChipInputTokenEnd)="add($event)" />
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                <mat-form-field class="w-100" >
+                    <mat-label><mat-icon>date_range</mat-icon> Choose a file *</mat-label>
+                    <mat-select formControlName="SelectMediaType" [(ngModel)]="SeletedMedia">
+                        <mat-option [value]="1" ><img class="drowdownimage"
+                                src="../../../assets/images/iconsForsvg/gui-folder-open-svgrepo-com.svg">
+                            <b>Local file</b></mat-option>
+                        <mat-option [value]="2" (click)="checkgoogleouthAccessToken(i,'GoogleDrive')"><img class="drowdownimage"
+                                src="../../../assets/images/iconsForsvg/google-drive-svgrepo-com.svg">
+                            <b>Google Drive</b></mat-option>
+                        <mat-option [value]="3" (click)="checkgoogleouthAccessToken(i,'Onedrive')"><img class="drowdownimage"
+                                src="../../../assets/images/iconsForsvg/ms-onedrive-svgrepo-com.svg">
+                            <b>Onedrive </b></mat-option>
+                        <mat-option [value]="4"><img class="drowdownimage"
+                                src="../../../assets/images/iconsForsvg/dropbox-color-svgrepo-com.svg">
+                            <b>Dropbox</b></mat-option>
+                    </mat-select>
+                </mat-form-field>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-3">
+                        <mat-checkbox formControlName="isPrivate">{{"Private?"|translate}}</mat-checkbox>
+                    </div>
+                    <div class="col-9">
+                        <div class="row">
+                            <div class="col-4 p0">
+                                <input *ngIf="SeletedMedia==1" type="file" style="color: transparent;" (change)="onSelect($event, i)"
+                                    formControlName="uploadfile">
+                            </div>
+                            <div class="col-8 p0">
+                                <span>{{FileName[i]}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ng-container *ngIf="AttachmentSelect">
+                    <div formArrayName="conditions" style="width: 100%;">
+                        <div class="row " *ngFor="let c of getConditionsFormArray(i).controls; let j = index"
+                            [formGroupName]="j">
+                            <ng-container *ngIf="j==0">
+                                <div class="row">
+                                    <div class="col-2">
+                                        <mat-icon (click)="addCondition(i)">add_box</mat-icon>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <div class="row justify-content-center w-100">
+                                <div class="col-10">
+                                    <mat-form-field appearance="fill" class="w-100" style="width:100% !important;">
+                                        <mat-label>{{"Select Entity"|translate}}</mat-label>
+                                        <mat-select formControlName="attachmentLevel" >
+                                            <mat-option [value]="type" *ngFor="let type of managementType">
+                                                {{type|translate}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-2">
+                                    <mat-icon *ngIf="j!=0" (click)="removeConditiona(i,j)">delete</mat-icon>
+                                </div>
+                            </div>
+                            <ng-container *ngIf="getvaluoption(i,j)=='Users'">
+                                <div class="col-11 p1">
+                                    <div class="row justify-content-end">
+                                        <div class="col-10">
+                                            <!-- selectid  -->
+                                            <mat-form-field appearance="fill" class="w-100">
+                                                <mat-label>{{"Users"|translate}}</mat-label>
+                                                <mat-select  multiple formControlName="selectid">
+                                                    <mat-select-filter [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'" [array]="filterforuserlist"
+                                                        (filteredReturn)="filterforuserlist=$event"></mat-select-filter>
+                                                    <mat-option [value]="user.id"
+                                                        *ngFor="let user of filterforuserlist">
+                                                        <img style="border-radius: 50%; margin-right: 6px;" width="30"
+                                                            height="30"
+                                                            [src]="user?.profilePicture ? user.profilePicture:'assets/avatar.svg'"
+                                                            onError="this.src='assets/avatar.svg'">
+                                                        {{user.firstName|titlecase}} {{user.lastName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <!-- select Group  -->
+                                            <mat-form-field appearance="fill" class="w-100">
+                                                <mat-label>{{"User Groups"|translate}}</mat-label>
+                                                <mat-select  multiple formControlName="selectGroup">
+                                                    <mat-select-filter [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'" [array]="filterforuserGrouplist"
+                                                        (filteredReturn)="filterforuserGrouplist =$event"></mat-select-filter>
+                                                    <mat-option [value]="user.id"
+                                                        *ngFor="let user of filterforuserGrouplist">
+                                                        <span *ngIf="user.dynamicGroupId ==null">
+                                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                        </span>
+                                                        <span *ngIf="user.dynamicGroupId !=null">
+                                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                        </span>
+                                                        {{user.groupName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="getvaluoption(i,j)=='Contacts'">
+                                <div class="col-11 p1">
+                                    <div class="row justify-content-end">
+                                        <div class="col-10">
+                                            <!-- selectid  -->
+                                            <mat-form-field appearance="fill" class="w-100">
+                                                <mat-label>{{"Contacts"|translate}}</mat-label>
+                                                <mat-select  multiple formControlName="selectid">
+                                                    <mat-select-filter [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'" [array]="filterforcontactlist"
+                                                        (filteredReturn)="filterforcontactlist=$event"></mat-select-filter>
+                                                    <mat-option [value]="user.id"
+                                                        *ngFor="let user of filterforcontactlist">
+                                                        <img style="border-radius: 50%; margin-right: 6px;" width="30"
+                                                            height="30"
+                                                            [src]="user?.profilePicture ? user.profilePicture:'assets/avatar.svg'"
+                                                            onError="this.src='assets/avatar.svg'">
+                                                        {{user.firstName|titlecase}} {{user.lastName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <!-- select Group  -->
+                                            <mat-form-field appearance="fill" class="w-100">
+                                                <mat-label>{{"Contact Groups"|translate}}</mat-label>
+                                                <mat-select  multiple formControlName="selectGroup">
+                                                    <mat-select-filter [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'"
+                                                        [array]="filterforcontactGrouplist"
+                                                        (filteredReturn)="filterforcontactGrouplist =$event"></mat-select-filter>
+                                                    <mat-option [value]="user.id"
+                                                        *ngFor="let user of filterforcontactGrouplist">
+                                                        <span *ngIf="user.dynamicGroupId ==null">
+                                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                        </span>
+                                                        <span *ngIf="user.dynamicGroupId !=null">
+                                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                        </span>
+                                                        {{user.groupName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="getvaluoption(i,j)=='Sites'">
+                                <div class="col-11 p1">
+                                    <div class="row justify-content-end">
+                                        <div class="col-10">
+                                            <!-- selectid  -->
+                                            <mat-form-field appearance="fill" class="w-100">
+                                                <mat-label>{{"Sites"|translate}}</mat-label>
+                                                <mat-select  multiple formControlName="selectid">
+                                                    <mat-select-filter [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'" [array]="filterforsiteslist"
+                                                        (filteredReturn)="filterforsiteslist=$event"></mat-select-filter>
+                                                    <mat-option [value]="site.id"
+                                                        *ngFor="let site of filterforsiteslist">
+                                                        <span>
+                                                            <img
+                                                                src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                                                        </span>
+                                                        {{site.companyName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <!-- select site Group  -->
+                                            <mat-form-field appearance="fill" class="w-100">
+                                                <mat-label>{{"Site Groups"|translate}}</mat-label>
+                                                <mat-select  multiple formControlName="selectGroup">
+                                                    <mat-select-filter [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'" [array]="filterforsiteGrouplist"
+                                                        (filteredReturn)="filterforsiteGrouplist =$event"></mat-select-filter>
+                                                    <mat-option [value]="site.id"
+                                                        *ngFor="let site of filterforsiteGrouplist">
+                                                        <span *ngIf="site.dynamicGroupId ==null">
+                                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                        </span>
+                                                        <span *ngIf="site.dynamicGroupId !=null">
+                                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                        </span>
+                                                        {{site.groupName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="getvaluoption(i,j)=='Products'">
+                                <div class="col-11 p1">
+                                    <div class="row justify-content-end">
+                                        <div class="col-10">
+                                            <!-- selectid  -->
+                                            <mat-form-field appearance="fill" class="w-100">
+                                                <mat-label>{{"Products"|translate}}</mat-label>
+                                                <mat-select  multiple formControlName="selectid">
+                                                    <mat-select-filter [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'" [array]="filterforProsuctlist"
+                                                        (filteredReturn)="filterforProsuctlist=$event"></mat-select-filter>
+                                                    <mat-option [value]="Product.id"
+                                                        *ngFor="let Product of filterforProsuctlist">
+                                                        <img style="border-radius: 50%; margin-right: 6px;" width="30"
+                                                            height="30"
+                                                            [src]="Product?.profilePicture ? Product.profilePicture:'assets/images/iconsForsvg/icon_product.svg '"
+                                                            onError="this.src='assets/images/iconsForsvg/icon_product.svg'">
+                                                        {{Product.productName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                            <!-- select Group  -->
+                                            <mat-form-field appearance="fill" class="w-100">
+                                                <mat-label>{{"Product Groups"|translate}}</mat-label>
+                                                <mat-select  multiple formControlName="selectGroup">
+                                                    <mat-select-filter [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'"
+                                                        [array]="filterforProsucGrouptlist"
+                                                        (filteredReturn)="filterforProsucGrouptlist =$event"></mat-select-filter>
+                                                    <mat-option [value]="Product.id"
+                                                        *ngFor="let Product of filterforProsucGrouptlist">
+                                                        <span *ngIf="Product.dynamicGroupId ==null">
+                                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                        </span>
+                                                        <span *ngIf="Product.dynamicGroupId !=null">
+                                                            <img style="border-radius: 50%;" width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                        </span>
+                                                        {{Product.groupName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="getvaluoption(i,j)=='Orders'">
+                                <div class="col-11 p1">
+                                    <div class="row justify-content-end">
+                                        <div class="col-10">
+                                            <!-- selectid  -->
+                                            <mat-form-field appearance="fill" class="w-100">
+                                                <mat-label>{{"Orders"|translate}}</mat-label>
+                                                <mat-select  multiple formControlName="selectid">
+                                                    <mat-select-filter [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'" [array]="filterfororderlist"
+                                                        (filteredReturn)="filterfororderlist=$event"></mat-select-filter>
+                                                    <mat-option [value]="order.id"
+                                                        *ngFor="let order of filterfororderlist">
+                                                        {{order.orderId}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="getvaluoption(i,j)=='Events'">
+                                <div class="col-11 p1">
+                                    <div class="row justify-content-end">
+                                        <div class="col-10">
+                                            <!-- selectid  -->
+                                            <mat-form-field appearance="fill" class="w-100">
+                                                <mat-label> {{"Events"|translate}}</mat-label>
+                                                <mat-select  multiple formControlName="selectid">
+                                                    <mat-select-filter [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'" [array]="filterforeventslist"
+                                                        (filteredReturn)="filterforeventslist=$event"></mat-select-filter>
+                                                    <mat-option [value]="Event.id"
+                                                        *ngFor="let Event of filterforeventslist">
+                                                        {{Event.title|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+
+                    </div>
+                    <!-- <mat-icon (click)="removeConditionalBody(i)">delete</mat-icon> -->
+                </ng-container>
+
+            </div>
+
+        </div>
+
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions class="p-3 m-b-15">
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <button mat-raised-button *ngIf="addNewFileButton" (click)="addConditionalBody()" class="b-blue">
+                {{"New File"|translate}}</button>
+        </div>
+        <div class="col-4">
+            <button mat-raised-button mat-dialog-close  class="W-blue" >{{"Cancel"|translate}}</button>
+        </div>
+        <div class="col-4">
+            <button mat-raised-button *ngIf="!Updatebutton" (click)="CreateFile()" class="b-blue">{{"Apply"|translate}}</button>
+            <button mat-raised-button *ngIf="Updatebutton" (click)="UpdateFile()" class="b-blue">{{"Update"|translate}}</button>
+
+        </div>
+    </div>
+</mat-dialog-actions>

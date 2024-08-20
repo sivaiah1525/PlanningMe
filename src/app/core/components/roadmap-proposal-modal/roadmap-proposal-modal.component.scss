@@ -1,0 +1,12 @@
+ion-radio-group {
+  display: inherit;
+
+  ion-radio {
+    margin-right: 10px !important;
+  }
+}
+
+ion-item {
+  --padding-start: 0px !important;
+  --background-focused: transparent;
+}

@@ -1,0 +1,1741 @@
+<div class="d-flex justify-content-between align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;"> bar_chart</mat-icon>
+        {{"Activity Reports"|translate}}
+    </h2>
+    <mat-icon matDialogClose>close</mat-icon>
+</div>
+<mat-dialog-content class="mr-0 ml-0">
+        <mat-tab-group [selectedIndex]="selectedIndex" (selectedTabChange)="radioChange($event.index);">
+            <!-- 000000000000  -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <span>{{"Chart"|translate}}</span>
+                </ng-template>
+                <form [formGroup]="graphFilterForm" (ngSubmit)="onSubmit()">
+                <div>
+                    <!-- -------------------  -->
+                    <div class="row">
+                        <mat-radio-group aria-label="Select an option"
+                            (change)="eventChange($event)" 
+                            formControlName="eventorTransaction" class="chart-ui">
+                            <mat-radio-button value="1">{{"Transactions"|translate}}</mat-radio-button>
+                            <mat-radio-button value="2">{{"Events"|translate}}</mat-radio-button>
+                            <!-- <mat-radio-button value="3">Target</mat-radio-button> -->
+                        </mat-radio-group>
+                    </div>
+                    <!-- ---------------------  -->
+                    <div class="row">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Choose type of chart</mat-label>
+                            <mat-select formControlName="chartTypeId"
+                                floatPlaceholder="never"
+                                (selectionChange)="onChartChanged($event)">
+                                <mat-option [value]="chart"
+                                    *ngFor="let chart of chartTypes">{{chart}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error
+                                *ngIf="graphFilterForm.controls['chartTypeId'].hasError('required')">
+                                chart is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <!-- -----------------  -->
+                    <div class="row">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <input matInput style="color: black;"
+                                placeholder="Report title" formControlName="graphTitle">
+                        </mat-form-field>
+                    </div>
+                    <!-- ----------------  -->
+                    <div class="row">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <input matInput style="color: black;"
+                                placeholder="Description" formControlName="description">
+                        </mat-form-field>
+                    </div>
+                    <!-- Activity Content  -->
+                    <ng-container *ngIf="ActivityContent==true">
+                        <div class="row p-0">
+                            <mat-form-field appearance="fill" class="w-100 p-0 blue_bg">
+                                <mat-label>Activity Content</mat-label>
+                                <mat-select formControlName="managementTypeId"
+                                    (selectionChange)="onChanged($event.value)">
+                                    <mat-option *ngFor="let type of managementType"
+                                        [value]="type.name">
+                                        {{type.name|titlecase}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+        
+                        <!-- Users filter -->
+                        <ng-container *ngIf="selectedMgmt === 'Users'">
+                            <div class="row justify-content-end">
+                                <div class="col-12">
+                                    <mat-tab-group class="w-100">
+                                        <mat-tab label="Users">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Users</mat-label>
+                                                <mat-select placeholder="Users" multiple
+                                                    formControlName="eventGraphId"
+                                                    (selectionChange)="selectMgmtChange($event, 'user')">
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'"
+                                                        [array]="users$"
+                                                        (filteredReturn)="filteredList1 =$event"></mat-select-filter>
+                                                    <mat-option [value]="user.id"
+                                                        *ngFor="let user of filteredList1  ">
+                                                        <span> <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                onError="this.src='assets/avatar.svg'"
+                                                                [src]="user.profilePicture!= null ? user.profilePicture : 'assets/avatar.svg'"></span>
+                                                        <span>
+                                                            {{user.firstName|titlecase}}
+                                                            {{user.lastName|titlecase}}</span>
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                        <mat-tab label="Add group member into user">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Groups</mat-label>
+                                                <mat-select multiple>
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'groupName'"
+                                                        [array]="userGroups$"
+                                                        (filteredReturn)="filteredList4 =$event"></mat-select-filter>
+                                                    <mat-option [value]="userGroup.id"
+                                                        *ngFor="let userGroup of filteredList4"
+                                                        (click)="GroupToSingleconvert(userGroup,'ActivityContent','Users')">
+                                                        <span
+                                                            *ngIf="userGroup.dynamicGroupId ==null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                        </span>
+                                                        <span
+                                                            *ngIf="userGroup.dynamicGroupId !=null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                        </span>
+                                                        {{userGroup.groupName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                    </mat-tab-group>
+                                </div>
+                                <div class="col-12">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>User Groups</mat-label>
+                                        <mat-select multiple
+                                            formControlName="eventGraphGroupId"
+                                            (selectionChange)="selectMgmtGroupChange($event, 'user')">
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="userGroups$"
+                                                (filteredReturn)="filteredList4 =$event"></mat-select-filter>
+                                            <mat-option [value]="userGroup.id"
+                                                *ngFor="let userGroup of filteredList4 ">
+                                                <span
+                                                    *ngIf="userGroup.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="userGroup.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{userGroup.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <!-- sites  -->
+                        <ng-container *ngIf="selectedMgmt === 'Sites'">
+                            <div class="row justify-content-end">
+                                <div class="col-12">
+                                    <mat-tab-group class="w-100">
+                                        <mat-tab label="Sites">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Sites</mat-label>
+                                                <mat-select
+                                                    formControlName="eventGraphId"
+                                                    (selectionChange)="selectMgmtChange($event, 'sites')"
+                                                    multiple>
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'companyName'"
+                                                        [array]="sites$"
+                                                        (filteredReturn)="filteredList3 =$event"></mat-select-filter>
+                                                    <mat-option [value]="site.id"
+                                                        *ngFor="let site of filteredList3 ">
+                                                        <span>
+                                                            <img
+                                                                src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                                                        </span>
+                                                        {{site.companyName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                        <mat-tab label="Add group member into Site">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Groups</mat-label>
+                                                <mat-select multiple>
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'groupName'"
+                                                        [array]="siteGroups$"
+                                                        (filteredReturn)="filteredList6 =$event"></mat-select-filter>
+                                                    <mat-option [value]="siteGroup.id"
+                                                        *ngFor="let siteGroup of filteredList6 "
+                                                        (click)="GroupToSingleconvert(siteGroup,'ActivityContent','Sites')">
+                                                        <span
+                                                            *ngIf="siteGroup.dynamicGroupId ==null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                        </span>
+                                                        <span
+                                                            *ngIf="siteGroup.dynamicGroupId !=null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                        </span>
+                                                        {{siteGroup.groupName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                    </mat-tab-group>
+        
+                                </div>
+                                <div class="col-12">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Site Groups</mat-label>
+                                        <mat-select formControlName="eventGraphGroupId"
+                                            (selectionChange)="selectMgmtGroupChange($event,'sites')"
+                                            multiple>
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="siteGroups$"
+                                                (filteredReturn)="filteredList6 =$event"></mat-select-filter>
+                                            <mat-option [value]="siteGroup.id"
+                                                *ngFor="let siteGroup of filteredList6 ">
+                                                <span
+                                                    *ngIf="siteGroup.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="siteGroup.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{siteGroup.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <!-- Contacts  -->
+                        <ng-container *ngIf="selectedMgmt === 'Contacts'">
+                            <div class="row justify-content-end">
+                                <div class="col-12">
+                                    <mat-tab-group class="w-100">
+                                        <mat-tab label="Contacts">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Contacts</mat-label>
+                                                <mat-select placeholder="Contact"
+                                                    multiple
+                                                    (selectionChange)="selectMgmtChange($event,'contacts')"
+                                                    formControlName="eventGraphId">
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'"
+                                                        [array]="contacts$"
+                                                        (filteredReturn)="filteredList2 =$event"></mat-select-filter>
+                                                    <mat-option [value]="contact.id"
+                                                        *ngFor="let contact of filteredList2 ">
+                                                        <img style="border-radius: 50%;"
+                                                            width="30" height="30"
+                                                            onError="this.src='assets/avatar.svg'"
+                                                            [src]="contact.profilePicture!= null ? contact.profilePicture : 'assets/avatar.svg'">
+                                                        {{contact.firstName|titlecase}}
+                                                        {{contact.lastName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                        <mat-tab label="Add group member into Contact">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Groups</mat-label>
+                                                <mat-select multiple>
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'groupName'"
+                                                        [array]="contactGroups$"
+                                                        (filteredReturn)="filteredList5 =$event">
+                                                    </mat-select-filter>
+                                                    <mat-option
+                                                        [value]="contactGroup.id"
+                                                        *ngFor="let contactGroup of filteredList5 "
+                                                        (click)="GroupToSingleconvert(contactGroup,'ActivityContent','Contacts')">
+                                                        <span
+                                                            *ngIf="contactGroup.dynamicGroupId ==null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                        </span>
+                                                        <span
+                                                            *ngIf="contactGroup.dynamicGroupId !=null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                        </span>
+                                                        {{contactGroup.groupName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                    </mat-tab-group>
+                                </div>
+                                <div class="col-12">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Contact Groups</mat-label>
+                                        <mat-select formControlName="eventGraphGroupId"
+                                            (selectionChange)="selectMgmtGroupChange($event,'contacts')"
+                                            multiple>
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="contactGroups$"
+                                                (filteredReturn)="filteredList5 =$event">
+                                            </mat-select-filter>
+                                            <mat-option [value]="contactGroup.id"
+                                                *ngFor="let contactGroup of filteredList5 ">
+                                                <span
+                                                    *ngIf="contactGroup.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="contactGroup.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{contactGroup.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="selectedMgmt === 'Products'">
+                            <div class="row justify-content-end">
+                                <div class="col-12">
+                                    <mat-tab-group class="w-100">
+                                        <mat-tab label="Products">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Products</mat-label>
+                                                <mat-select multiple
+                                                    formControlName="eventGraphId"
+                                                    (selectionChange)="selectMgmtChange($event,'products')">
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'productName'"
+                                                        [array]="products$"
+                                                        (filteredReturn)="filteredList7 =$event"></mat-select-filter>
+                                                    <mat-option [value]="product.id"
+                                                        *ngFor="let product of filteredList7 ">
+                                                        <img
+                                                            style="border-radius: 50%; margin-right: 6px;"
+                                                            width="30"
+                                                            height="30"
+                                                            [src]="Product?.profilePicture ? Product.profilePicture:'assets/images/iconsForsvg/icon_product.svg '"
+                                                            onError="this.src='assets/images/iconsForsvg/icon_product.svg '">
+                                                        {{product.productName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                        <mat-tab label="Add group member into Product">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Groups</mat-label>
+                                                <mat-select multiple>
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'groupName'"
+                                                        [array]="productGroups$"
+                                                        (filteredReturn)="filteredList8 =$event"></mat-select-filter>
+                                                    <mat-option [value]="product.id"
+                                                        *ngFor="let product of filteredList8 "
+                                                        (click)="GroupToSingleconvert(product,'ActivityContent','Products')">
+                                                        <span
+                                                            *ngIf="product.dynamicGroupId ==null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                        </span>
+                                                        <span
+                                                            *ngIf="product.dynamicGroupId !=null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                        </span>
+                                                        {{product.groupName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                    </mat-tab-group>
+                                </div>
+                                <div class="col-12">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Product Groups</mat-label>
+                                        <mat-select multiple
+                                            formControlName="eventGraphGroupId"
+                                            (selectionChange)="selectMgmtGroupChange($event,'products')">
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="productGroups$"
+                                                (filteredReturn)="filteredList8 =$event"></mat-select-filter>
+                                            <mat-option [value]="product.id"
+                                                *ngFor="let product of filteredList8 ">
+                                                <span
+                                                    *ngIf="product.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="product.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{product.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <!-- Activity Detail  -->
+                    <ng-container *ngIf="ActivityDetail==true">
+                        <div class="row">
+                            <mat-form-field appearance="fill" class="w-100 blue_bg">
+                                <mat-label>Activity Detail</mat-label>
+                                <mat-select formControlName="eventGraph"
+                                    (selectionChange)="onEventChanged($event)">
+                                    <mat-option *ngFor="let type of eventSearchType"
+                                        [value]="type.name">
+                                        {{type.name|titlecase}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <ng-container *ngIf="selectedEventSearch === 'Users'">
+                            <div class="row justify-content-end">
+                                <div class="col-10">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Users</mat-label>
+                                        <mat-select placeholder="Users" multiple
+                                            id="UserId"
+                                            formControlName="detaileventGraphId"
+                                            (selectionChange)="optionalSearch($event)">
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'firstName'"
+                                                [array]="users$"
+                                                (filteredReturn)="filteredList1 =$event"></mat-select-filter>
+                                            <mat-option [value]="user.id"
+                                                *ngFor="let user of filteredList1 ">
+                                                <img style="border-radius: 50%;"
+                                                    width="30" height="30"
+                                                    onError="this.src='assets/avatar.svg'"
+                                                    [src]="user.profilePicture!= null ? user.profilePicture : 'assets/avatar.svg'">
+                                                {{user.firstName|titlecase}}
+                                                {{user.lastName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>User Group Name</mat-label>
+                                        <mat-select id="groupName" multiple
+                                            (selectionChange)="optionalGroupSearch($event)"
+                                            formControlName="detaileventGraphGroupId">
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="userGroups$"
+                                                (filteredReturn)="filteredList4 =$event"></mat-select-filter>
+                                            <mat-option [value]="userGroup.id"
+                                                *ngFor="let userGroup of filteredList4 ">
+                                                <span
+                                                    *ngIf="userGroup.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="userGroup.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{userGroup.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <!-- Sites filter  -->
+                        <ng-container *ngIf="selectedEventSearch === 'Sites'">
+                            <div class="row justify-content-end">
+                                <div class="col-10">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Sites</mat-label>
+                                        <mat-select placeholder="Sites" id="SiteId"
+                                            formControlName="detaileventGraphId"
+                                            (selectionChange)="optionalSearch($event)"
+                                            multiple>
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'companyName'"
+                                                [array]="sites$"
+                                                (filteredReturn)="filteredList3 =$event"></mat-select-filter>
+                                            <mat-option [value]="site.id"
+                                                *ngFor="let site of filteredList3 ">
+                                                <span>
+                                                    <img
+                                                        src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                                                </span>
+                                                {{site.companyName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Site Group Name</mat-label>
+                                        <mat-select id="groupName"
+                                            formControlName="detaileventGraphGroupId"
+                                            (selectionChange)="optionalGroupSearch($event)"
+                                            multiple>
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="siteGroups$"
+                                                (filteredReturn)="filteredList6 =$event"></mat-select-filter>
+                                            <mat-option [value]="siteGroup.id"
+                                                *ngFor="let siteGroup of filteredList6 ">
+                                                <span
+                                                    *ngIf="siteGroup.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="siteGroup.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{siteGroup.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <!-- Contacts filter  -->
+                        <ng-container *ngIf="selectedEventSearch === 'Contacts'">
+                            <div class="row justify-content-end">
+                                <div class="col-10">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Contact</mat-label>
+                                        <mat-select placeholder="Contact" multiple
+                                            id="ContactId"
+                                            formControlName="detaileventGraphId"
+                                            (selectionChange)="optionalSearch($event)">
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'firstName'"
+                                                [array]="contacts$"
+                                                (filteredReturn)="filteredList2 =$event"></mat-select-filter>
+                                            <mat-option [value]="contact.id"
+                                                *ngFor="let contact of filteredList2 ">
+                                                <img style="border-radius: 50%;"
+                                                    width="30" height="30"
+                                                    onError="this.src='assets/avatar.svg'"
+                                                    [src]="contact.profilePicture!= null ? contact.profilePicture : 'assets/avatar.svg'">
+                                                {{contact.firstName|titlecase}}
+                                                {{contact.lastName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Contact Group Name</mat-label>
+                                        <mat-select id="groupName"
+                                            formControlName="detaileventGraphGroupId"
+                                            (selectionChange)="optionalGroupSearch($event)"
+                                            multiple>
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="contactGroups$"
+                                                (filteredReturn)="filteredList5 =$event">
+                                            </mat-select-filter>
+                                            <mat-option [value]="contactGroup.id"
+                                                *ngFor="let contactGroup of filteredList5 ">
+                                                <span
+                                                    *ngIf="contactGroup.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="contactGroup.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{contactGroup.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <!-- Products filter  -->
+                        <ng-container *ngIf="selectedEventSearch === 'Products'">
+                            <div class="row justify-content-end">
+                                <div class="col-10">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Product Name</mat-label>
+                                        <mat-select id="ProductName" multiple
+                                            formControlName="detaileventGraphId"
+                                            (selectionChange)="optionalSearch($event)"> 
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'productName'"
+                                                [array]="products$"
+                                                (filteredReturn)="filteredList7 =$event"></mat-select-filter>
+                                            <mat-option [value]="product.id"
+                                                *ngFor="let product of filteredList7 ">
+                                                <img
+                                                    style="border-radius: 50%; margin-right: 6px;"
+                                                    width="30" height="30"
+                                                    [src]="Product?.profilePicture ? Product.profilePicture:'assets/images/iconsForsvg/icon_product.svg '"
+                                                    onError="this.src='assets/images/iconsForsvg/icon_product.svg '">
+                                                {{product.productName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Product Group Name</mat-label>
+                                        <mat-select id="ProductName" multiple
+                                            formControlName="detaileventGraphGroupId"
+                                            (selectionChange)="optionalGroupSearch($event)">
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="productGroups$"
+                                                (filteredReturn)="filteredList8 =$event">
+                                            </mat-select-filter>
+                                            <mat-option [value]="product.id"
+                                                *ngFor="let product of filteredList8 ">
+                                                <span
+                                                    *ngIf="product.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="product.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{product.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+        
+                    <!-- Transation Type  -->
+                    <div class="row">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>{{"Transation Type"|translate}}</mat-label>
+                            <mat-select formControlName="StatusOfTransaction" (selectionChange)="seletectdtransationstatus($event)">
+                                <mat-option value="0">{{"Pending"|translate}}</mat-option>
+                                <mat-option value="1">{{"Validated"|translate}}</mat-option>
+                                <!-- <mat-option [value]="2">Cancelled</mat-option> -->
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+        
+                    <div class="row">
+                        <mat-form-field class="example-chip-list" style="width: 100% !important;">
+                            <mat-label>{{"keyword"|translate}}</mat-label><br>
+                            <mat-chip-list #chipGridforkeyword aria-label="Fruit selection" class="keywordlist">
+                                <mat-chip-row class="keywordrow" *ngFor="let keyword of keywordlist">
+                                    <button class="keywordbutton">
+                                        <span class="keywordpostion">{{keyword|titlecase}}</span>
+                                        <mat-icon class="keywordcancelicon" (click)="remove(keyword)">cancel</mat-icon>
+                                    </button>
+                                </mat-chip-row>
+                            </mat-chip-list>
+                                <mat-select  multiple>
+                                    <mat-option (click)="Selectedkeywprd(x)"  *ngFor="let x of KeywordsFromOrder">{{x}}</mat-option>
+                                </mat-select>
+                        </mat-form-field>
+                            </div>
+                    <!-- Start Date End Date  -->
+                    <div class="row firstAndLastName">
+                        <div class="col-6">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"Start Date"|translate}}</mat-label>
+                                <input matInput style="color: black;"
+                                    [matDatepicker]="startdatepicker1"
+                                    formControlName="startDate">
+                                <mat-datepicker-toggle matSuffix
+                                    [for]="startdatepicker1"></mat-datepicker-toggle>
+                                <mat-datepicker #startdatepicker1></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-6">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"End Date"|translate}}</mat-label>
+                                <input matInput style="color: black;"
+                                    [matDatepicker]="enddatepicker1"
+                                    formControlName="endDate">
+                                <mat-datepicker-toggle matSuffix [for]="enddatepicker1"></mat-datepicker-toggle>
+                                <mat-datepicker #enddatepicker1></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+        
+                    <div class="w-100 mb-3" *ngIf="isTransaction">
+                        <mat-label class="d-block mb-1">{{"Display Type"|translate}}
+                            <span class="danger">* </span></mat-label>
+                        <mat-radio-group formControlName="YDisplayType"
+                            (change)="onDisplayTypeChanged($event,typevalue)">
+                            <mat-radio-button value="0" class="mr-4">{{"Transaction Amount"|translate}}</mat-radio-button>
+                            <mat-radio-button value="1" class="mr-4">{{"Number of Transactions"|translate}}</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                    <!-- ------------  -->
+                    <div class="w-100 mb-3" *ngIf="isEvent">
+                        <mat-label class="d-block mb-1">{{"Display Type"|translate}}
+                            <span class="danger">* </span></mat-label>
+                        <mat-radio-group formControlName="YDisplayType"
+                            (change)="eventType($event)">
+                            <mat-radio-button value="0" class="mr-4">{{"Number of Events"|translate}}</mat-radio-button>
+                            <mat-radio-button value="1" class="mr-4">{{"Event Quantity"|translate}}</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                    <!-- ------------  -->
+                    <ng-container>
+                        <div class=" w-100 mb-3">
+                            <mat-label class="d-block mb-1"><span class="danger"></span></mat-label>
+                            <mat-radio-group formControlName="XDisplayType"
+                                (change)="XDisplayTypevalue($event)">
+                                <ng-container *ngIf="selectedChartvalue=='Bar Chart'">
+                                    <mat-radio-button value="0">{{"No Period"|translate}}
+                                    </mat-radio-button>
+                                </ng-container>
+                                <mat-radio-button value="1">{{"Daily"|translate}}</mat-radio-button>
+                                <mat-radio-button value="2">{{"Monthly"|translate}}</mat-radio-button>
+                                <mat-radio-button value="3">{{"Yearly"|translate}}</mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </ng-container>
+                    <!-- Currency  -->
+                    <div class="row">
+                        <mat-form-field formControlName="Currency" appearance="fill"
+                            class="w-100" *ngIf="isTransaction && !isnoOfTransaction">
+                            <mat-label>{{"Currency"|translate}}</mat-label>
+                            <mat-select [(value)]="selected">
+                                <mat-option value="Euros">Euros</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <!-- IS SEPERATE  -->
+                    <!-- default for create  -->
+                    <ng-container *ngIf="defaultforcreate || EditforCreate">
+                        <section>
+                            <mat-checkbox class="chck" formControlName="isseperate"
+                                (change)="isSeperateCall($event)"
+                                *ngIf="isSeperate">IS SEPERATE</mat-checkbox>
+                        </section>
+                        <section>
+                            <mat-checkbox class="chck" (change)="buyOptions($event)"
+                                *ngIf="isBuy" formControlName="isBuy">BUY
+                            </mat-checkbox>
+                            <mat-checkbox class="chck" (change)="showOptions($event)"
+                                *ngIf="issale" formControlName="isSale">
+                                SELL</mat-checkbox>
+                            <mat-checkbox class="chck" (change)="marginOptions($event)"
+                                *ngIf="iswithMargin"
+                                formControlName="withMargin">WITH MARGIN
+                            </mat-checkbox>
+                            <mat-checkbox class="chck" *ngIf="iswithVat"
+                                formControlName="withVat">WITH
+                                VAT</mat-checkbox>
+                            <br><br>
+                        </section>
+                    </ng-container>
+                </div>
+            </form>
+            </mat-tab>
+            <!-- 11111111111111  -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <span>{{"Ranking"|translate}}</span>
+                </ng-template>
+                <form [formGroup]="graphFilterForm" (ngSubmit)="onSubmit()">
+                <div>
+                    <!-- -------------------  -->
+                    <div class="row">
+                        <mat-radio-group aria-label="Select an option"
+                            (change)="eventChange($event)"
+                            formControlName="eventorTransaction" class="chart-ui">
+                            <mat-radio-button value="1">{{"Transactions"|translate}}</mat-radio-button>
+                            <mat-radio-button value="2">{{"Events"|translate}}</mat-radio-button>
+                            <!-- <mat-radio-button value="3">Target</mat-radio-button> -->
+                        </mat-radio-group>
+                    </div>
+                    <!-- ---------------------  -->
+                    <div class="row">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Choose type of chart</mat-label>
+                            <mat-select formControlName="chartTypeId"
+                                floatPlaceholder="never"
+                                (selectionChange)="onChartChanged($event)">
+                                <mat-option [value]="chart"
+                                    *ngFor="let chart of chartTypes">{{chart}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error
+                                *ngIf="graphFilterForm.controls['chartTypeId'].hasError('required')">
+                                chart is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <!-- -----------------  -->
+                    <div class="row">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <input matInput style="color: black;"
+                                placeholder="Report title" formControlName="graphTitle">
+                        </mat-form-field>
+                    </div>
+                    <!-- ----------------  -->
+                    <div class="row">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <input matInput style="color: black;"
+                                placeholder="Description" formControlName="description">
+                        </mat-form-field>
+                    </div>
+                    <!-- Activity Content  -->
+                    <ng-container *ngIf="ActivityContent==true">
+                        <div class="row p-0">
+                            <mat-form-field appearance="fill" class="w-100 p-0 blue_bg">
+                                <mat-label>Activity Content</mat-label>
+                                <mat-select formControlName="managementTypeId"
+                                    (selectionChange)="onChanged($event.value)">
+                                    <mat-option *ngFor="let type of managementType"
+                                        [value]="type.name">
+                                        {{type.name|titlecase}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+        
+                        <!-- Users filter -->
+                        <ng-container *ngIf="selectedMgmt === 'Users'">
+                            <div class="row justify-content-end">
+                                <div class="col-12">
+                                    <mat-tab-group class="w-100">
+                                        <mat-tab label="Users">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Users</mat-label>
+                                                <mat-select placeholder="Users" multiple
+                                                    formControlName="eventGraphId"
+                                                    (selectionChange)="selectMgmtChange($event, 'user')">
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'"
+                                                        [array]="users$"
+                                                        (filteredReturn)="filteredList1 =$event"></mat-select-filter>
+                                                    <mat-option [value]="user.id"
+                                                        *ngFor="let user of filteredList1  ">
+                                                        <span> <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                onError="this.src='assets/avatar.svg'"
+                                                                [src]="user.profilePicture!= null ? user.profilePicture : 'assets/avatar.svg'"></span>
+                                                        <span>
+                                                            {{user.firstName|titlecase}}
+                                                            {{user.lastName|titlecase}}</span>
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                        <mat-tab label="Add group member into user">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Groups</mat-label>
+                                                <mat-select multiple>
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'groupName'"
+                                                        [array]="userGroups$"
+                                                        (filteredReturn)="filteredList4 =$event"></mat-select-filter>
+                                                    <mat-option [value]="userGroup.id"
+                                                        *ngFor="let userGroup of filteredList4"
+                                                        (click)="GroupToSingleconvert(userGroup,'ActivityContent','Users')">
+                                                        <span
+                                                            *ngIf="userGroup.dynamicGroupId ==null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                        </span>
+                                                        <span
+                                                            *ngIf="userGroup.dynamicGroupId !=null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                        </span>
+                                                        {{userGroup.groupName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                    </mat-tab-group>
+                                </div>
+                                <div class="col-12">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>User Groups</mat-label>
+                                        <mat-select multiple
+                                            formControlName="eventGraphGroupId"
+                                            (selectionChange)="selectMgmtGroupChange($event, 'user')">
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="userGroups$"
+                                                (filteredReturn)="filteredList4 =$event"></mat-select-filter>
+                                            <mat-option [value]="userGroup.id"
+                                                *ngFor="let userGroup of filteredList4 ">
+                                                <span
+                                                    *ngIf="userGroup.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="userGroup.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{userGroup.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <!-- sites  -->
+                        <ng-container *ngIf="selectedMgmt === 'Sites'">
+                            <div class="row justify-content-end">
+                                <div class="col-12">
+                                    <mat-tab-group class="w-100">
+                                        <mat-tab label="Sites">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Sites</mat-label>
+                                                <mat-select
+                                                    formControlName="eventGraphId"
+                                                    (selectionChange)="selectMgmtChange($event, 'sites')"
+                                                    multiple>
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'companyName'"
+                                                        [array]="sites$"
+                                                        (filteredReturn)="filteredList3 =$event"></mat-select-filter>
+                                                    <mat-option [value]="site.id"
+                                                        *ngFor="let site of filteredList3 ">
+                                                        <span>
+                                                            <img
+                                                                src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                                                        </span>
+                                                        {{site.companyName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                        <mat-tab label="Add group member into Site">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Groups</mat-label>
+                                                <mat-select multiple>
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'groupName'"
+                                                        [array]="siteGroups$"
+                                                        (filteredReturn)="filteredList6 =$event"></mat-select-filter>
+                                                    <mat-option [value]="siteGroup.id"
+                                                        *ngFor="let siteGroup of filteredList6 "
+                                                        (click)="GroupToSingleconvert(siteGroup,'ActivityContent','Sites')">
+                                                        <span
+                                                            *ngIf="siteGroup.dynamicGroupId ==null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                        </span>
+                                                        <span
+                                                            *ngIf="siteGroup.dynamicGroupId !=null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                        </span>
+                                                        {{siteGroup.groupName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                    </mat-tab-group>
+        
+                                </div>
+                                <div class="col-12">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Site Groups</mat-label>
+                                        <mat-select formControlName="eventGraphGroupId"
+                                            (selectionChange)="selectMgmtGroupChange($event,'sites')"
+                                            multiple>
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="siteGroups$"
+                                                (filteredReturn)="filteredList6 =$event"></mat-select-filter>
+                                            <mat-option [value]="siteGroup.id"
+                                                *ngFor="let siteGroup of filteredList6 ">
+                                                <span
+                                                    *ngIf="siteGroup.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="siteGroup.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{siteGroup.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <!-- Contacts  -->
+                        <ng-container *ngIf="selectedMgmt === 'Contacts'">
+                            <div class="row justify-content-end">
+                                <div class="col-12">
+                                    <mat-tab-group class="w-100">
+                                        <mat-tab label="Contacts">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Contacts</mat-label>
+                                                <mat-select placeholder="Contact"
+                                                    multiple
+                                                    (selectionChange)="selectMgmtChange($event,'contacts')"
+                                                    formControlName="eventGraphId">
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'firstName'"
+                                                        [array]="contacts$"
+                                                        (filteredReturn)="filteredList2 =$event"></mat-select-filter>
+                                                    <mat-option [value]="contact.id"
+                                                        *ngFor="let contact of filteredList2 ">
+                                                        <img style="border-radius: 50%;"
+                                                            width="30" height="30"
+                                                            onError="this.src='assets/avatar.svg'"
+                                                            [src]="contact.profilePicture!= null ? contact.profilePicture : 'assets/avatar.svg'">
+                                                        {{contact.firstName|titlecase}}
+                                                        {{contact.lastName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                        <mat-tab label="Add group member into Contact">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Groups</mat-label>
+                                                <mat-select multiple>
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'groupName'"
+                                                        [array]="contactGroups$"
+                                                        (filteredReturn)="filteredList5 =$event">
+                                                    </mat-select-filter>
+                                                    <mat-option
+                                                        [value]="contactGroup.id"
+                                                        *ngFor="let contactGroup of filteredList5 "
+                                                        (click)="GroupToSingleconvert(contactGroup,'ActivityContent','Contacts')">
+                                                        <span
+                                                            *ngIf="contactGroup.dynamicGroupId ==null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                        </span>
+                                                        <span
+                                                            *ngIf="contactGroup.dynamicGroupId !=null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                        </span>
+                                                        {{contactGroup.groupName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                    </mat-tab-group>
+                                </div>
+                                <div class="col-12">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Contact Groups</mat-label>
+                                        <mat-select formControlName="eventGraphGroupId"
+                                            (selectionChange)="selectMgmtGroupChange($event,'contacts')"
+                                            multiple>
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="contactGroups$"
+                                                (filteredReturn)="filteredList5 =$event">
+                                            </mat-select-filter>
+                                            <mat-option [value]="contactGroup.id"
+                                                *ngFor="let contactGroup of filteredList5 ">
+                                                <span
+                                                    *ngIf="contactGroup.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="contactGroup.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{contactGroup.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="selectedMgmt === 'Products'">
+                            <div class="row justify-content-end">
+                                <div class="col-12">
+                                    <mat-tab-group class="w-100">
+                                        <mat-tab label="Products">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Products</mat-label>
+                                                <mat-select multiple
+                                                    formControlName="eventGraphId"
+                                                    (selectionChange)="selectMgmtChange($event,'products')">
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'productName'"
+                                                        [array]="products$"
+                                                        (filteredReturn)="filteredList7 =$event"></mat-select-filter>
+                                                    <mat-option [value]="product.id"
+                                                        *ngFor="let product of filteredList7 ">
+                                                        <img
+                                                            style="border-radius: 50%; margin-right: 6px;"
+                                                            width="30"
+                                                            height="30"
+                                                            [src]="Product?.profilePicture ? Product.profilePicture:'assets/images/iconsForsvg/icon_product.svg '"
+                                                            onError="this.src='assets/images/iconsForsvg/icon_product.svg '">
+                                                        {{product.productName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                        <mat-tab label="Add group member into Product">
+                                            <mat-form-field appearance="fill"
+                                                class="w-100">
+                                                <mat-label>Groups</mat-label>
+                                                <mat-select multiple>
+                                                    <mat-select-filter
+                                                        [placeholder]="'Filter'"
+                                                        [displayMember]="'groupName'"
+                                                        [array]="productGroups$"
+                                                        (filteredReturn)="filteredList8 =$event"></mat-select-filter>
+                                                    <mat-option [value]="product.id"
+                                                        *ngFor="let product of filteredList8 "
+                                                        (click)="GroupToSingleconvert(product,'ActivityContent','Products')">
+                                                        <span
+                                                            *ngIf="product.dynamicGroupId ==null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                        </span>
+                                                        <span
+                                                            *ngIf="product.dynamicGroupId !=null">
+                                                            <img
+                                                                style="border-radius: 50%;"
+                                                                width="30" height="30"
+                                                                src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                        </span>
+                                                        {{product.groupName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </mat-tab>
+                                    </mat-tab-group>
+                                </div>
+                                <div class="col-12">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Product Groups</mat-label>
+                                        <mat-select multiple
+                                            formControlName="eventGraphGroupId"
+                                            (selectionChange)="selectMgmtGroupChange($event,'products')">
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="productGroups$"
+                                                (filteredReturn)="filteredList8 =$event"></mat-select-filter>
+                                            <mat-option [value]="product.id"
+                                                *ngFor="let product of filteredList8 ">
+                                                <span
+                                                    *ngIf="product.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="product.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{product.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <!-- Activity Detail  -->
+                    <ng-container *ngIf="ActivityDetail==true">
+                        <div class="row">
+                            <mat-form-field appearance="fill" class="w-100 blue_bg">
+                                <mat-label>Activity Detail</mat-label>
+                                <mat-select formControlName="eventGraph"
+                                    (selectionChange)="onEventChanged($event)">
+                                    <mat-option *ngFor="let type of eventSearchType"
+                                        [value]="type.name">
+                                        {{type.name|titlecase}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <ng-container *ngIf="selectedEventSearch === 'Users'">
+                            <div class="row justify-content-end">
+                                <div class="col-10">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Users</mat-label>
+                                        <mat-select placeholder="Users" multiple
+                                            id="UserId"
+                                            formControlName="detaileventGraphId"
+                                            (selectionChange)="optionalSearch($event)">
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'firstName'"
+                                                [array]="users$"
+                                                (filteredReturn)="filteredList1 =$event"></mat-select-filter>
+                                            <mat-option [value]="user.id"
+                                                *ngFor="let user of filteredList1 ">
+                                                <img style="border-radius: 50%;"
+                                                    width="30" height="30"
+                                                    onError="this.src='assets/avatar.svg'"
+                                                    [src]="user.profilePicture!= null ? user.profilePicture : 'assets/avatar.svg'">
+                                                {{user.firstName|titlecase}}
+                                                {{user.lastName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>User Group Name</mat-label>
+                                        <mat-select id="groupName" multiple
+                                            (selectionChange)="optionalGroupSearch($event)"
+                                            formControlName="detaileventGraphGroupId">
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="userGroups$"
+                                                (filteredReturn)="filteredList4 =$event"></mat-select-filter>
+                                            <mat-option [value]="userGroup.id"
+                                                *ngFor="let userGroup of filteredList4 ">
+                                                <span
+                                                    *ngIf="userGroup.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="userGroup.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{userGroup.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <!-- Sites filter  -->
+                        <ng-container *ngIf="selectedEventSearch === 'Sites'">
+                            <div class="row justify-content-end">
+                                <div class="col-10">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Sites</mat-label>
+                                        <mat-select placeholder="Sites" id="SiteId"
+                                            formControlName="detaileventGraphId"
+                                            (selectionChange)="optionalSearch($event)"
+                                            multiple>
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'companyName'"
+                                                [array]="sites$"
+                                                (filteredReturn)="filteredList3 =$event"></mat-select-filter>
+                                            <mat-option [value]="site.id"
+                                                *ngFor="let site of filteredList3 ">
+                                                <span>
+                                                    <img
+                                                        src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                                                </span>
+                                                {{site.companyName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Site Group Name</mat-label>
+                                        <mat-select id="groupName"
+                                            formControlName="detaileventGraphGroupId"
+                                            (selectionChange)="optionalGroupSearch($event)"
+                                            multiple>
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="siteGroups$"
+                                                (filteredReturn)="filteredList6 =$event"></mat-select-filter>
+                                            <mat-option [value]="siteGroup.id"
+                                                *ngFor="let siteGroup of filteredList6 ">
+                                                <span
+                                                    *ngIf="siteGroup.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="siteGroup.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{siteGroup.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <!-- Contacts filter  -->
+                        <ng-container *ngIf="selectedEventSearch === 'Contacts'">
+                            <div class="row justify-content-end">
+                                <div class="col-10">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Contact</mat-label>
+                                        <mat-select placeholder="Contact" multiple
+                                            id="ContactId"
+                                            formControlName="detaileventGraphId"
+                                            (selectionChange)="optionalSearch($event)">
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'firstName'"
+                                                [array]="contacts$"
+                                                (filteredReturn)="filteredList2 =$event"></mat-select-filter>
+                                            <mat-option [value]="contact.id"
+                                                *ngFor="let contact of filteredList2 ">
+                                                <img style="border-radius: 50%;"
+                                                    width="30" height="30"
+                                                    onError="this.src='assets/avatar.svg'"
+                                                    [src]="contact.profilePicture!= null ? contact.profilePicture : 'assets/avatar.svg'">
+                                                {{contact.firstName|titlecase}}
+                                                {{contact.lastName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Contact Group Name</mat-label>
+                                        <mat-select id="groupName"
+                                            formControlName="detaileventGraphGroupId"
+                                            (selectionChange)="optionalGroupSearch($event)"
+                                            multiple>
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="contactGroups$"
+                                                (filteredReturn)="filteredList5 =$event">
+                                            </mat-select-filter>
+                                            <mat-option [value]="contactGroup.id"
+                                                *ngFor="let contactGroup of filteredList5 ">
+                                                <span
+                                                    *ngIf="contactGroup.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="contactGroup.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{contactGroup.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <!-- Products filter  -->
+                        <ng-container *ngIf="selectedEventSearch === 'Products'">
+                            <div class="row justify-content-end">
+                                <div class="col-10">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Product Name</mat-label>
+                                        <mat-select id="ProductName" multiple
+                                            formControlName="detaileventGraphId"
+                                            (selectionChange)="optionalSearch($event)">
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'productName'"
+                                                [array]="products$"
+                                                (filteredReturn)="filteredList7 =$event"></mat-select-filter>
+                                            <mat-option [value]="product.id"
+                                                *ngFor="let product of filteredList7 ">
+                                                <img
+                                                    style="border-radius: 50%; margin-right: 6px;"
+                                                    width="30" height="30"
+                                                    [src]="Product?.profilePicture ? Product.profilePicture:'assets/images/iconsForsvg/icon_product.svg '"
+                                                    onError="this.src='assets/images/iconsForsvg/icon_product.svg '">
+                                                {{product.productName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>Product Group Name</mat-label>
+                                        <mat-select id="ProductName" multiple
+                                            formControlName="detaileventGraphGroupId"
+                                            (selectionChange)="optionalGroupSearch($event)">
+                                            <mat-select-filter [placeholder]="'Filter'"
+                                                [displayMember]="'groupName'"
+                                                [array]="productGroups$"
+                                                (filteredReturn)="filteredList8 =$event">
+                                            </mat-select-filter>
+                                            <mat-option [value]="product.id"
+                                                *ngFor="let product of filteredList8 ">
+                                                <span
+                                                    *ngIf="product.dynamicGroupId ==null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                                </span>
+                                                <span
+                                                    *ngIf="product.dynamicGroupId !=null">
+                                                    <img style="border-radius: 50%;"
+                                                        width="30" height="30"
+                                                        src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                                </span>
+                                                {{product.groupName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+        
+                    <!-- Transation Type  -->
+                    <div class="row">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>{{"Transation Type"|translate}}</mat-label>
+                            <mat-select formControlName="StatusOfTransaction" (selectionChange)="seletectdtransationstatus($event)">
+                                <mat-option value="0">{{"Pending"|translate}}</mat-option>
+                                <mat-option value="1">{{"Validated"|translate}}</mat-option>
+                                <!-- <mat-option [value]="2">Cancelled</mat-option> -->
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+        
+                    <div class="row">
+                        <mat-form-field class="example-chip-list" style="width: 100% !important;">
+                            <mat-label>{{"keyword"|translate}}</mat-label><br>
+                            <mat-chip-list #chipGridforkeyword aria-label="Fruit selection" class="keywordlist">
+                                <mat-chip-row class="keywordrow" *ngFor="let keyword of keywordlist">
+                                    <button class="keywordbutton">
+                                        <span class="keywordpostion">{{keyword|titlecase}}</span>
+                                        <mat-icon class="keywordcancelicon" (click)="remove(keyword)">cancel</mat-icon>
+                                    </button>
+                                </mat-chip-row>
+                            </mat-chip-list>
+                                <mat-select  multiple>
+                                    <mat-option  (click)="Selectedkeywprd(x)"  *ngFor="let x of chartTypes" >{{x}}</mat-option>
+                                </mat-select>
+                        </mat-form-field>
+                    </div>
+        
+                    <!-- Start Date End Date  -->
+                    <div class="row firstAndLastName">
+                        <div class="col-6">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"Start Date"|translate}}</mat-label>
+                                <input matInput style="color: black;"[matDatepicker]="startdatepicker2"formControlName="startDate">
+                                <mat-datepicker-toggle matSuffix
+                                    [for]="startdatepicker2"></mat-datepicker-toggle>
+                                <mat-datepicker #startdatepicker2></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-6">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"End Date"|translate}}</mat-label>
+                                <input matInput style="color: black;" [matDatepicker]="enddatepicker2" formControlName="endDate">
+                                <mat-datepicker-toggle matSuffix [for]="enddatepicker2"></mat-datepicker-toggle>
+                                <mat-datepicker #enddatepicker2></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+        
+                    <div class="w-100 mb-3" *ngIf="isTransaction">
+                        <mat-label class="d-block mb-1">{{"Display Type"|translate}}
+                            <span class="danger">* </span></mat-label>
+                        <mat-radio-group formControlName="YDisplayType"
+                            (change)="onDisplayTypeChanged($event,typevalue)">
+                            <mat-radio-button value="0" class="mr-4">{{"Transaction Amount"|translate}}</mat-radio-button>
+                            <mat-radio-button value="1" class="mr-4">{{"Number of Transactions"|translate}}</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                    <!-- ------------  -->
+                    <div class="w-100 mb-3" *ngIf="isEvent">
+                        <mat-label class="d-block mb-1">{{"Display Type"|translate}}
+                            <span class="danger">* </span></mat-label>
+                        <mat-radio-group formControlName="YDisplayType"
+                            (change)="eventType($event)">
+                            <mat-radio-button value="0" class="mr-4">{{"Number of Events"|translate}}</mat-radio-button>
+                            <mat-radio-button value="1" class="mr-4">{{"Event Quantity"|translate}}</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                    <!-- ------------  -->
+                    <ng-container>
+                        <div class=" w-100 mb-3">
+                            <mat-label class="d-block mb-1"><span class="danger"></span></mat-label>
+                            <mat-radio-group formControlName="XDisplayType"
+                                (change)="XDisplayTypevalue($event)">
+                                <ng-container *ngIf="selectedChartvalue=='Bar Chart'">
+                                    <mat-radio-button value="0">{{"No Period"|translate}}
+                                    </mat-radio-button>
+                                </ng-container>
+                                <mat-radio-button value="1">{{"Daily"|translate}}</mat-radio-button>
+                                <mat-radio-button value="2">{{"Monthly"|translate}}</mat-radio-button>
+                                <mat-radio-button value="3">{{"Yearly"|translate}}</mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </ng-container>
+                    <!-- Currency  -->
+                    <div class="row">
+                        <mat-form-field formControlName="Currency" appearance="fill"
+                            class="w-100" *ngIf="isTransaction && !isnoOfTransaction">
+                            <mat-label>{{"Currency"|translate}}</mat-label>
+                            <mat-select [(value)]="selected">
+                                <mat-option value="Euros">Euros</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <!-- IS SEPERATE  -->
+                    <!-- default for create  -->
+                    <ng-container *ngIf="defaultforcreate || EditforCreate">
+                        <section>
+                            <mat-checkbox class="chck" formControlName="isseperate"
+                                (change)="isSeperateCall($event)"
+                                *ngIf="isSeperate">IS SEPERATE</mat-checkbox>
+                        </section>
+                        <section>
+                            <mat-checkbox class="chck" (change)="buyOptions($event)"
+                                *ngIf="isBuy" formControlName="isBuy">BUY
+                            </mat-checkbox>
+                            <mat-checkbox class="chck" (change)="showOptions($event)"
+                                *ngIf="issale" formControlName="isSale">
+                                SELL</mat-checkbox>
+                            <mat-checkbox class="chck" (change)="marginOptions($event)"
+                                *ngIf="iswithMargin"
+                                formControlName="withMargin">WITH MARGIN
+                            </mat-checkbox>
+                            <mat-checkbox class="chck" *ngIf="iswithVat"
+                                formControlName="withVat">WITH
+                                VAT</mat-checkbox>
+                            <br><br>
+                        </section>
+                    </ng-container>
+                </div>
+            </form>
+            </mat-tab>
+            <!-- 222222222222222  -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <span>{{"Custom Date"|translate}}</span>
+                </ng-template>
+                <form [formGroup]="graphFilterForm" (ngSubmit)="onSubmit()">
+             <div>
+                <div class="row mt-4">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>Choose type of chart</mat-label>
+                        <mat-select formControlName="chartTypeId">
+                            <mat-option [value]="chart"
+                                *ngFor="let chart of chartTypes">{{chart}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error
+                            *ngIf="graphFilterForm.controls['chartTypeId'].hasError('required')">
+                            chart is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <!-- -----------------  -->
+                <div class="row">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <input matInput style="color: black;"
+                            placeholder="Report title" formControlName="graphTitle">
+                    </mat-form-field>
+                </div>
+                <!-- ----------------  -->
+                <div class="row">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <input matInput style="color: black;"
+                            placeholder="Description" formControlName="description">
+                    </mat-form-field>
+                </div>
+                <!-- Activity Content  -->
+                    <div class="row p-0">
+                        <mat-form-field appearance="fill" class="w-100 p-0 blue_bg">
+                            <mat-label>Entity</mat-label>
+                            <mat-select formControlName="Entity">
+                                <mat-option *ngFor="let type of managementType"
+                                    [value]="type.name">
+                                    {{type.name|titlecase}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                 
+            
+             
+                        <!-- Custom Date  -->
+                        <div class="row">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"Custom Date"|translate}}</mat-label>
+                                <mat-select formControlName="CustomDate">
+                                    <mat-option value="2">{{"Date of Modify"|translate}}</mat-option>
+                                    <mat-option value="1">{{"Date of creation"|translate}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                          <!-- Start Date End Date  -->
+                          <div class="row firstAndLastName">
+                            <div class="col-6">
+                                <mat-form-field appearance="fill" class="w-100">
+                                    <mat-label>{{"Start Date"|translate}}</mat-label>
+                                    <input matInput style="color: black;"
+                                        [matDatepicker]="startdatepicker5" 
+                                        formControlName="startDate">
+                                    <mat-datepicker-toggle matSuffix
+                                        [for]="startdatepicker5"></mat-datepicker-toggle>
+                                    <mat-datepicker #startdatepicker5></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-6">
+                                <mat-form-field appearance="fill" class="w-100">
+                                    <mat-label>{{"End Date"|translate}}</mat-label>
+                                    <input matInput style="color: black;"
+                                        [matDatepicker]="enddatepicker6"
+                                        formControlName="endDate">
+                                    <mat-datepicker-toggle matSuffix [for]="enddatepicker6"></mat-datepicker-toggle>
+                                    <mat-datepicker #enddatepicker6></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    <ng-container>
+                        <div class=" w-100 mb-3">
+                            <mat-label class="d-block mb-1"><span class="danger"></span></mat-label>
+                            <mat-radio-group formControlName="XDisplayType" (change)="XDisplayTypevalue($event)">
+                                <ng-container *ngIf="selectedChartvalue=='Bar Chart'">
+                                    <mat-radio-button value="0">{{"No Period"|translate}}
+                                    </mat-radio-button>
+                                </ng-container>
+                                <mat-radio-button value="1">{{"Daily"|translate}}</mat-radio-button>
+                                <mat-radio-button value="2">{{"Monthly"|translate}}</mat-radio-button>
+                                <mat-radio-button value="3">{{"Yearly"|translate}}</mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                    </ng-container>
+
+
+             </div>
+                    </form>
+            </mat-tab>
+        </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="my-1">
+    <div class="row mt-2 justify-content-center">
+        <div class="col-4">
+            <button mat-raised-button mat-dialog-close class="W-blue">{{"Cancel"|translate}}</button>
+        </div>
+        <div class="col-4">
+            <button mat-raised-button class="b-blue" (click)="onSubmit()">{{"Apply"|translate}}</button>
+        </div>
+    </div>
+</mat-dialog-actions>

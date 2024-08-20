@@ -1,0 +1,45 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <mat-icon mat-dialog-close>keyboard_backspace</mat-icon>
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+      <span> Price matrix List</span>
+    </h2>
+    <mat-icon  (click)="addpricematrix('create')">add_box</mat-icon>
+  </div>
+  <mat-dialog-content class="mr-0 ml-0" style="min-height: 300px !important;">
+
+    <div class="row justify-content-center" *ngFor="let x of pricematrixlist">
+        <mat-accordion style="width: 100%; margin-top: 10px;">
+          <mat-expansion-panel hideToggle>
+            <mat-expansion-panel-header>
+              <mat-panel-title style="width: 100%;">
+                <p style="width: 100%;"><b>Name :</b> {{x.name}}</p>
+                <p style="width: 100%;"><b>Price :</b> {{x.price}}</p>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class=" mt-2 height-116">
+              <div class="row" >
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">Name</th>
+                      <th scope="col">Parameter</th>
+                      <th scope="col">Comparator</th>
+                      <th scope="col">Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let condition of x.conditionDtos">
+                      <td>{{condition.conditionDropDownList}}</td>
+                      <td>{{condition.conditionParameter}}</td>
+                      <td style="text-align: center !important;">{{condition.conditionComparison}}</td>
+                      <td>{{condition.value}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </mat-expansion-panel>
+          </mat-accordion>
+    </div>
+
+   </mat-dialog-content>

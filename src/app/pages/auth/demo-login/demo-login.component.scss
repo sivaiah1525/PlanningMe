@@ -1,0 +1,41 @@
+.login-card {
+    width: 350px;
+    align-items: center;
+    opacity: 0.9;
+
+    .loginlogo {
+        height: 70px;
+        padding: 0;
+        border: none;
+    }
+}
+
+.b-blue {
+    background-color: #3880ff;
+}
+
+.loginbody {
+    width: 100%;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    object-fit: cover !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+
+.loginimages {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.detailsRow:hover {
+    background-color: #e4dbdb;
+    border-radius: 5px;
+    cursor: pointer;
+}

@@ -1,0 +1,103 @@
+.table-desgin {
+
+
+
+  .table{
+    tr,td{
+      border: unset !important;
+    }
+  }
+
+  .formatTextLine {
+    white-space: normal !important;
+
+  }
+
+
+  .width_20 {
+    width: 20px !important;
+    padding: 0px !important;
+  }
+}
+
+.table{
+  tr,td{
+    border: unset !important;
+  }
+}
+
+.mat-dialog-container {
+  height: auto !important;
+}
+
+.iconalign {
+  vertical-align: bottom;
+  padding-right: 1px;
+}
+
+.align_items_icon {
+  padding-left: 29px !important;
+}
+
+::ng-deep .table-desgin[_ngcontent-xoo-c267] .td[_ngcontent-xoo-c267] .width_20 {
+  width: 20px !important;
+  padding: 0px !important;
+}
+
+.btn-black {
+  color:
+
+    black;
+}
+
+.m-l-28 {
+  margin-left: 27px !important;
+}
+
+.m-l-8 {
+  margin-left: 4px !important;
+}
+
+// .block{
+//   display: block !important;
+// }
+.float-l {
+  float: left !important;
+}
+
+.width_500 {
+  width: 500px !important;
+  position: absolute !important;
+}
+
+.itanlist {
+  padding: 10px 10px 10px 10px
+}
+
+mat-dialog-content {
+  padding: 4 !important;
+  margin: 0 !important;
+  overflow-x: hidden;
+  display: block;
+  margin: 0 -24px;
+  max-height: 65vh !important;
+  font-size: 12px !important;
+  overflow-y: auto;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media all and (max-width: 3000px) { 
+.table-desgin{
+  font-size: 16px;
+}
+  }
+@media all and (max-width: 500px) {
+  .table-desgin{
+    font-size: 12px !important;
+  }
+  }
+
+mat-icon {
+  margin: 0px 5px;
+}

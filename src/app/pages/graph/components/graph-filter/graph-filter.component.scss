@@ -1,0 +1,132 @@
+ion-grid,
+ion-row,
+ion-col {
+    padding: var(--ion-no-padding);
+}
+
+ion-checkbox,
+ion-radio {
+    margin-right: 10px !important;
+}
+
+ion-radio-group {
+    display: inherit;
+}
+
+ion-item {
+    --padding-start: 0px !important;
+    --inner-padding-end: 0px !important;
+    --background-focused: transparent;
+}
+
+.pe {
+    --inner-padding-end: 16px !important;
+}
+
+#graph-filter {
+    .mat-form-field-type-mat-select.mat-form-field-can-float .mat-form-field-label {
+        transform: none;
+    }
+
+    .mat-form-field-type-mat-select .mat-form-field-label {
+        top: 8px;
+        font-size: 12px;
+        color: #222428;
+        overflow-x: auto;
+    }
+
+    .mat-form-field-appearance-fill .mat-form-field-flex {
+        padding-top: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .mat-form-field-appearance-fill .mat-form-field-flex {
+        background-color: transparent;
+    }
+
+    .mat-form-field-appearance-fill .mat-form-field-flex:hover {
+        background: #f7f7f7;
+    }
+
+    .mat-form-field-type-mat-select.mat-form-field-hide-placeholder .mat-select-placeholder {
+        color: rgba(0, 0, 0, .30);
+        -webkit-text-fill-color: rgba(0, 0, 0, .30);
+        font-size: 15px;
+    }
+
+    .mat-radio-group {
+        &:first-child {
+            display: flex;
+
+            .mat-radio-button {
+                flex: auto;
+            }
+        }
+    }
+}
+
+.b-blue {
+    background-color: #528bf1;
+    color: white;
+}
+
+.chart-ui {
+    display: flex;
+    padding: 20px 0;
+
+    .mat-radio-button {
+        flex: auto;
+    }
+
+}
+
+::ng-deep .mat-option-text {
+    color: #528bf1;
+}
+
+.w-80 {
+    width: 80%;
+    float: right;
+}
+
+::ng-deep .mat-form-field-appearance-fill.blue_bg .mat-form-field-flex {
+    background-color: #dcf2f8;
+}
+
+#graph-filter {
+    ::ng-deep .mat-tab-labels {
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.chck {
+    margin-right: 20px;
+}
+
+.mat-tab-label {
+    height: 20px;
+}
+
+::ng-deep  primary .mat-ink-bar {
+    background-color: transparent;
+}
+
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar,.mat-tab-nav-bar.mat-primary .mat-ink-bar {
+     background-color: transparent !important; 
+}
+::ng-deep .mat-tab-label {
+    height: 48px;
+    padding: 0 15px !important;
+    cursor: pointer;
+    box-sizing: border-box;
+    opacity: .6;
+    min-width: 100px !important;
+    text-align: center;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+    position: relative;
+}

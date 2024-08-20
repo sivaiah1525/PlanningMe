@@ -1,0 +1,18 @@
+
+
+
+.pnmlogo{
+    vertical-align: middle;
+    border-style: none;
+    margin: auto;
+    display: flex;
+}
+
+@media all and (max-width: 800px) {
+.pnmlogo{
+    margin-top: 80px !important;
+    width: 20px;
+    height: 20px;
+}
+
+}

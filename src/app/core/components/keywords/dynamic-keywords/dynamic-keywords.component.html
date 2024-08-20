@@ -1,0 +1,77 @@
+<div class="d-flex flex-row align-items-center modal-header">
+  <mat-icon mat-dialog-close>keyboard_backspace</mat-icon>
+  <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+    <span> Dynamic Keyword List</span>
+  </h2>
+  <mat-icon  (click)="addkeyword('create','')">add_box</mat-icon>
+</div>
+<mat-dialog-content class="mr-0 ml-0" style="min-height: 300px !important;">
+
+  <div class="row" *ngIf="Alldynamickeywords.lenght==0">
+          <h2>No Data Found</h2>
+  </div>
+  <div class="row cardbody cardrowstyle" id="strategy">
+    <div class="col-12  col-sm-12 col-md-6 col-lg-4 col-xl-4" *ngFor="let r of Alldynamickeywords; let i =index">
+      <mat-card class="cardsize">
+        <mat-card-header>
+          <mat-card-title>
+            <p class="m-t-5 f-weight">{{r.name | titlecase }}</p>
+            <mat-divider class="divider"></mat-divider><br>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="row">
+            <div class="col-10">
+              <p class="color f-weight">{{"Description"|titlecase}} : {{r.description | titlecase }} </p>
+            </div>
+            <div class="col-2">
+              <mat-icon [matMenuTriggerFor]="moreMenu">more_vert</mat-icon>
+              <mat-menu #moreMenu="matMenu" class="eventlist">
+                <ng-template matMenuContent>
+                  <button mat-menu-item (click)="editdynamickeywords(r)">
+                    <mat-icon class="icon-options">edit</mat-icon> <b>{{"Edit"|titlecase}}</b>
+                  </button>
+                  <button mat-menu-item (click)="deleteDialogConfirmation(r,'deletedynamickeywords')">
+                    <mat-icon class="icon-options">delete</mat-icon><b>{{"Delete"|titlecase}}</b>
+                  </button>
+                </ng-template>
+              </mat-menu>
+            </div>
+          </div>
+
+          <div class=" mt-2 height-116">
+            <div class="row m-t-3">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col">Parameter</th>
+                    <th scope="col">Comparator</th>
+                    <th scope="col">Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let condition of r.conditionDtos">
+                    <td style="text-align: start !important;">{{condition.conditionParameter}}</td>
+                    <td style="text-align: center !important;">{{condition.conditionComparison}}</td>
+                    <ng-container *ngIf="condition.dataType=='Date'">
+                      <td style="text-align: center !important;">{{condition.value|date:'dd-MMM-yyyy'}}</td>
+                    </ng-container>
+                    <ng-container *ngIf="condition.dataType!='Date'">
+                      <td style="text-align: center !important;">{{condition.value}}</td>
+                    </ng-container>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- ---------------------  -->
+  <div class="overlay" *ngIf="loadder">
+    <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+    </mat-progress-spinner>
+  </div>
+</mat-dialog-content>

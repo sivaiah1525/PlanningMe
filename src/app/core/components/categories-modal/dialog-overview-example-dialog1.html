@@ -1,0 +1,15 @@
+<div class="d-flex flex-row align-items-center modal-header">
+  <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Confirmation</h2>
+</div>
+<mat-dialog-content class="mr-0 ml-0">
+  <div class="row">
+    <h3 style="
+      margin-top: 14px;
+      margin-left: 34px;
+  ">{{'Are you sure you want to delete?'|translate}}</h3>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="my-1">
+  <button mat-button mat-dialog-close>{{'Cancel'|translate}}</button>
+  <button mat-raised-button cdkFocusInitial [mat-dialog-close]="data.catId" class="b-blue">{{'Delete'|translate}}</button>
+</mat-dialog-actions>

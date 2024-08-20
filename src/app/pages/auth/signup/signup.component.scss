@@ -1,0 +1,167 @@
+@media all and (max-width: 3000px) {
+    .singup-card {
+        width: 380px;
+        height: 80vh;
+        align-items: center;
+        overflow-y: scroll;
+        opacity: 0.9;
+    
+        img {
+            height: 70px;
+            padding: 0;
+            border: none;
+        }
+    }
+
+}
+
+@media all and (max-width: 800px) {
+    .singup-card {
+        width: 330px;
+        height: 60vh;
+        align-items: center;
+        overflow-y: scroll;
+        opacity: 0.9;
+    
+        img {
+            height: 50px;
+            padding: 0;
+            border: none;
+        }
+    }
+
+}
+
+
+
+
+.singup-carddetails {
+    width: 380px;
+    height: 50vh;
+    align-items: center;
+    overflow-y: scroll;
+
+    img {
+        height: 70px;
+        padding: 0;
+        border: none;
+    }
+}
+
+.singupbody {
+    width: 100%;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    object-fit: cover !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.infomationstyle{
+    font-size: large;
+    font-weight: 600;
+    padding-top: 10px;
+}
+
+
+.b-blue {
+    background-color: #3880ff;
+}
+
+.account {
+    padding: 0, 80;
+}
+
+.profilebody {
+    border: 1px solid rgb(210, 202, 202);
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.profilename {
+    position: relative;
+    top: -6px;
+}
+
+.inputprofile {
+    overflow: hidden;
+    width: 200px;
+}
+
+textarea {
+    width: 90%;
+}
+
+.mainaddress,
+.paymentAddress {
+    width: 100%;
+}
+
+.col6format{
+    .col-6{
+        padding-left: 2px !important;
+        padding-right: 0 !important;
+    }
+}
+
+.carddetails{
+    .col-5{
+        padding-left: 2px !important;
+        padding-right: 0 !important;
+    }
+}
+
+
+
+
+.StripeElement {
+    box-sizing: border-box;  
+    height: 40px;  
+    padding: 10px 12px;  
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: white;  
+    box-shadow: 0 1px 10px 0 #e6ebf1;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+    margin-bottom: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  
+  .StripeElement--focus {
+    box-shadow: 0 1px 3px 0 #cfd7df;
+  }
+  
+  .StripeElement--invalid {
+    border-color: #fa755a;
+  }
+  
+  .StripeElement--webkit-autofill {
+    background-color: #fefde5 !important;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+  
+  // /* Create two equal columns that floats next to each other */
+  .column1 {
+    float: left;
+    width: 70%;
+    height: 50px; /* Should be removed. Only for demonstration */
+  }
+
+  .column2 {
+    float: left;
+    width: 30%;
+    padding-left: 10px;
+    height: 50px; /* Should be removed. Only for demonstration */
+  }
+  #card-errors{
+    color: red;
+    margin-bottom: 14px;
+  }
+  

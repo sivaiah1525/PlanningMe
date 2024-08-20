@@ -1,0 +1,156 @@
+
+.circular-progress-bar {
+    position: relative;
+    width: 50px; /* Adjust the width as needed */
+    height: 50px; /* Adjust the height as needed */
+}
+
+.circular-progress-bar svg {
+    width: 100%;
+    height: 100%;
+}
+
+.circular-progress-bar circle {
+    fill: none;
+    stroke-width: 10; /* Adjust the stroke width as needed */
+}
+
+.circular-progress-bar .progress-bar-background {
+    stroke: #e0e0e0; /* Background color for the progress bar */
+}
+
+.circular-progress-bar .progress-bar-Send {
+    stroke: #4caf50; /* Color for the progress bar */
+    transition: stroke-dashoffset 0.35s; /* Add animation transition for progress */
+}
+
+.circular-progress-bar text {
+    font-size: 12px; /* Adjust font size as needed */
+}
+
+.circular-progress-bar .counttitle {
+    text-align: center;
+    margin-top: 5px; /* Adjust margin as needed */
+} 
+
+::ng-deep .mat-expansion-panel-body {
+     padding: 0 !important; 
+}
+
+::ng-deep  .mat-expansion-panel:not([class*=mat-elevation-z]) {
+    box-shadow:none !important; 
+}
+::ng-deep  .mat-expansion-panel-header-description {
+    display: flex;
+    flex-grow: 1;
+     margin-right: 0 !important; 
+}
+::ng-deep  .mat-expansion-panel-header.mat-expanded {
+    height: 55px;
+}
+
+::ng-deep  .mat-accordion .mat-expansion-panel:first-of-type {
+     border-top-right-radius:0 !important;
+    border-top-left-radius: 0 !important; 
+}
+ .panelheader {
+    cursor: pointer;
+    border-top: 1px solid lightgray !important;
+}
+.panelheader1 {
+    cursor: pointer;
+    border-top: 1px solid white !important;
+    background-color: rgb(247, 243, 243);
+}
+::ng-deep  .mat-expansion-panel-spacing {
+    margin: 0 !important; 
+}
+
+.mat-expansion-panel-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center; 
+    border-radius: inherit;
+    transition: height 225ms cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top:0px !important ;
+    margin:0px !important ;
+    padding:0px !important ;
+}
+
+.w28 {
+    width:28%;
+}
+
+.w12 {
+    width:12%;
+}
+
+.w10 {
+    width:10%
+}
+
+.w2 {
+    width:2%;
+}
+
+.w9 {
+    width:9%;
+}
+
+.w15 {
+    width:15%;
+}
+
+.w20 {
+    width: 20%;
+}
+
+.p3 {
+    padding-top:3%;
+}
+
+.w5 {
+    width: 5%;
+}
+
+.w11 {
+    width: 11%;
+}
+
+td {
+    white-space: nowrap;
+    padding-left: none !important;
+    padding-right: none !important;
+
+}
+
+.timeauto {
+    width: 23px;
+    height: 23px;
+    margin-right: 3px;
+}
+
+.textbold{
+    font-weight: 900 !important;
+}
+
+
+.arrow {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+  }
+  
+  .up {
+    border-bottom: 5px solid black;
+      position: relative;
+      top: -10px;
+  
+  }
+  
+  .down {
+    border-top: 5px solid black;
+    position: relative;
+    top: 12px;
+  }

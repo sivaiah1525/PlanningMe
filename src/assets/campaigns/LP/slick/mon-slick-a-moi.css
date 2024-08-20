@@ -1,0 +1,166 @@
+/*GENERALITES*/
+
+	.slides {
+	  width: auto;
+	  margin: 0px;
+	}
+
+
+
+	.slick-prev:before,
+	.slick-next:before {
+	  color: black;
+	}
+
+	.slick-dots {
+	  top: 0px;
+	}
+	
+	.slick-dots li.slick-active button::before {
+	  color: #000000;
+	  opacity:1;
+	}	
+	
+	
+	
+	
+
+	.slick-current {
+	  color: #000000;
+	}
+
+	.slick-dots-thumb .slick-slide:not(.slick-current) {
+	  opacity: 0.1;
+	}
+
+	.slick-dots-thumb .slick-slide {
+	  font-size: 17px;
+	  margin: 0 0.25em;
+	}
+
+	slick-track {
+	  display: flex !important;
+	}
+
+	.slick-slide {
+	  height: auto;
+	}
+
+
+
+
+
+	
+	
+	
+	
+	
+	.slick-prev, .slick-next, .my_row.slick-slider-fix .slick-next, .my_row.slick-slider-fix .slick-prev  {
+	  font-size: 0;
+	  line-height: 0;
+	  position: absolute;
+	  bottom: 0%;
+	  display: block;
+	  width: 40px !important;
+	  height: 40px !important;
+	  padding: 0;
+	  -webkit-transform: translate(0, -50%);
+	  -ms-transform: translate(0, -50%);
+	  transform: translate(0, -50%);
+	  cursor: pointer;
+	  color: transparent;
+	  border: none;
+	  outline: none;
+	  background: rgba(255, 255, 255, 0.8);
+	  z-index:2;
+	}
+	
+	
+@media screen and (min-width: 1024px) {
+	.slick-prev, .slick-next, .my_row.slick-slider-fix .slick-next, .my_row.slick-slider-fix .slick-prev  {
+	  top: 50%;
+	  botto:auto;
+	}
+}
+
+	.slick-prev {
+		left:0px
+	}
+
+	.slick-next {
+		right:0px
+	}
+	
+	
+	.slick-prev:before , .slick-next::before {
+		position: absolute;
+		z-index:10000;
+		top:8%;
+		left:25%
+	}
+
+
+
+	.slick-prev:before {
+		content:url('../img/fleche-gauche-mobile.png');
+		left:25%
+	}
+
+	.slick-next::before {
+		content:url('../img/fleche-droite-mobile.png');
+		right:25%
+	}
+	
+	
+	
+/* #SLIDER-IMAGES */
+
+
+	.slick-prev:before {
+		content:url('../img/fleche-gauche-mobile.png');
+	}
+
+	.slick-next:before {
+		content:url('../img/fleche-droite-mobile.png');
+	}	
+	
+	
+	
+	
+	
+	
+	.slick-prev{
+		background-color:#ffffff;
+	}
+
+	.slick-next {
+		background-color:#ffffff;
+	}	
+
+
+
+
+
+
+	
+	
+
+	
+
+
+/* #SLIDER-ARGUMENTAIRE */
+
+
+	#slider-argumentaire  .slick-prev {
+		left:-7%;
+	}
+	
+	
+	#slider-argumentaire  .slick-next {
+		right:-7%;
+	}
+
+
+
+
+

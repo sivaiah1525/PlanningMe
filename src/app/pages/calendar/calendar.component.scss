@@ -1,0 +1,68 @@
+#pm-calender {
+    height: auto;
+    overflow: auto;
+
+    section {
+        display: table;
+        margin: 8px;
+        float: right;
+    }
+
+    .create-button-row {
+        display: table-cell;
+        position: relative;
+    }
+
+    .create-button-row button {
+        display: table-cell;
+        margin-right: 8px;
+        position: fixed;
+        right: 0;
+        z-index: 1;
+        bottom: 9px;
+    }
+
+    .create-flex-container {
+        display: flex;
+        justify-content: space-between;
+        width: 480px;
+    }
+
+    .create-button-container {
+        display: flex;
+        justify-content: center;
+        width: 120px;
+
+        .mat-icon {
+            color: #fff;
+        }
+    }
+}
+
+.cal-week-view .cal-hour:not(:last-child) .cal-hour-segment,
+.cal-week-view .cal-hour:last-child :not(:last-child) .cal-hour-segment {
+    border-bottom: none;
+}
+
+.avatarprofile {
+    height: 50px !important;
+    width: 50px !important;
+    border-radius: 50px;
+    margin-top: -10px;
+}
+
+.modal-header {
+    padding: 10px;
+    background: #fb4444;
+    color: #fff;
+    width: 100%;
+}
+
+.cal-header.cal-weekend,
+.cal-day-headers {
+    span {
+        color: white !important;
+        opacity: 1 !important;
+    }
+
+}

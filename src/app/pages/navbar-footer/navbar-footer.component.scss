@@ -1,0 +1,36 @@
+
+
+@media all and (max-width: 3000px) {
+    .footerstyle{
+      display: flex;
+        color: white;
+        cursor: pointer;
+        margin:0 !important;
+        justify-content: center;
+        align-items: center;
+        .flexbody{
+          padding: 16px;
+          font-size:16px;
+          align-items: center;
+          text-align:center;
+        }
+    }
+  }
+
+  @media all and (max-width: 500px) {
+    .footerstyle{
+      display: flex;
+        color: white;
+        cursor: pointer;
+        margin:0 !important;
+        justify-content: center;
+        align-items: center;
+        .flexbody{
+          padding: 16px;
+          font-size:12px;
+          align-items: center;
+          text-align:center;
+
+        }
+    }
+  }

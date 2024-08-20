@@ -1,0 +1,259 @@
+<div class="d-flex flex-row align-items-center modal-header">
+  <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+    <mat-icon style="position: relative;right: 10px;"> event</mat-icon>
+    {{'Event Details'|translate}}
+  </h2>
+  <mat-icon class="pointer" mat-dialog-close>close</mat-icon>
+</div>
+<mat-dialog-content class="mr-0 ml-0">
+  <div class="row mt-2 mb-2">
+    <div class="col-4">
+    </div>
+    <div class="col-3">
+      <img style="width: 40px;height: 50px;margin-top: 10px;" *ngIf="eventData?.isConvertedFromTask"
+        src="../../../../../../assets/images/iconsForsvg/event_upcoming.svg">
+      <mat-icon style="font-size: 40px"> event</mat-icon>
+    </div>
+    <div class="col-5">
+      <button *ngIf="!otherpepuleplan"
+        style="display: flex;justify-content: end;position: relative;left: 50px;top: 10px;"
+        [matMenuTriggerFor]="beforeMenu" class="mr-1 b-color">
+        <mat-icon class="icon-options">more_vert</mat-icon>
+      </button>
+      <mat-menu #beforeMenu="matMenu" xPosition="before">
+        <button mat-menu-item (click)="openEditdEventDialog(eventData?.id)">
+          <mat-icon>edit</mat-icon> {{'Edit'|translate}}
+        </button>
+        <button mat-menu-item (click)="deleteDialogConfirmation(eventData,'deleteEvent')">
+          <mat-icon>delete</mat-icon> {{'Delete'|translate}}
+        </button>
+      </mat-menu>
+      <!-- </span> -->
+    </div>
+  </div>
+  <h2 style="text-align: center; align-items: center;margin-top: 20px !important; padding: 0 !important;">
+    <span *ngIf="eventData?.isExternalEvent === true && eventData?.source == 'Google Calender'">
+      <img style="border-radius: 50%;" width="20" height="20" src="assets/logo/GoogleCalendar.png">
+    </span>
+    <span *ngIf="eventData?.isExternalEvent === true && eventData?.source == 'Outlook Calender'">
+      <img style="border-radius: 50%; width: 20px !important; height: 20px !important;"
+        src="assets/logo/OutlookCalendar.png">
+    </span>
+    <span> {{eventData?.title|titlecase}}</span>
+  </h2>
+
+  <section class="detail-wrapper">
+    <mat-list>
+      <mat-list-item *ngIf="eventData?.eventReference!=null">
+        <div class="fw-600"><b><mat-icon></mat-icon>{{'Event Reference'|translate}}:</b> </div>
+        <span class="ml-3 fw-600 color_grey"> {{eventData?.eventReference}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <div class="fw-600"><b><mat-icon>event</mat-icon>{{'Start date and Time'|translate}}:</b> </div>
+        <span class="ml-3 fw-600 color_grey"> {{eventData?.startDate | date:'dd-MMM-yyyy H:mm'}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <div class="fw-600"><b> <mat-icon>event</mat-icon>{{'End date and Time'|translate}}:</b> </div>
+        <span class="ml-3 fw-600 color_grey"> {{eventData?.endDate | date:'dd-MMM-yyyy H:mm'}}</span>
+      </mat-list-item>
+      <mat-list-item>
+        <div class="fw-600"><b> <mat-icon style="color: green;">group</mat-icon>{{'Public'|translate}}:</b>
+        </div>
+        <span class="ml-3 fw-600 color_grey">
+          <span *ngIf="eventData?.isPublic==true">{{'Yes'|translate}}</span>
+          <span *ngIf="eventData?.isPublic==false">{{'No'|translate}}</span>
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <div class="fw-600" style="padding-left: 10px;"><b><img
+              src="../../../../assets/images/iconsForsvg/phone-call.svg"> {{'Online'|translate}}:</b> </div>
+        <span class="ml-3 fw-600 color_grey">
+          <span *ngIf="eventData?.isOnlineEvent==true">{{'Yes'|translate}}</span>
+          <span *ngIf="eventData?.isOnlineEvent==false">{{'No'|translate}}</span>
+        </span>
+      </mat-list-item>
+
+      <ng-container *ngIf="(eventData?.address!=null&&eventData?.address!='')">
+        <mat-list-item>
+          <div class="fw-600"><b> <mat-icon>map</mat-icon>{{'Address'|translate}}:</b></div>
+          <span class="ml-3 fw-600 color_grey"> <span
+              class="formatTextLine">{{eventData?.address|titlecase}}</span></span>
+        </mat-list-item>
+        <mat-list-item *ngIf="eventData?.city!=null">
+          <div class="fw-600"><b> <mat-icon></mat-icon>{{'City'|translate}}:</b></div>
+          <span class="ml-3 fw-600 color_grey"> <span class="formatTextLine">{{eventData?.city|titlecase}}</span></span>
+        </mat-list-item>
+        <mat-list-item *ngIf="eventData?.country!=null">
+          <div class="fw-600"><b> <mat-icon></mat-icon>{{'Country'|translate}}:</b></div>
+          <span class="ml-3 fw-600 color_grey"> <span
+              class="formatTextLine">{{eventData?.country|titlecase}}</span></span>
+        </mat-list-item>
+        <mat-list-item *ngIf="eventData?.zipCode!=null">
+          <div class="fw-600"><b> <mat-icon></mat-icon>{{'ZipCode'|translate}}:</b></div>
+          <span class="ml-3 fw-600 color_grey"> <span
+              class="formatTextLine">{{eventData?.zipCode|titlecase}}</span></span>
+        </mat-list-item>
+      </ng-container>
+    </mat-list>
+  </section>
+
+  <div>
+    <table class="table-desgin">
+      <tr *ngFor="let users of eventUsers ; let i = index">
+        <td><b *ngIf="i == 0">
+            <mat-icon>person</mat-icon>{{'Resource Name'|translate}}:</b></td>
+        <td class="fw-600 color_grey">
+          <img style="border-radius: 50%;" width="30" height="30" src="assets/images/admin.jpg"><span
+            style="padding-left:10px">{{users.userName|titlecase}}</span>
+        </td>
+      </tr>
+
+      <tr *ngFor="let client of clients ; let i = index">
+        <td><b *ngIf="i == 0">
+            <mat-icon>contacts</mat-icon>{{'Client Name'|translate}}:</b></td>
+        <td class="fw-600 color_grey">
+          <img style="border-radius: 50%;" width="30" height="30" src="assets/images/admin.jpg">
+          <span style="padding-left:10px">{{client.contactName|titlecase}}</span>
+        </td>
+      </tr>
+
+      <tr>
+        <td><b>
+            <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">{{' Site'|translate}}:</b></td>
+        <td class="pointer fw-600 color_grey">
+          {{eventData?.siteName? eventData?.siteName :'-' |titlecase}}</td>
+      </tr><br>
+
+      <tr>
+        <td><b>
+            <mat-icon>person</mat-icon>{{'Users'|translate}}:</b></td>
+        <td class="pointer fw-600 color_grey" (click)="findEventLinked()">{{eventData?.usersCount+ 1}}</td>
+      </tr><br>
+
+      <tr *ngIf="showusers">
+        <td></td>
+        <td class="fw-600 color_grey">
+          <span>
+            <mat-icon class="btn-blue v-align">edit</mat-icon>
+          </span>
+          <span class="fw-600 color_grey w-100 pointer">
+            <img class="btn-blue" style="border-radius: 50%;" width="30" height="30"
+              [src]="eventData?.eventCreatorProfile ? eventData?.eventCreatorProfile :'assets/avatar.svg'">
+            {{eventData?.eventCreatorFirstName|titlecase}}
+            {{eventData?.eventCreatorLastName|titlecase}}
+          </span><br>
+        </td>
+      </tr>
+      <tr *ngIf="showusers">
+        <td></td>
+        <td class="float-l pointer" *ngFor="let users of eventLinkedById.linkedEventUserTableDtos ; let i = index">
+          <div style="width: 200px; margin: 0 !important;">
+            <span [ngClass]="{ 'm-l-28':  users.proposedUser == false       }">
+              <mat-icon class="v-align" *ngIf="users.eventValidationName == 'Not Attendee'">thumb_down_alt
+              </mat-icon>
+              <mat-icon class="btn-blue v-align " *ngIf="users.eventValidationName == 'Attendee'">
+                thumb_up_alt</mat-icon>
+              <mat-icon class="btn-black v-align" *ngIf="users.proposedUser == true">help</mat-icon>
+              <mat-icon *ngIf="users.eventValidationName == 'No response'"></mat-icon>
+            </span>
+            <span class="p-l-10 fw-600 color_grey pointer" (click)="openUserDialog(users, 'user')">
+              <img class="btn-blue" style="border-radius: 50%;" width="30" height="30"
+                [src]="users.profilePicture ? users.profilePicture :'assets/avatar.svg'">
+              {{users.firstName|titlecase}} {{users.lastName |titlecase}}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <!-- contacts  -->
+      <tr>
+        <td><b>
+            <mat-icon style="color: #6495ed;">contacts</mat-icon>{{'Contacts'|translate}}:</b></td>
+        <td class="pointer fw-600 color_grey" (click)="findcontactLinked()">{{eventData?.contactsCount}}</td>
+      </tr><br>
+      <tr *ngIf="showcontact">
+        <td class="float-l pointer fw-600 color_grey" (click)="openContactDialog(eventcontact, 'contact')"
+          *ngFor="let eventcontact of contactLinkedById.groupOfContactsDtos ; let i = index">
+          <div style="width: 200px; margin: 0 !important;">
+            <span class="m-l-28">
+              <img style="border-radius: 50%;" width="30" height="30"
+                [src]="eventcontact.profile ? eventcontact.profile :'assets/avatar.svg'"></span>
+            <span style="padding-left:10px">
+              {{eventcontact.firstName|titlecase}}
+              {{eventcontact.lastName|titlecase}}
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr class="mt-2">
+        <td><b class="fw-600 align_items_icon">{{'Category'|translate}}:</b></td>
+        <td class="fw-600 color_grey">
+          <button [ngStyle]="{'background':eventData?.color}" class="Categorystyle">
+            <span> {{eventData?.categoryName|titlecase}}</span></button>
+        </td>
+      </tr><br>
+      <tr class="mt-2">
+        <td><b class="fw-600 align_items_icon">{{'Critic level'|translate}}:</b></td>
+        <td class="fw-600 color_grey">{{eventData?.criticityName|titlecase}}</td>
+      </tr><br>
+      <tr>
+        <td><b class="fw-600 align_items_icon">{{'keywords'|translate}}:</b></td>
+        <td class="fw-600 color_grey">
+          <span *ngIf="eventData?.eventReference!=null">
+            <button class="EventReff">
+              <span>{{eventData?.eventReference|titlecase}}</span>
+            </button>
+          </span>
+          <span *ngFor="let x of eventData?.keywords ;let i=index">
+            <button class="normalkeyword">
+              <span>{{x|titlecase}}</span>
+            </button>
+          </span>
+        </td>
+      </tr><br>
+      <tr>
+        <td><mat-icon></mat-icon><b>{{'Description'|translate}}:</b></td>
+        <td class="fw-600 color_grey"><span class="formatTextLine">{{eventData?.description}}</span></td>
+      </tr><br>
+      <tr>
+        <td><b>
+            <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>{{'Files'|translate}}:</b></td>
+        <td class="pointer fw-600 color_grey" (click)="findfilesLinked(eventData?.filesCount)">{{eventData?.filesCount}}
+        </td>
+      </tr><br>
+
+      <tr *ngIf="showfile">
+        <td></td>
+        <td>
+          <div class="row">
+            <div class="col-12" *ngFor="let file of getfile ; let i = index">
+              <div> <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                <a style="cursor:pointer;" (click)="gotofiles(file)"
+                  class="color_grey m-l-10">{{file.title|titlecase}}</a>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td><b>
+            <mat-icon style="color:rgb(255,193,111) ;">speaker_notes</mat-icon>{{'Notes'|translate}}:
+          </b></td>
+        <td class="pointer fw-600 color_grey" (click)="findnotesLinked(eventData?.notesCount)">{{eventData?.notesCount}}
+        </td>
+      </tr><br>
+      <tr *ngIf="showNote">
+        <td></td>
+        <td>
+          <div class="row">
+            <div class="col-12" *ngFor="let note of getNote ; let i = index">
+              <div> <mat-icon style="color:rgb(255,193,111) ;">speaker_notes</mat-icon>
+                <a style="cursor:pointer;" class="color_grey m-l-10">{{note.title|titlecase}}</a>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+
+    </table>
+  </div>
+</mat-dialog-content>

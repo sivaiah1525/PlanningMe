@@ -1,0 +1,199 @@
+<div class="kanban-card"
+    [ngStyle]="{'background-color':(card?.isExpired ==true)?'#FFCFCF':(card?.isThreeDaysLeft ==true)?'#FFFFCC':(card?.isApproved ==true)?'#D8F4F5':'#fff'}">
+    <div class="kanban-card-header">
+        <span class="kanban-card-title">
+            <ng-container *ngIf="card?.isMilesStone==true">
+                <span><img (click)="opentaskDialog(card?.id)"
+                        src="../../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg"></span>
+            </ng-container>
+            <ng-container *ngIf="card?.isMilesStone==false">
+                <mat-icon (click)="opentaskDialog(card?.id)" style="color:green;cursor: pointer;"> assignment_turned_in</mat-icon>
+            </ng-container>
+            <span style="padding: 4px 10px;border-radius: 50px;position: relative;left: 10px;"
+                [style.background]="card?.fontColor" [style.color]="card?.color">{{
+                card?.categoryName|titlecase}}</span>
+        </span>
+        <div class="btn-container">
+            <mat-icon [matMenuTriggerFor]="moreMenu" class="icon-options">more_vert</mat-icon>
+            <mat-menu #moreMenu="matMenu" class="eventlist">
+                <ng-template matMenuContent>
+                    <button class="fw-600" mat-menu-item>
+                        <mat-icon class="icon-options">visibility</mat-icon>
+                        <span class="fw-600 color_black">{{'View'|translate}}</span>
+                    </button>
+                    <button class="fw-600" mat-menu-item (click)="onEditClick()">
+                        <mat-icon class="icon-options">edit</mat-icon>
+                        <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                    </button>
+                    <button class="fw-600" mat-menu-item (click)="onDeleteClick()">
+                        <mat-icon class="icon-options">delete</mat-icon>
+                        <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                    </button>
+                </ng-template>
+            </mat-menu>
+
+        </div>
+    </div>
+    <div style="background-color: #4287F5;width: 100%;margin: 0 !important;height: 3px;"></div>
+    <div class="kanban-card-content">
+        <p style="font-weight: 900;margin-top:5px;padding: 3px 12px;cursor: pointer;"
+         (click)="opentaskDialog(card?.id)" >{{ card?.title|titlecase}}</p>
+        <div class="row mt-2 mb-2">
+            <div class="col-5 p-0">
+                <span [ngClass]="getCriticityColorClass(card?.criticityLevel)"
+                    style="padding: 5px 10px;border-radius: 50px;">{{card?.criticityLevel}}</span>
+            </div>
+            <div class="col-7 p-0">
+                <span style="font-size: 13px;font-weight: 900;color: black;"> <b>End Date : </b></span>
+                <span style="font-size: 13px;font-weight: 900;color: gray;">{{card?.endDate| date:'dd-MMM-yyyy'}}</span>
+            </div>
+        </div>
+        <div style="display: flex;justify-content: space-between;">
+            <div>
+                <img style="width:33px;height:33px;border-radius: 50%;margin: 10px;"
+                    [src]="card?.creatorProfile ? card?.creatorProfile:'assets/avatar.svg'"
+                    onError="this.src='assets/avatar.svg'">
+                <span style="position: relative;top:3px;margin: 10px;"><b>{{card?.creatorFirstName|titlecase}}
+                        {{card?.creatorLastName|titlecase}} </b></span>
+            </div>
+            <div class="circular-progress-bar">
+                <svg viewBox="0 0 100 100">
+                    <circle class="progress-bar-background" [attr.cx]="50" [attr.cy]="50" [attr.r]="radius">
+                    </circle>
+                    <circle [ngClass]="assignCssClass(card?.progress)" [attr.cx]="50" [attr.cy]="50" [attr.r]="radius"
+                        [attr.stroke-dasharray]="circumference"
+                        [attr.stroke-dashoffset]="calculateDashoffset(card?.progress)">
+                    </circle>
+                    <text x="50" y="40" text-anchor="middle" dominant-baseline="central">
+                        <tspan x="50" dy="0.5em">{{ temformat(card?.progress ) }}</tspan>
+                    </text>
+                </svg>
+            </div>
+        </div>
+        <!-- isMilesStone false  -->
+        <ng-container *ngIf="!card?.isMilesStone">
+            <div style="display: flex;margin-top: 10px; margin-bottom: 5px;justify-content: space-around;">
+                <div style="float: left;">
+                    <span style="font-weight: 900;color: rgb(12, 12, 12);">Duration :</span>
+                    <span style="font-weight: 900;color: gray;">{{card?.duration}}</span>
+                </div>
+                <div style="float: right;">
+                    <!-- <span>
+                        <img src="../../../../../../assets/images/iconsForsvg/time_auto_FILL0_wght400_GRAD0_opsz24.svg">
+                    </span> -->
+                    <span *ngIf="card.isApproved">
+                        <img src="../../../../../../assets/images/iconsForsvg/approval.svg"></span>
+                    <span *ngIf="card.isExpired||card.isThreeDaysLeft"><img
+                            src="../../../../../../assets/images/iconsForsvg/warning_FILL0_wght400_GRAD0_opsz24.svg"></span>
+                    <span *ngIf="card?.criticityLevel=='Less Important'"><img
+                            src="../../../../../../assets/images/iconsForsvg/zone_person_urgent.svg"></span>
+                    <span *ngIf="card?.criticityLevel=='Mandatory'"><img
+                            src="../../../../../../assets/images/iconsForsvg/emergency_heat.svg"></span>
+                    <span *ngIf="card?.isConvertedToEvent"><img
+                            src="../../../../../../assets/images/iconsForsvg/event_upcoming.svg"></span>
+                </div>
+            </div>
+            <div style="display: flex;margin-top: 10px; margin-bottom: 5px;justify-content: space-around;">
+                <div>
+                    <span style="margin: 5px;" *ngFor="let x of card?.getKeywords">
+                        <span class="keywords">#{{x | titlecase}}</span>
+                    </span>
+                </div>
+            </div>
+            <div style="display: flex;">
+                <img *ngIf="card?.sucessorCount!=0" style="width: 18px;height: 18px;"
+                    style="position: relative;cursor: pointer;" (click)="getlinkedsuccessor(card,sucessorCount)"  
+                    src="../../../../../assets/images/iconsForsvg/right-arrow.svg">
+                <img *ngIf="card?.predecessorCount!=0" style="width: 18px;height: 18px;"
+                    style="position: relative;cursor: pointer;"  (click)="getlinkedpredecessor(card,predecessorCount)" 
+                    src="../../../../../assets/images/iconsForsvg/left-arrow.svg">
+                <img *ngIf="card?.isParent == true" style="width: 18px;height: 18px;" 
+                style="position: relative;cursor: pointer;"
+                    src="../../../../../assets/images/iconsForsvg/up_arrow.svg">
+            </div>
+            <hr *ngIf="card?.initiatives.length!=0">
+            <ng-container *ngIf="card?.isConvertedToEvent==true">
+                <div style="display: flex;" class="mb-1">
+                    <div>
+                        <span><img src="../../../../../../assets/images/iconsForsvg/event_upcoming.svg"></span>
+                    </div>
+                    <div>
+                        <span style="position: relative;left: 10px;font-weight: 900;color: gray;">
+                        {{card?.eventEnddate|date:'dd-MMM-yyyy H:mm'}}</span>
+                        <span style="margin-left: 30px;"></span>
+                        <span
+                            style="position: relative;left: 10px;font-weight: 900;color: gray;">
+                            {{card?.eventStartdate|date:'dd-MMM-yyyy H:mm'}}</span>
+                    </div>
+                </div>
+            </ng-container>
+            <div *ngFor="let x of card?.initiatives">
+                <div class="mb-1" (click)="showinitiativesdetails(x)">
+                    <span><mat-icon>ballot</mat-icon></span>
+                    <span
+                        style="position: relative;left: 10px;font-weight: 900;color: rgb(8, 8, 8);">{{x.title|titlecase}}</span>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- isMilesStone true  -->
+        <ng-container *ngIf="card?.isMilesStone">
+            <div style="display: flex;margin-top: 10px; margin-bottom: 5px;justify-content: space-around;">
+                <div style="float: left;">
+                    <!-- <span>
+                        <img src="../../../../../../assets/images/iconsForsvg/time_auto_FILL0_wght400_GRAD0_opsz24.svg">
+                    </span> -->
+                    <span *ngIf="card.isApproved">
+                        <img src="../../../../../../assets/images/iconsForsvg/approval.svg"></span>
+                    <span *ngIf="card?.isExpired||card?.isThreeDaysLeft"><img
+                            src="../../../../../../assets/images/iconsForsvg/warning_FILL0_wght400_GRAD0_opsz24.svg"></span>
+                    <span *ngIf="card?.criticityLevel=='Low'"><img
+                            src="../../../../../../assets/images/iconsForsvg/zone_person_urgent.svg"></span>
+                    <span *ngIf="card?.criticityLevel=='Medium'"><img
+                            src="../../../../../../assets/images/iconsForsvg/emergency_heat.svg"></span>
+                    <span *ngIf="card?.isConvertedToEvent"><img
+                            src="../../../../../../assets/images/iconsForsvg/event_upcoming.svg"></span>
+                </div>
+                <div style="float: right;">
+                    <span style="margin: 5px;" *ngFor="let x of card?.getKeywords">
+                        <span class="keywords">#{{x | titlecase}}</span>
+                    </span>
+                </div>
+            </div>
+            <div style="display: flex;">
+                <img *ngIf="card?.sucessorCount!=0" style="width: 18px;height: 18px;"
+                    style="position: relative;cursor: pointer;" (click)="getlinkedsuccessor(card,sucessorCount)"  
+                    src="../../../../../assets/images/iconsForsvg/right-arrow.svg">
+                <img *ngIf="card?.predecessorCount!=0" style="width: 18px;height: 18px;"
+                    style="position: relative;cursor: pointer;"  (click)="getlinkedpredecessor(card,predecessorCount)" 
+                    src="../../../../../assets/images/iconsForsvg/left-arrow.svg">
+                <img *ngIf="card?.isParent == true" style="width: 18px;height: 18px;" 
+                style="position: relative;cursor: pointer;"
+                    src="../../../../../assets/images/iconsForsvg/up_arrow.svg">
+            </div>
+            <hr *ngIf="card?.initiatives.length!=0">
+            <ng-container *ngIf="card?.isConvertedToEvent==true">
+                <div style="display: flex;" class="mb-1">
+                    <div>
+                        <span><img src="../../../../../../assets/images/iconsForsvg/event_upcoming.svg"></span>
+                    </div>
+                    <div>
+                        <span style="position: relative;left: 10px;font-weight: 900;color: gray;">{{card?.eventEnddate|
+                            date:'dd-MMM-yyyy H:mm'}}</span>
+                        <span style="margin-left: 30px;"></span>
+                        <span
+                            style="position: relative;left: 10px;font-weight: 900;color: gray;">{{card?.eventStartdate|
+                            date:'dd-MMM-yyyy H:mm'}}</span>
+                    </div>
+                </div>
+            </ng-container>
+            <div *ngFor="let x of card?.initiatives">
+                <div class="mb-1" (click)="showinitiativesdetails(x)">
+                    <span><mat-icon>ballot</mat-icon></span>
+                    <span
+                        style="position: relative;left: 10px;font-weight: 900;color: rgb(8, 8, 8);">{{x.title|titlecase}}</span>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>

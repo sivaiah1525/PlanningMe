@@ -1,0 +1,42 @@
+<div class="d-flex flex-row align-items-center modal-header">
+  <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{'Categories'|translate}}</h2>
+  <mat-icon matDialogClose>close</mat-icon>
+</div>
+
+<mat-dialog-content class="mr-0 ml-0">
+  <form [formGroup]="categoriesForm" id="categories-form">
+    <div style="float: right"><button mat-raised-button (click)="createCat()" class="b-blue">{{'Create'|translate}}</button></div>
+    <div class="w-100 mb-3">
+      <mat-list>
+        <div mat-subheader style="font-weight: bold;color: black;">{{'List of Categories'|translate}}</div> <br>
+        <mat-list-item *ngFor="let categroy of categories">
+          <div mat-line>
+            <button [style.background]="categroy.color" [style.color]="categroy.fontColor"
+              style="border: none; border-radius:20px;padding: 5px 29px">
+              <span style="position: relative; left: 3px;">{{categroy.categoryName}}</span></button>
+          </div>
+
+          <button *ngIf="categroy.id != null" mat-icon-button>
+            <mat-icon (click)="editCategory(categroy)">edit</mat-icon> 
+          </button>
+          <button *ngIf="categroy.id != null" mat-icon-button>
+            <mat-icon (click)="deletecategroy(categroy,'deletecategroy')">delete</mat-icon>
+          </button>
+
+        </mat-list-item>
+      </mat-list>
+    </div>
+
+    <mat-form-field appearance="legacy" class="w-100" *ngIf="categoryOption === '1'">
+      <mat-label>{{'Category Name'|translate}}<span class="danger"> * </span></mat-label>
+      <input matInput type="text" placeholder="Category Name " formControlName="categoryName">
+    </mat-form-field>
+
+    <div class="col-md-5" *ngIf="categoryOption === '1'">
+      <mat-label>{{'Category Color'|translate}} <span class="danger"> * </span></mat-label>
+      <input [style.background]="color1" [(colorPicker)]="color1"
+        (colorPickerOpen)="onEventLog('colorPickerOpen', $event)"
+        (colorPickerClose)="onEventLog('colorPickerClose', $event)" />
+    </div>
+  </form>
+</mat-dialog-content>

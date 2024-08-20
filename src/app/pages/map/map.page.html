@@ -1,0 +1,392 @@
+<div class="row  modal-header" *ngIf="ScreenType=='otherUserMap'">
+  <div class="col-11">
+    <div class="row mt-2">
+      <div class="col-12">
+        <span>
+          <img class="avatarimage"
+            [src]="OtherpepleData.User?.profilePicture ? OtherpepleData.User.profilePicture:'assets/avatar.svg'"
+            onError="this.src='assets/avatar.svg'" />
+          <span style="color: rgb(252, 251, 251);font-size: 20px;font-weight: bold;">{{'
+            '+OtherpepleData.User?.firstName+'
+            '+OtherpepleData.User?.lastName|titlecase}}</span>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="col-1  mt-2 ">
+    <mat-icon (click)="RemovePlanningFilter()">close</mat-icon>
+  </div>
+</div>
+
+
+<div id="carte" class="mt-2">
+  <pm-calendar-header (calendarViewChanged)="calendarViewChanged($event)" [(view)]="calendarView"
+    [(viewDate)]="viewDate" [smallDevice]="smallDevice" [OtherpeplemapStatus]="Otherpeplemap">
+  </pm-calendar-header>
+
+  <div class="row pageHeight">
+
+    <!-- Import All External Data  -->
+    <div class="col-xl-8 col-lg-8 col-md-7 col-sm-6 pr-1 pl-1  fixed-top" [style.height.px]="Height">
+      <ng-container *ngIf="ImportExternalData">
+        <div class="row">
+          <div class="col-4">
+            <button mat-raised-button cdkFocusInitial class="b-blue" class="externaldata"
+              (click)="ImportOnssenData(viewDialogformulti)">
+              Import All External Data
+            </button>
+          </div>
+          <div class="col-4">
+            <button mat-raised-button cdkFocusInitial class="b-blue" class="externaldata" (click)="FilterRemove()">
+              Remove Filter
+            </button>
+          </div>
+        </div>
+      </ng-container>
+      <!-- mapppp  -->
+      <agm-map
+       [latitude]="lat" 
+       [longitude]="lng"
+        [zoom]="zoom" [zoomControl]="true"
+        (zoomChange)="onZoomChange($event)"
+        (mapClick)="onMapClick($event)">
+        <agm-marker-cluster (clusterClick)="onClusterClick($event)"imagePath='assets/images/cluster-icons/m' [gridSize]="60"  
+         #markerCluster  >
+          <agm-marker *ngFor="let m of markerEvents; let i = index" style="position: fixed;" 
+            (markerClick)="clickedMarker(m.label, i, m,configDialog)" [latitude]="m.lat" [longitude]="m.lng"
+            [label]="m.label" [markerDraggable]="false" (dragEnd)="markerDragEnd(m, $event)" [iconUrl]="iconURL(m)">
+            <agm-info-window *ngFor="let m of showtitle; let i = index">
+              <strong>{{m.title}}</strong>
+            </agm-info-window>
+          </agm-marker>
+        </agm-marker-cluster>
+      </agm-map>
+    </div>
+
+   
+    
+    
+
+    <!-- ---------------  -->
+    <div class="col-xl-4 col-lg-4 col-md-5 col-sm-6 scrollHeight" [style.height.px]="Height">
+      <div [event]="event" *ngFor="let event of markerEvents; let i=index" class="event_split pointer">
+        <!-- planning and me Data  -->
+        <ng-container *ngIf="event.isConsumedData == false">
+          <!-- {{'latitude :'+event.lat}}
+          {{"longitude :"+event.lng}} -->
+          <div *ngIf="event.id!=null"
+          [ngClass]="{'bdr-invited': event.isEventCreator == false, 'bdr-simulation': event.isSimulation == true }">
+          <div class="d-flex flex-row align-items-end">
+            <div class="fw-600 flex-74">
+              <!-- ---------  -->
+              <span>
+                <img *ngIf="event.type!=='Sites'" style="border-radius: 50%;" width="30" height="30"
+                  [src]="event?.profilePicture ? event.profilePicture:'assets/avatar.svg'"
+                  onError="this.src='assets/avatar.svg'" />
+              </span>
+              <span>{{event.title}}</span>
+              <span>
+                <mat-icon class="btn-blue map-icon" (click)="showlocation(event,i)">my_location</mat-icon>
+                <mat-icon class="btn-blue map-icon" *ngIf="showremove == true && i==index " (click)="removelocation()">
+                  autorenew</mat-icon>
+              </span>
+            </div>
+
+            <mat-menu #moreMenu="matMenu" class="eventlist">
+              <ng-template matMenuContent>
+                <!-- ------------  -->
+                <div *ngIf="!event.isEventCreator">
+                  <button mat-icon-button>
+                    <mat-icon class="btn-blue" (click)="openEditdEventDialog(event.id)">edit</mat-icon>
+                  </button>
+                  <button mat-icon-button>
+                    <mat-icon class="btn-red" (click)="deleteEvent(event.id)">delete</mat-icon>
+                  </button>
+                </div>
+                <!-- ------------  -->
+                <div *ngIf="event.isEventCreator">
+                  <button mat-icon-button>
+                    <mat-icon class="btn-blue" (click)="invitedEventUpdate(event.id, 1)">thumb_up_alt</mat-icon>
+                  </button>
+                  <button mat-icon-button>
+                    <mat-icon class="btn-red" (click)="invitedEventUpdate(event.id, 0)">thumb_down_alt</mat-icon>
+                  </button>
+                  <button mat-icon-button>
+                    <mat-icon class="btn-black" (click)="eventProposal(event)">help</mat-icon>
+                  </button>
+                </div>
+              </ng-template>
+            </mat-menu>
+          </div>
+          <div class="d-flex flex-row align-items-center ">
+            <div class="fw-600 flex-74" (click)="onClick(event)" style="color: grey;" *ngIf="event.address !== null">
+              <span style="color: rgb(10, 10, 10);">Address : </span>
+              <span>{{event.address ?event.address : ' '}} {{event.city ? event.city : ' '}}</span><br>
+              <span> {{event.country ?event.country : ' '}} {{event.zipcode ? event.zipcode : ' '}}</span>
+            </div>
+            <div>
+              <span *ngIf="event.type == 'Contacts'">
+                <mat-icon role="img" class="mat-icon notranslate  mr-2 material-icons mat-icon-no-color color_blue"
+                  aria-hidden="true" (click)="contactpopup(event)">contacts</mat-icon>
+              </span>
+              <span *ngIf="event.type == 'Users'">
+                <mat-icon role="img" class="mat-icon notranslate  mr-2 material-icons mat-icon-no-color "
+                  aria-hidden="true" (click)="openUserDialog(event)">person</mat-icon>
+              </span>
+              <span *ngIf="event.type == 'Sites'">
+                <img (click)="openSiteDialog(event)" src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+              </span>
+
+            </div>
+
+          </div>
+        </div>
+        </ng-container>
+        <!-- onssendata  -->
+        <ng-container *ngIf="event.isConsumedData == true">
+          <div *ngIf="event.id!=null">
+            <div class="row">
+              <div class="col-12">
+                <img width="60px" height="40px" src="../../../assets/logo/onssen_logo.png" alt="">
+                <span class=" fw-600" (click)="showonssendata(event,configDialog)">{{event.title}}</span>
+                <span>
+                  <mat-icon class="btn-blue map-icon" (click)="showlocation(event,i)">my_location</mat-icon>
+                  <mat-icon class="btn-blue map-icon" *ngIf="showremove == true && i==index " (click)="removelocation()">
+                    autorenew</mat-icon>
+                </span>
+              </div>
+            </div>
+            <div class="row mt-2" style="padding-left: 20px; position: relative; bottom: 10px;">
+              <div class="col-11">
+                <div class=" fw-600" style="color: grey;">{{event.address}}</div>
+                <div class=" fw-600" style="color: grey;"> {{event.email}}</div>
+                <div class=" fw-600" style="color: grey;">{{event.phoneNumber}}</div>
+                <div class=" fw-600" style="color: grey;">{{event.code}}</div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<ng-template #redirecttoonssenwebsite class="container">
+  <div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100"> Configuration</h2>
+  </div>
+  <mat-dialog-content class="viewDialog pading "
+    style="padding: 0px  !important; margin: 0px !important;height:140px; width:500px;">
+    <div class="row mt-1 mb-1 p-0  justify-content-center">
+      <div class="col-4">
+        <img width="100px" height="50px" src="../../../assets/logo/onssen_logo.png" alt="">
+      </div>
+      <div class="row p-0 m-0">
+        <div class="col-12">
+          <h3>mysource.com is a platform giving you some credits in order to get data</h3>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-action>
+    <div class="row justify-content-center mt-1 mb-1">
+      <div class="col-4">
+        <button mat-raised-button mat-dialog-close>Cancel</button>
+      </div>
+      <div class="col-4">
+        <button mat-raised-button class="b-blue"><a style="transform: none; color: white;" target="_blank"
+            href="http://onssendataui.s3-website.eu-west-3.amazonaws.com/default/default/login">Go tO
+            webSite </a></button>
+      </div>
+    </div>
+  </mat-dialog-action>
+</ng-template>
+
+
+
+<!-- mapDialog  -->
+<ng-template #mapDialog class="container">
+  <div class="row br-btm -flex flex-row align-items-center modal-header" style="border-bottom: 1px solid lightsalmon;">
+    <h3 mat-dialog-title class="m-0 dialog-title text-center w-100 f-weight">Paris France 75008</h3>
+  </div>
+  <mat-dialog-content class="viewDialog pading "
+    style="padding: 0px  !important; margin: 0px !important;height:auto; width: 400px;">
+    <div class="row b-btm" *ngFor="let list of listgrplocation" style="height: 50px;">
+      <div class="col-2 pointer">
+        <span *ngIf="list.type == 'Contacts'">
+          <mat-icon role="img" class="mat-icon notranslate mt-2 mr-2 material-icons mat-icon-no-color color_blue"
+            aria-hidden="true" (click)="contactpopup(list,'contact')">contacts</mat-icon>
+        </span>
+
+        <span *ngIf="list.type == 'Users'">
+          <mat-icon role="img" class="mat-icon notranslate mt-2 mr-2 material-icons mat-icon-no-color "
+            aria-hidden="true" (click)="openUserDialog(list,'user')">person</mat-icon>
+        </span>
+        <span *ngIf=" list.type=='Sites'">
+          <img (click)="openSiteDialog(list, 'site')" src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+        </span>
+      </div>
+      <div class="col-9 pointer f-weight m-t-10">
+        <div class="row">
+          <div class="avatarimage " (click)="onClick(list)">
+            <img class="avatarimage" src="assets/avatar.svg">
+          </div>
+          {{list.title|titlecase}}
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+</ng-template>
+
+
+
+<!-- configDialog  -->
+<ng-template #configDialog class="container">
+  <div class="d-flex flex-row align-items-center  width_500 "
+    [ngStyle]="{'background-color':(onseendata.IsMasked ==true)?'#800080':'#FC0FC0'}">
+    <button mat-icon-button (click)="closedialogbox()">
+      <mat-icon class="pointer color_white">keyboard_backspace</mat-icon>
+    </button>
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100 color_white">Prospect Details</h2>
+    <mat-icon class="pointer color_white" (click)="closedialogbox()">close</mat-icon>
+  </div>
+
+  <mat-dialog-content class="viewDialog pading "
+    style="padding: 0px  !important; margin: 0px !important;height:auto; width: 500px;">
+    <div class="row mb-1 justify-content-center">
+      <img (click)="openDialog(redirecttoonssenwebsite)"
+        title="mysource.com is a platform giving you some credits in order to get data" width="150px" height="80px"
+        src="../../../assets/logo/onssen_logo.png" alt="">
+    </div>
+    <div class="row b-btm">
+      <div class="col-12 pointer f-weight">
+        <!-- name tilte  -->
+        <div class="row f-weight">
+          <h3 class="black f-weight">Name :
+          </h3><span class="color_grey m-l-10 m-t-4">{{onseendata.title }} </span>
+        </div>
+        <!-- Address  -->
+        <div class="row f-weight">
+          <h3 class="black f-weight">Address :
+          </h3><span class="color_grey m-l-10 m-t-4">{{onseendata.address}}</span>
+        </div>
+        <!-- email  -->
+        <div class="row f-weight">
+          <h3 class="black f-weight">Email : </h3>
+          <span class="color_grey m-l-10 m-t-4">{{onseendata.email }}
+          </span>
+        </div>
+        <!-- phoneNumber  -->
+        <div class="row f-weight">
+          <h3 class="black f-weight">PhoneNumber :</h3><span
+            class="color_grey m-l-10 m-t-4">{{onseendata.phoneNumber}}</span>
+        </div>
+
+        <!-- Activity Name -->
+        <div class="row f-weight">
+          <h3 class="black f-weight">Activity Name :
+          </h3><span class="color_grey m-l-10 m-t-4">{{onseendata.code}}</span>
+        </div>
+
+
+      </div>
+    </div>
+
+    <div class="row justify-content-center mb-2">
+      <div class="col-4">
+        <button mat-raised-button class="b-blue" (click)="ImportOssendata(viewDialogforsingle,onseendata)">
+          Import Data
+        </button>
+      </div>
+      <div class="col-6">
+        <button mat-raised-button class="color_red" (click)="AccountConfigure()">
+          Configure Your Account
+        </button>
+      </div>
+    </div>
+  </mat-dialog-content>
+</ng-template>
+
+
+<ng-template #viewDialogformulti class="container">
+  <div class="d-flex flex-row align-items-center modal-header">
+    <mat-icon mat-dialog-close (click)="closedialogbox()">keyboard_backspace</mat-icon>
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Import External Data</h2>
+    <mat-icon mat-dialog-close (click)="closedialogbox()">close</mat-icon>
+  </div>
+  <mat-dialog-content class="viewDialog pading "
+    style="padding: 0px  !important; margin: 0px !important;height:180px; width:450px;">
+
+    <div class="row mt-2 p-0">
+      <div class="col-1">
+        <img style="border-radius:25%;" src="../../../assets/images/iconsForsvg/imformation.svg" alt="">
+      </div>
+      <div class="col-11 fw-600">
+        <span> {{'Etes vous sûr de vouloir consommer'+' '+ onseenDataLimit +'
+          '+'crédits'+'('+numberofrecord+'Results)'}}
+          {{'sur votre total de'+' '+ availableCredits +' '+'crédits?'}}
+        </span>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <div class="col-12 p2">
+        <mat-radio-group aria-label="Select an option">
+          <mat-radio-button onchange="checkvalue(2)" value="2">Yes</mat-radio-button><br><br>
+          <mat-radio-button onchange="checkvalue(1)" value="1">No</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-action>
+    <div class="row mb-4 justify-content-center">
+      <div class="col-3">
+        <button mat-raised-button (click)="closedialogbox()">Cancel</button>
+      </div>
+      <div class="col-3">
+        <button mat-raised-button class="b-blue" [disabled]="flag==true" (click)="importOnssenData(datatype)">
+          ok
+        </button>
+      </div>
+    </div>
+  </mat-dialog-action>
+</ng-template>
+
+
+<ng-template #viewDialogforsingle class="container">
+  <div class="d-flex flex-row align-items-center modal-header">
+    <mat-icon mat-dialog-close (click)="closedialogbox()">keyboard_backspace</mat-icon>
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">Import External Data</h2>
+    <mat-icon mat-dialog-close (click)="closedialogbox()">close</mat-icon>
+  </div>
+  <mat-dialog-content class="viewDialog pading "
+    style="padding: 0px  !important; margin: 0px !important;height:140px; width:450px;">
+    <div class="row mt-2 p-0">
+      <div class="col-1">
+        <img style="border-radius:25%;" src="../../../assets/images/iconsForsvg/imformation.svg" alt="">
+      </div>
+      <div class="col-11 fw-600"> {{'Etes vous sûr de vouloir consommer'+' '+ 2 +' '+'crédits'+'('+1+'Results)'}}</div>
+    </div>
+    <div class="row mt-2">
+      <div class="col-12 p2">
+        <mat-radio-group aria-label="Select an option">
+          <mat-radio-button onchange="checkvalue(2)" value="2">Yes</mat-radio-button><br><br>
+          <mat-radio-button onchange="checkvalue(1)" value="1">No</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-action>
+    <div class="row mb-4 justify-content-center">
+      <div class="col-3">
+        <button mat-raised-button (click)="closedialogbox()">Cancel</button>
+      </div>
+      <div class="col-3">
+        <button mat-raised-button class="b-blue" [disabled]="flag==true" (click)="importOnssenData(datatype)">
+          ok
+        </button>
+      </div>
+    </div>
+  </mat-dialog-action>
+</ng-template>

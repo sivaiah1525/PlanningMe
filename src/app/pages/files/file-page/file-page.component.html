@@ -1,0 +1,93 @@
+
+<ng-container *ngIf="showbtn == true">
+    <div class="row mt-3 justify-content-end">
+        <div class="col-2">
+            <button mat-raised-button *ngIf="showbtn == true" class="b-blue w-100" (click)="close()">
+                {{"Remove Filter"|translate}}
+            </button>
+        </div>
+    </div>
+</ng-container>
+<div class="row mt-3">
+    <div class=" p-4 col-12  col-sm-6 col-md-6 col-lg-6 col-xl-3" *ngFor="let data of filterFileList">
+        <div class="row">
+            <div class="col-5">
+                <span *ngIf="!data.isNote">
+                    <mat-icon (click)="View(data)" *ngIf="getfiletype(data.fileName)=='png'||getfiletype(data.fileName)=='PNG'||getfiletype(data.fileName)=='jpeg'||getfiletype(data.fileName)=='jpg'||getfiletype(data.fileName)=='jfif'" class="fileicon">insert_drive_file</mat-icon>
+                    <img src="../../../../assets/notecreateicons/docx-file.svg" (click)="View(data)" *ngIf="getfiletype(data.fileName)=='docx'" class="drowdownimage" >
+                    <img src="../../../../assets/notecreateicons/excel-file.svg" (click)="View(data)" *ngIf="getfiletype(data.fileName)=='xlsx'" class="drowdownimage" >
+                    <img src="../../../../assets/notecreateicons/avi-file.svg" (click)="View(data)" *ngIf="getfiletype(data.fileName)=='avi'" class="drowdownimage" >
+                    <img src="../../../../assets/notecreateicons/pdf-file.svg" (click)="View(data)" *ngIf="getfiletype(data.fileName)=='pdf'" class="drowdownimage" >
+                    <img src="../../../../assets/notecreateicons/powerpoint-file.svg" (click)="View(data)" *ngIf="getfiletype(data.fileName)=='powerpoint'" class="drowdownimage" >
+                    <img src="../../../../assets/notecreateicons/html.svg" (click)="View(data)" *ngIf="getfiletype(data.fileName)=='html'" class="drowdownimage" >
+                    <img src="../../../../assets/notecreateicons/csv.svg" (click)="View(data)" *ngIf="getfiletype(data.fileName)=='csv'" class="drowdownimage" >
+                </span>
+                <span *ngIf="data.isNote">
+                    <mat-icon class="noteicon"  (click)="View(data)">speaker_notes</mat-icon>
+                </span>
+                <span class="Lockicon">
+                    <mat-icon *ngIf="data.isPrivate">lock</mat-icon>
+                    <img *ngIf="!data.isPrivate" src="../../../../assets/images/iconsForsvg/Unlock.svg" alt="">
+                </span>
+            </div>
+            <div class="col-6 p-0">
+                <span class="fw-600 color_black">{{data.title}}</span><br>
+                <span class="fw-600 color_grey">{{data.dateTime | date:'mediumDate'}}</span>
+            </div>
+            <div class="col-1 p-0">
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                    <button mat-menu-item (click)="View(data)">
+                        <mat-icon>visibility</mat-icon>
+                        <span class="fw-600 color_black">{{"View"|translate}}</span>
+                    </button>
+                    <button mat-menu-item (click)="Edit(data)">
+                        <mat-icon>edit</mat-icon>
+                        <span class="fw-600 color_black">{{"Edit"|translate}}</span>
+                    </button>
+                    <button mat-menu-item (click)="deleteDialogConfirmation(data,'deletefileAndNote')">
+                        <mat-icon>delete_forever</mat-icon>
+                        <span class="fw-600 color_black">{{"Delete"|translate}}</span>
+                    </button>
+                    <button mat-menu-item (click)="Downloadfile(data)" *ngIf="!data.isNote">
+                        <mat-icon>file_download</mat-icon>
+                        <span class="fw-600 color_black">{{"Download"|translate}}</span>
+                    </button>
+                    <button mat-menu-item (click)="Access(data)" *ngIf="!data.isPrivate">
+                        <mat-icon class="icon-options">lock_open</mat-icon>
+                        <span class="fw-600 color_black">{{"Access"|translate}}</span>
+                    </button>
+                    <button mat-menu-item (click)="share(data)" *ngIf="!data.isPrivate">
+                        <img src="../../../../assets/images/iconsForsvg/share-square-1.svg">
+                        <span class="fw-600 color_black" style="margin-left:24px;">
+                            {{"Share"|translate}}</span>
+                    </button>
+                </mat-menu>
+            </div>
+        </div>
+        <div>
+        </div>
+    </div>
+</div>
+<div class="overlay" *ngIf="loader">
+    <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+    </mat-progress-spinner>
+</div>
+<div class="row justify-content-start">
+    <div class="col-11">
+        <mat-paginator [pageSize]="25" [length]="TotalFileAndNotes" (page)="next($event)"></mat-paginator>
+    </div>
+</div>
+<span mat-fab style="background-color: transparent !important;" class="fab-table-group bottom_fab_2">
+    <button id="add-button1" mat-fab (click)="openSearchPopup()">
+        <mat-icon style="color: white;">search</mat-icon>
+    </button><br><br>
+    <button id="add-button1" mat-fab (click)="SynchronizationData()">
+        <mat-icon style="color: white;">sync</mat-icon>
+    </button><br><br>
+    <button id="add-button2" mat-fab (click)="onCreateFile()">
+        <mat-icon style="color: white;">add</mat-icon>
+    </button>
+</span>

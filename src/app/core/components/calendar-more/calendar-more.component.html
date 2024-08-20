@@ -1,0 +1,103 @@
+<!-- map cart  -->
+<ng-container *ngIf="carte==true&&Otherpeplemap==false">
+  <button mat-menu-item (click)="openconfiguration()">
+    <mat-icon>build</mat-icon>
+    <span class="ion-text-capitalize"><strong> {{'Prospect Setup'|translate}}</strong></span>
+  </button>
+  <button mat-menu-item (click)="filter()">
+    <mat-icon>filter_alt</mat-icon>
+    <span class="ion-text-capitalize"><strong>{{'Filter'|translate}}</strong></span>
+  </button>
+  <button mat-menu-item (click)="mapConfiguration(configdialog)">
+    <mat-icon>settings_input_composite</mat-icon>
+    <span class="ion-text-capitalize"><strong>{{'Map Configuration'|translate}}</strong></span>
+  </button>
+  <button mat-menu-item (click)="OtherPepole('Map')" *ngIf="(carte == true&&(AdminStatis=='true'||isManager=='true'))">
+    <mat-icon>group</mat-icon>
+    <span class="ion-text-capitalize"><strong>{{'Other User Map'|translate}}</strong></span>
+  </button>
+</ng-container>
+
+<!-- planning calender  -->
+<ng-container *ngIf="carte==false&&OtherpeplePlanning==false">
+  <button mat-menu-item (click)="exportPlanning()">
+    <mat-icon>import_export</mat-icon>
+    <span class="ion-text-capitalize"><strong>{{'Export Planning'|translate}}</strong></span>
+  </button>
+  <button mat-menu-item (click)="simulationEvent()">
+    <mat-icon>visibility</mat-icon>
+    <span class="ion-text-capitalize"><strong>{{'Planning Simulation'|translate}}</strong></span>
+  </button>
+  <button mat-menu-item (click)="filter()">
+    <mat-icon>filter_alt</mat-icon>
+    <span class="ion-text-capitalize"><strong>{{'Filter'|translate}}</strong></span>
+  </button>
+  <button mat-menu-item (click)="categoryFilter()">
+    <mat-icon>category</mat-icon>
+    <span class="ion-text-capitalize"><strong>{{'Categories'|translate}}</strong></span>
+  </button>
+  <button mat-menu-item (click)="OtherPepole('Planning')" *ngIf="(carte == false&&(AdminStatis=='true'||isManager=='true'))">
+    <mat-icon>group</mat-icon>
+    <span class="ion-text-capitalize"><strong>{{'Other User Planning'|translate}}</strong></span>
+  </button>
+  <button mat-menu-item (click)="SynchronisationComponent()">
+    <mat-icon>sync</mat-icon>
+    <span class="ion-text-capitalize"><strong>{{'Planning Synchronization'|translate}}</strong></span>
+  </button>
+</ng-container>
+
+<ng-container *ngIf="OtherpeplePlanning==true">
+  <button mat-menu-item (click)="exportPlanning()">
+    <mat-icon>import_export</mat-icon>
+    <span class="ion-text-capitalize">
+      <strong>{{'Export Planning'|translate}}</strong></span>
+  </button>
+  <button mat-menu-item (click)="filter()">
+    <mat-icon>filter_alt</mat-icon>
+    <span class="ion-text-capitalize">
+      <strong>{{'Filter'|translate}}</strong></span>
+  </button>
+</ng-container>
+
+<ng-container *ngIf="Otherpeplemap==true">
+  <button mat-menu-item (click)="filter()">
+    <mat-icon>filter_alt</mat-icon>
+    <span class="ion-text-capitalize">
+      <strong>{{'Filter'|translate}}</strong></span>
+  </button>
+</ng-container>
+
+
+
+
+
+
+
+<ng-template #configdialog class="container">
+  <div class="d-flex flex-row align-items-center modal-header">
+    <mat-icon (click)="closeDialog()">keyboard_backspace</mat-icon>
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{'Map Configuration'|translate}}</h2>
+  </div>
+  <mat-dialog-content class="mr-0 ml-0">
+    <h3 class="m-l-10 black f-weight">Choose</h3>
+    <div class="row">
+      <mat-radio-group class="m-l-12 f-weight" (change)="onDataChange($event)">
+        <mat-radio-button [checked]="confvalue == '1'" value="1" class="mr-4 black f-weight">{{'Planning Data'|translate}}
+        </mat-radio-button>
+        <mat-radio-button value="3" class="mr-4 black f-weight">{{'Prospect Only'|translate}}
+        </mat-radio-button>
+        <mat-radio-button [checked]="confvalue == '2'" value="2" class="mr-4 black f-weight">{{'All Data'|translate}}</mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-action>
+    <div class="row mt-2 mb-2 justify-content-center">
+      <div class="col-4">
+        <button mat-raised-button (click)="closeDialog()">Cancel</button>
+      </div>
+      <div class="col-4">
+        <button mat-raised-button (click)="configuration()" class="b-blue">Filter</button>
+      </div>
+  </div>
+  </mat-dialog-action>
+</ng-template>

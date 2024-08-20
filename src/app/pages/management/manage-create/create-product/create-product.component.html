@@ -1,0 +1,324 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <span *ngIf="ScreenType=='Createproduct'"><mat-icon> business_center</mat-icon>{{"Create Product"|translate}}</span>
+        <span *ngIf="ScreenType=='UpdateProduct'"><mat-icon> business_center</mat-icon>{{"Update Product"|translate}}</span>
+    </h2>
+    <mat-icon [matMenuTriggerFor]="menu">more_vert</mat-icon>
+    <mat-menu #menu="matMenu">
+        <button class="fw-600" (click)=" importdata()" mat-menu-item> <mat-icon> import_export</mat-icon>{{"Import Data"|translate}}
+            </button>
+        <button class="fw-600" (click)="downloadTemplate()" mat-menu-item><mat-icon
+                style="vertical-align: middle">download</mat-icon> {{"Download Template"|translate}}</button>
+    </mat-menu>
+</div>
+    <mat-dialog-content class="mr-0 ml-0">
+        <form [formGroup]="productForm">
+        <div class="row mb-2 justify-content-center">
+            <div class="col-1 p-0 mb-1">
+                <div class="avatar">
+                    <img class="imgclass"
+                        [src]="profilePick ? profilePick:'assets/images/iconsForsvg/icon_product.svg'">
+                </div>
+            </div>
+            <div class="col-1 mt-5 mr-5">
+                <div
+                    style="background-color: rgb(232, 239, 36);width: 30px; cursor: pointer;height: 30px;border-radius: 30px;position: relative; left:6px;">
+                    <mat-icon style="position: relative;left: 5px;top: 5px;font-size: 20px; cursor: pointer;">
+                        edit
+                    </mat-icon>
+                    <input (change)="onFileSelect($event)" style="position: relative; cursor: pointer;
+                            top: -24px; width: 30px; height: 40px; opacity: -0.5; " id="file-input" type="file" />
+                </div>
+            </div>
+        </div>
+
+
+      <div class="row">
+            <mat-form-field class="w-100">
+                <input matInput type="text" placeholder="Reference Produit *" formControlName="ProductReference">
+                <mat-error *ngIf="productForm.controls['ProductReference'].hasError('required')">
+                    Reference Produit is <strong>{{"required"|translate}}</strong>
+                </mat-error>
+            </mat-form-field>
+      </div>
+
+      <div class="row">
+            <mat-form-field class="w-100">
+                <input matInput type="text" placeholder="Nom Produit *" formControlName="ProductName">
+                <mat-error *ngIf="productForm.controls['ProductName'].hasError('required')">
+                    Nom Produit is <strong>{{"required"|translate}}</strong>
+                </mat-error>
+            </mat-form-field>
+      </div>
+
+      <div class="row">
+            <mat-form-field class="w-100">
+                <input matInput type="text" placeholder="Description Produit *" formControlName="ProductDescription">
+                <mat-error *ngIf="productForm.controls['ProductDescription'].hasError('required')">
+                    Description Produit is <strong>{{"required"|translate}}</strong>
+                </mat-error>
+            </mat-form-field>
+      </div>
+        <div class="row firstAndLastName">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field class="w-100">
+                    <input matInput type="number" placeholder="Stock Quantity" formControlName="StockQuantity">
+                    <mat-error *ngIf="productForm.controls['StockQuantity'].hasError('required')">
+                        {{"Quantity"|translate}} is <strong>{{"required"|translate}}</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field class="w-100">
+                    <mat-label>{{"Measure"|translate}} *</mat-label>
+                    <mat-select formControlName="MeasureId">
+                        <mat-option *ngFor="let measure of measures$ | async" [value]="measure.id">
+                            {{measure.measureName}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="productForm.controls['MeasureId'].hasError('required')">
+                        {{"Measure"|translate}} is <strong>{{"required"|translate}}</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <!-- Base price  -->
+
+        <div class="row firstAndLastName">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field class="w-100">
+                    <mat-label>{{"Type"|translate}} *</mat-label>
+                    <mat-select formControlName="IsBaseUnitIsPercentage">
+                    <mat-option *ngFor="let measure of type" [value]="measure.value" [disabled]="getIsSellingpricetype()">
+                        <img style="width: 30px;height: 30px;object-fit: contain;" [src]="measure.image">
+                        {{measure.name}}
+                    </mat-option>
+                </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field class="w-100">
+                    <mat-label>{{"Base price"|translate}} *</mat-label>
+                    <input matInput type="number" placeholder="Base price" formControlName="Baseprice">
+                    <mat-error *ngIf="productForm.controls['Baseprice'].hasError('required')">
+                        {{"Base price"|translate}} is <strong>{{"required"|translate}}</strong>
+                    </mat-error>
+                </mat-form-field>
+                <div *ngIf="checkpresentagevalueforBaseprice()">
+                    <span style="color: red;">Please enter a value below 100%.</span>
+                </div>
+            </div>
+        </div>
+        <!-- Selling price  -->
+        <div class="row firstAndLastName">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field class="w-100">
+                <mat-label>{{"Type"|translate}} *</mat-label>
+                <mat-select formControlName="IsSellingPriceIsPercentage">
+                    <mat-option *ngFor="let measure of type" [value]="measure.value" [disabled]="getIsBaseUnittype()">
+                        <img style="width: 30px;height: 30px;object-fit: contain;"  [src]="measure.image">
+                        {{'  '+measure.name}}
+                    </mat-option>
+                </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field class="w-100">
+                    <mat-label>{{"Selling price"|translate}} *</mat-label>
+                    <input matInput type="number" placeholder="Selling price" formControlName="Sellingprice">
+                    <mat-error *ngIf="productForm.controls['Sellingprice'].hasError('required')">
+                        {{"Selling price"|translate}} is <strong>{{"required"|translate}}</strong>
+                    </mat-error>
+                </mat-form-field>
+                <div *ngIf="checkpresentagevalueforSellingprice()">
+                    <span style="color: red;">Please enter a value below 100%.</span>
+                </div>
+            </div>
+        </div>
+
+      <div class="row">
+            <mat-form-field appearance="fill" class="w-100">
+                <mat-label>{{"Currency"|translate}} *</mat-label>
+                <mat-select formControlName="CurrencyId">
+                    <mat-option [value]="1">{{"Euro"|translate}}</mat-option>
+                    <mat-option [value]="2">{{"Dollar"|translate}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+      </div>
+
+     <div class="row">
+            <mat-form-field class="w-100">
+                <mat-label>{{"Comment"|translate}} *</mat-label>
+                <input matInput type="text" placeholder="Comment" formControlName="Comments">
+                <mat-error *ngIf="productForm.controls['Comments'].hasError('required')">
+                    {{"Comment"|translate}} is <strong>{{"required"|translate}}</strong>
+                </mat-error>
+            </mat-form-field>
+     </div>
+
+        <ng-container *ngIf="ScreenType=='UpdateProduct'">
+            <div>
+                <!-- Attachment  -->
+                <div class="row mt-3">
+                    <span class="fw-600 pointer">{{"Files"|translate}} & {{"Notes"|translate}}</span><mat-icon
+                        (click)="addNewFileAndNote()">add_box</mat-icon>
+                </div>
+                <!-- file list  -->
+                <div class="row mt-3">
+                    <div class="col-3 fw-600">
+                        <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon> {{"Files"|translate}} :
+                    </div>
+                    <div class="col-9">
+                        <span class=" fw-600   pointer"
+                            [ngClass]="{'color_grey': filesCount > 0,'name_red': filesCount == 0 }"
+                            (click)="findfilesLinked()">{{filesCount+' '}}{{filesCount> 0 ? 'Files' : 'File'}}</span>
+                    </div>
+                </div>
+                <!-- ShowAttachmentFile  -->
+                <ng-container *ngIf="ShowAttachmentFile">
+                    <div class="row mt-4 pointer" *ngFor=" let x of AttachmentFileList">
+                        <div class="col-8 pointer">
+                            <mat-icon style="color:rgb(66,135,245) ;">insert_drive_file</mat-icon>
+                            <mat-icon class="lock" *ngIf="x.isPrivate">lock</mat-icon>
+                            <img class="lock" *ngIf="!x.isPrivate"
+                                src="../../../../assets/images/iconsForsvg/Unlock.svg" alt="">
+                            <span (click)="ViewLink('File',x.id)">
+                                {{x.title|titlecase}}
+
+                            </span>
+                        </div>
+                        <div class="col-1">
+                            <mat-icon (click)="Downloadfile(x)" class="vertical-bottom">download</mat-icon>
+                        </div>
+                        <div class="col-1">
+                            <mat-icon (click)="sharefileAndNote('File',x)" class="vertical-bottom">share</mat-icon>
+                        </div>
+                        <div class="col-1">
+                            <mat-icon (click)="EditfileAndNote('File',x.id)" class="vertical-bottom">edit</mat-icon>
+                        </div>
+                        <div class="col-1">
+                            <mat-icon (click)="deleteDialogConfirmation(x,'deletefileAndNote')"
+                                class="vertical-bottom">delete</mat-icon>
+                        </div>
+                    </div>
+                </ng-container>
+
+
+                <!-- note list  -->
+                <div class="row mt-3">
+                    <div class="col-3 fw-600">
+                        <mat-icon style="color:rgb(255,193,111) ;">speaker_notes </mat-icon> {{"Notes"|translate}} :
+                    </div>
+                    <div class="col-9">
+                        <span class=" fw-600   pointer"
+                            [ngClass]="{'color_grey': notesCount > 0,'name_red': notesCount == 0 }"
+                            (click)="findnotesLinked()">{{notesCount+' '}}{{notesCount> 0 ? 'Notes' : 'Note'}}</span>
+                    </div>
+                </div>
+                <ng-container *ngIf="ShowAttachmentNotes">
+                    <div class="row mt-4" *ngFor=" let x of AttachmentNotesList">
+                        <div class="col-8 pointer">
+                            <mat-icon style="color:rgb(255,193,111) ;">speaker_notes
+                            </mat-icon>
+                            <mat-icon class="lock" *ngIf="x.isPrivate">lock</mat-icon>
+                            <img class="lock" *ngIf="!x.isPrivate"
+                                src="../../../../assets/images/iconsForsvg/Unlock.svg" alt="">
+                            <span (click)="ViewLink('Note',x.id)">
+                                {{x.title|titlecase}}
+                            </span>
+                        </div>
+                        <div class="col-1">
+                            <mat-icon (click)="ViewNoteContent(x)" class="vertical-bottom">remove_red_eye</mat-icon>
+                        </div>
+                        <div class="col-1">
+                            <mat-icon (click)="sharefileAndNote('Note',x)" class="vertical-bottom">share</mat-icon>
+                        </div>
+                        <div class="col-1">
+                            <mat-icon (click)="EditfileAndNote('Note',x.id)" class="vertical-bottom">edit</mat-icon>
+                        </div>
+                        <div class="col-1">
+                            <mat-icon (click)="deleteDialogConfirmation(x,'deletefileAndNote')"
+                                class="vertical-bottom">delete</mat-icon>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </ng-container>
+        <div class="w-100" *ngFor="let contact of tagarray">
+            <mat-checkbox class="w-100" formControlName="ischecked"
+                *ngIf="showcheckbox == true && contact.fieldType == 'Bool'">
+                {{contact.fieldName}}
+            </mat-checkbox>
+        </div>
+        <!-- show tags  -->
+        <div class="row" formArrayName="Addtages">
+            <div class="row   " *ngFor="let conditionsBodyGroup of gettageBody().controls; let i=index"
+                [formGroupName]="i">
+                <div class="row">
+                    <!-- Bool  -->
+                    <ng-container *ngIf="fieldType(i)=='Bool'">
+                        <div class="col-10">
+                            <mat-checkbox formControlName="fieldValue" class="w-100">
+                                {{fieldname(i)}}
+                            </mat-checkbox>
+                        </div>
+                    </ng-container>
+                    <!-- Text  -->
+                    <ng-container *ngIf="fieldType(i)=='Text'">
+                        <div class="col-10">
+                            <mat-form-field class="w-100">
+                                <mat-label>{{fieldname(i)}}</mat-label>
+                                <input matInput type="text" placeholder="value" formControlName="fieldValue">
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                    <!-- Number  -->
+                    <ng-container *ngIf="fieldType(i)=='Number'">
+                        <div class="col-10">
+                            <mat-form-field class="w-100">
+                                <mat-label>{{fieldname(i)}}</mat-label>
+                                <input matInput type="Number" placeholder="value" formControlName="fieldValue">
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                    <!-- Dropdown -->
+                    <ng-container *ngIf="fieldType(i)=='Dropdown'">
+                        <div class="col-10">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{fieldname(i)}}</mat-label>
+                                <mat-select placeholder="value" formControlName="dropdownValues">
+                                    <mat-option [value]="x" *ngFor="let x of dropdownvaluetotal(i)">
+                                        {{x|titlecase}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                    <!-- <ng-container *ngIf="ScreenType=='Createproduct'"> -->
+                        <div class="col-2">
+                            <mat-icon class="pointer" (click)="deletetagDialog(i,'removetag')">delete</mat-icon>
+                        </div>
+                    <!-- </ng-container> -->
+                </div>
+            </div>
+        </div>
+        <mat-list>
+            <div class="d-flex justify-content-between">
+                <h4 class="m-0" style="color: grey;"><b>{{"Add another feild"|translate}}</b></h4>
+                <mat-chip-list>
+                    <mat-chip (click)="showdropdown()">{{"Add"|translate}}</mat-chip>
+                </mat-chip-list>
+            </div>
+        </mat-list>
+    </form>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end" class="my-1">
+        <div class="row mt-2 justify-content-center">
+            <div class="col-4">
+                <button mat-raised-button mat-dialog-close  class="W-blue" >{{"Cancel"|translate}}</button>
+            </div>
+            <div class="col-4">
+                <button mat-raised-button class="b-blue" [disabled]="!productForm.valid" (click)="onSubmit()">{{"Apply"|translate}}</button>
+            </div>
+        </div>
+    </mat-dialog-actions>

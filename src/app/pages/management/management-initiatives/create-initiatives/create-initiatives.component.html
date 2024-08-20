@@ -1,0 +1,647 @@
+<div class="d-flex flex-row align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <span *ngIf="screentype == 'Create'"> 
+            {{'Create Initiatives'|translate}}</span>
+        <span *ngIf="screentype == 'Update'">
+            {{'Update Initiatives'|translate}}</span>
+    </h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div> 
+<mat-dialog-content class="mr-0 ml-0">
+    <form [formGroup]="Initiative">
+        <div class="row mt-2">
+            <mat-form-field class="w-100">
+                <mat-label>{{"Title"|translate}}<span class="danger">* </span></mat-label>
+                <input matInput type="text" placeholder="Title *" formControlName="title">
+                <mat-error *ngIf="Initiative.controls['title'].hasError('required')">
+                    {{"Title"|translate}} is <strong>{{"required"|translate}}</strong>
+                </mat-error>
+            </mat-form-field> 
+        </div>
+        <div class="row">
+            <mat-form-field class="example-chip-list" style="width: 100% !important;">
+                <mat-label>{{'keyword'|translate}}</mat-label><br>
+                <mat-chip-list #chipGridforkeyword aria-label="Fruit selection" class="keywordlist">
+                    <mat-chip-row class="keywordrow" *ngFor="let keyword of keywordlist">
+                        <button class="keywordbutton">
+                            <span class="keywordpostion">{{keyword|titlecase}}</span>
+                            <mat-icon class="keywordcancelicon" (click)="remove(keyword)">cancel</mat-icon>
+                        </button>
+                    </mat-chip-row>
+                </mat-chip-list>
+                <input [matChipInputFor]="chipGridforkeyword" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    (matChipInputTokenEnd)="add($event)" />
+            </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field class="w-100">
+                <mat-label>{{"Description"|translate}}</mat-label>
+                <input matInput type="text" placeholder="Description" formControlName="description">
+            </mat-form-field>
+        </div>
+
+        <!-- Start Date & Time   -->
+        <div class="row firstAndLastName">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{"Start Date"|translate}}<span class="danger">* </span></mat-label>
+                    <input matInput [matDatepicker]="startdatepicker1" style="color: black;"
+                        formControlName="StartDate">
+                    <mat-datepicker-toggle matSuffix [for]="startdatepicker1"></mat-datepicker-toggle>
+                    <mat-datepicker #startdatepicker1></mat-datepicker>
+                    <mat-error *ngIf="Initiative.controls['StartDate'].hasError('required')">
+                        {{"Start Date"|translate}} is <strong>{{"required"|translate}}</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{"End Date"|translate}}<span class="danger">* </span></mat-label>
+                    <input matInput [matDatepicker]="enddatepicker1" style="color: black;" formControlName="EndDate">
+                    <mat-datepicker-toggle matSuffix [for]="enddatepicker1"></mat-datepicker-toggle>
+                    <mat-datepicker #enddatepicker1></mat-datepicker>
+                    <mat-error *ngIf="Initiative.controls['EndDate'].hasError('required')">
+                        {{"End Date"|translate}} is <strong>{{"required"|translate}}</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+
+        <div class="row firstAndLastName">
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field class="w-100">
+                    <mat-label>{{"Budget"|translate}}<span class="danger">* </span></mat-label>
+                    <input matInput type="number" placeholder="Budget " formControlName="budget">
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                <mat-form-field class="w-100">
+                    <mat-label>{{"Currency"|translate}} </mat-label>
+                    <mat-select formControlName="CurrencyId">
+                        <mat-option [value]="1">{{"Euro"|translate}}</mat-option>
+                        <mat-option [value]="2">{{"Dollar"|translate}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+ 
+                 <!-- Private  -->
+                 <div class="row">
+                    <div class="col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4">
+                        <mat-list-item>
+                            <mat-checkbox formControlName="isPublic">
+                                <img src="../../../../assets/images/iconsForsvg/Unlock.svg" style="position: relative;
+                                top: -3px;">
+                                {{"Public"|translate}}</mat-checkbox>
+                        </mat-list-item>
+                    </div>
+                    </div>
+                    <ng-container *ngIf="!getIsPublicstatus()">
+                        <div class="row">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"Access for private users"|translate}} </mat-label>
+                                <mat-select multiple (openedChange)="filterOptions('','users')" #select formControlName="PermittedUserIds">
+                                    <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'users')"
+                                        placeholder="Filter" />
+                                    <mat-option *ngFor="let user of filteredusers" [value]="user.id">
+                                        <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                            [src]="user?.profilePicture ? user.profilePicture:'assets/avatar.svg'"
+                                            onError="this.src='assets/avatar.svg'">
+                                        {{ user.firstName| titlecase}} {{user.lastName|titlecase}}
+                                    </mat-option>
+                                </mat-select> 
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+
+
+<!-- tean group  -->
+<!-- Create Team  -->
+<div style="border: 1px solid gray;border-radius: 3px;" class="row w-100">
+    <div class="row  p-1 justify-content-around w-100"
+        style="color: white; background-color:#fb4444; font-weight: 600;">
+        <div class="col-10">
+            <p>Create Team</p>
+        </div>
+        <div class="col-2">
+            <!-- <mat-icon style="color: white;" (click)="Addteam()">add</mat-icon> -->
+        </div>
+    </div>
+    <div formArrayName="team" class="row  w-100">
+        <div class="row FivecolWithTwocol w-100" *ngFor="let x of getAllteam().controls; let i=index" [formGroupName]="i">
+            <div class="mb-1" style="padding: 5px;background: #f3f3f7b8;color: black;font-weight: 900;display: flex;width: 100% !important;border-radius: 3px;">
+                <div style="width: 90%;">
+                    <p> Team - {{i+1}}</p>
+                </div>
+                <div style="width: 10%;">
+                    <mat-icon class="maticonpostion1"  (click)="Removeteam(i)">delete</mat-icon>
+                </div>
+            </div>
+            <div style="width: 100% !important">
+                <div class="row">
+                  <div class="col-10">
+                    <mat-form-field class="w-100">
+                        <mat-label>{{"Team Name"|translate}}<span class="danger">* </span></mat-label>
+                        <input matInput type="text" placeholder="Teamname *" formControlName="Teamname">
+                    </mat-form-field> 
+                  </div>
+                  <div class="col-2">
+                    <button  mat-raised-button class="G-Green" (click)="selectUserType(i,0,'teamuser')" >Add  Users</button>
+                  </div>
+                </div>
+                      <!-- team users -->
+                      <div formArrayName="teamUsers" class="row  w-100">
+                        <div class="row FivecolWithTwocol w-100" *ngFor="let x of getmainteamUser(i).controls; let m=index" [formGroupName]="m">
+                            <div class="row">
+                                <div class="col-5">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>{{"User"|translate}} <span class="danger">* </span></mat-label>
+                                        <mat-select (openedChange)="filterOptions('','users')" #select formControlName="userId">
+                                            <input style="padding: 15px;" matInput
+                                                (keyup)="filterOptions($event.target.value,'users')" placeholder="Filter" />
+                                            <mat-option *ngFor="let user of filteredusers" [value]="user.id">
+                                                <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                                    [src]="user?.profilePicture ? user.profilePicture:'assets/avatar.svg'"
+                                                    onError="this.src='assets/avatar.svg'">
+                                                {{ user.firstName| titlecase}} {{user.lastName|titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-5">
+                                    <mat-form-field class="w-100 mt-2 mb-2">
+                                        <mat-label>{{"Role Name"|translate}}</mat-label>
+                                        <input matInput  type="text" placeholder="RoleName *"
+                                            formControlName="roleName">
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-2">
+                                <mat-icon (click)="removemainteamuser(i,m)" class="maticonpostion1">delete</mat-icon>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                <!-- Create SubTeam  -->
+                <div style="border: 1px solid gray;border-radius: 3px;" class="row w-100">
+                    <div class="row  p-1 justify-content-around w-100"
+                        style="color: black; background-color:antiquewhite; font-weight: 600;">
+                        <div class="col-10">
+                            <p>Add SubTeam</p>
+                        </div>
+                        <div class="col-2">
+                            <mat-icon style="color: black;" (click)="Addsubteam(i)" >add</mat-icon>
+                        </div>
+                    </div>
+                    <div formArrayName="subTeam" class="row  w-100">
+                        <div class="row FivecolWithTwocol w-100" *ngFor="let x of getsubTeam(i).controls; let k=index" [formGroupName]="k">
+                            <div class="mb-1" style="padding: 5px;background: #f3f3f7b8;color: black;font-weight: 900;display: flex;width: 100% !important;border-radius: 3px;">
+                                <div style="width: 90%;">
+                                    <p> SubTeam - {{k+1}}</p>
+                                </div>
+                                <div style="width: 10%;">
+                                    <mat-icon class="maticonpostion1"  (click)="RemoveSubteam(i,k)">delete</mat-icon>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-10">
+                                  <mat-form-field class="w-100">
+                                      <mat-label>{{"Sub Team Name"|translate}}<span class="danger">* </span></mat-label>
+                                      <input matInput type="text" placeholder="Teamname *" formControlName="Teamname">
+                                  </mat-form-field> 
+                                </div>
+                                <div class="col-2">
+                                  <button  mat-raised-button class="G-Green"
+                                  (click)="selectUserType(i,k,'subteamuser')"  >Add  Users</button>
+                                </div>
+                              </div>
+                            <div formArrayName="teamUsers" class="row  w-100">
+                                <div class="row FivecolWithTwocol w-100" *ngFor="let x of getsubteamUsers(i,k).controls; let m=index" [formGroupName]="m">
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <mat-form-field appearance="fill" class="w-100">
+                                                <mat-label>{{"User"|translate}} <span class="danger">* </span></mat-label>
+                                                <mat-select (openedChange)="filterOptions('','users')" #select formControlName="userId">
+                                                    <input style="padding: 15px;" matInput
+                                                        (keyup)="filterOptions($event.target.value,'users')" placeholder="Filter" />
+                                                    <mat-option *ngFor="let user of filteredusers" [value]="user.id">
+                                                        <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                                            [src]="user?.profilePicture ? user.profilePicture:'assets/avatar.svg'"
+                                                            onError="this.src='assets/avatar.svg'">
+                                                        {{ user.firstName| titlecase}} {{user.lastName|titlecase}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-5">
+                                            <mat-form-field class="w-100 mt-2 mb-2">
+                                                <mat-label>{{"Role Name"|translate}}</mat-label>
+                                                <input matInput  type="text" placeholder="RoleName *"
+                                                    formControlName="roleName">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-2">
+                                        <mat-icon (click)="removemainsubteamUser(i,k,m)" class="maticonpostion1">delete</mat-icon>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                        
+                        </div>
+                    </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <!-- <div class="row mb-2">
+            <mat-form-field class="example-chip-list" style="width: 100% !important;">
+                <mat-label>{{'Role Names'|translate}} <span class="danger">* </span></mat-label><br>
+                <mat-chip-list #chipGridforkeyword1 aria-label="Fruit selection" class="keywordlist">
+                    <mat-chip-row class="keywordrow" *ngFor="let keyword of roleNamesArray">
+                        <button class="keywordbutton">
+                            <span class="keywordpostion">{{keyword|titlecase}}</span>
+                            <mat-icon class="keywordcancelicon" (click)="removeRoll(keyword)">cancel</mat-icon>
+                        </button>
+                    </mat-chip-row>
+                </mat-chip-list>
+                <input [matChipInputFor]="chipGridforkeyword1" [matChipInputSeparatorKeyCodes]="separatorKeysCodes1"
+                    (matChipInputTokenEnd)="addRoll($event)" />
+                    <mat-hint>Write Role Names with Comma Separated</mat-hint>
+            </mat-form-field>
+
+        </div>
+
+        <div style="border: 1px solid gray;border-radius: 3px;">
+            <div class="row p-1  justify-content-around"
+                style="color: white; background-color:#fb4444; font-weight: 600;border-radius: 3px;">
+                <div class="col-8 p-0">
+                    <p>Add User With Role Name</p>
+                </div>
+                <div class="col-2 p-0">
+                    <mat-icon style="color:white" (click)="Addcondictuon()">add</mat-icon>
+                </div>
+            </div>
+            <div formArrayName="UsersConditions" class="row mt-2">
+                <div class="row mt-2 FivecolWithTwocol" *ngFor="let x of Userslist().controls; let i=index"
+                    [formGroupName]="i">
+                    <div class="col-5">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>{{"User"|translate}} <span class="danger">* </span></mat-label>
+                            <mat-select (openedChange)="filterOptions('','users')" #select formControlName="userId">
+                                <input style="padding: 15px;" matInput
+                                    (keyup)="filterOptions($event.target.value,'users')" placeholder="Filter" />
+                                <mat-option *ngFor="let user of filteredusers" [value]="user.id">
+                                    <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                        [src]="user?.profilePicture ? user.profilePicture:'assets/avatar.svg'"
+                                        onError="this.src='assets/avatar.svg'">
+                                    {{ user.firstName| titlecase}} {{user.lastName|titlecase}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-5">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>{{"Role Name"|translate}} </mat-label>
+                            <mat-select (openedChange)="filterOptions1('','users')" #select formControlName="roleName">
+                                <mat-option *ngFor="let RoleName of roleNamesArray" [value]="RoleName">
+                                    {{ RoleName| titlecase}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-2">
+                        <mat-icon class="maticonpostion" (click)="Removecondictuon(i)">delete</mat-icon>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+
+        <div class="row mt-2">
+            <mat-checkbox formControlName="addsteps" class="example-margin">Do you want to add steps .. ?</mat-checkbox>
+        </div>
+                <!-- with steps  -->
+           <ng-container *ngIf="getaddstepsstatus()">
+            <div class="row mt-4 mb-2">
+                <mat-radio-group   (change)="onRadioChange($event)" aria-label="Select an option"
+                    formControlName="PipeLinetype">
+                    <mat-radio-button value="1">New PipeLine</mat-radio-button>
+                    <mat-radio-button value="2">Existing PipeLine</mat-radio-button>
+                </mat-radio-group>
+        </div>
+            <ng-container *ngIf="getPipeLinetype()=='2'">
+                <div class="row">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"Select Existing Pipeline"|translate}} <span class="danger">* </span></mat-label>
+                        <mat-select #select formControlName="pipelineID" (selectionChange)="onSelectionChange($event)">
+                            <input style="padding: 15px;" matInput (keyup)="filterOptionsforExistingPipeline($event.target.value)" placeholder="Filter" />
+                            <mat-option *ngFor="let Pipeline of listofPipelines" [value]="Pipeline.id">
+                                {{ Pipeline.name| titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </ng-container> 
+            <ng-container *ngIf="getPipeLinetype()=='1'">
+                <div class="row">
+                    <mat-form-field class="w-100">
+                        <mat-label>{{"New Pipeline Name"|translate}} <span class="danger">* </span></mat-label>
+                        <input matInput type="text" placeholder="Pipelinename *" formControlName="Pipelinename">
+                        <mat-error *ngIf="Initiative.controls['Pipelinename'].hasError('required')">
+                            {{"Pipelinename"|translate}} is <strong>{{"required"|translate}}</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </ng-container>
+    <!-- 00000000000  -->
+            <ng-container *ngIf="getstatus()">
+                    <div style="border: 1px solid gray;border-radius: 3px;" class="row w-100">
+                        <div class="row  p-1 justify-content-around w-100"
+                            style="color: white; background-color:#fb4444; font-weight: 600;">
+                            <div class="col-10">
+                                <p>Add Steps With Task</p>
+                            </div>
+                            <div class="col-2">
+                                <mat-icon style="color: white;" (click)="Addsteps()">add</mat-icon>
+                            </div>
+                        </div>
+                        <div formArrayName="Allsteps" class="row  w-100">
+                            <div class="row FivecolWithTwocol w-100" *ngFor="let x of getAllsteps().controls; let i=index" [formGroupName]="i">
+                                <div class="mb-1" style="padding: 5px;background: #f3f3f7b8;color: black;font-weight: 900;display: flex;width: 100% !important;border-radius: 3px;">
+                                    <div style="width: 90%;">
+                                        <p> Step - {{i+1}}</p>
+                                    </div>
+                                    <div style="width: 10%;">
+                                        <mat-icon class="maticonpostion1"  (click)="Removesteps(i)">delete</mat-icon>
+                                    </div>
+                                </div>
+                                <div style="width: 100% !important">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <mat-form-field class="w-100 mt-2 mb-2">
+                                                <mat-label>{{"StepName"|translate}}</mat-label>
+                                                <input matInput  type="text" placeholder="StepName *"
+                                                    formControlName="name">
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-12">
+                                            <button  mat-raised-button class="G-Green" (click)="ChooseTaskOption(i)">{{"Add a Task"|translate}}</button>
+                                        </div>
+                                    </div>
+                                    <!-- 0000  -->
+                                    <div formArrayName="taskmodule" class="row  w-100">
+                                        <div class="row FivecolWithTwocol w-100" *ngFor="let x of getsteptaskmodule(i).controls; let k=index" [formGroupName]="k">
+                                            <div  style="background: #f1eded;color: black; font-weight: 600;display: flex;width: 100% !important;margin: 5px;border-radius: 3px;">
+                                                <div style="width: 90%;display: flex;">
+                                                    <mat-icon *ngIf="getstepinsidetaskIsMileStone(i,k)==false" style="color:green;" > assignment_turned_in</mat-icon>
+                                                    <img *ngIf="getstepinsidetaskIsMileStone(i,k)==true" style="margin-right: 12px;"src="/assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg">
+                                                    <p> {{getstepinsidetaskname(i,k)}}</p>
+                                                </div>
+                                                <div style="width: 10%;">
+                                                        <mat-icon [matMenuTriggerFor]="moreMenu"  class="icon-options">more_vert</mat-icon>
+                                                    <mat-menu #moreMenu="matMenu" class="eventlist">
+                                                        <ng-template matMenuContent>
+                                                            <button class="fw-600" mat-menu-item (click)="showtaskdetails(i,k)">
+                                                                <mat-icon class="icon-options">visibility</mat-icon>
+                                                                <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                                            </button>
+                                                            <button class="fw-600" mat-menu-item (click)="addsubtask(i,k)">
+                                                            <mat-icon style="color: green;">assignment_turned_in</mat-icon>
+                                                            <span class="fw-600 color_black"> {{'Add subTask'|translate}}</span>
+                                                           </button>
+                                                            <button class="fw-600" mat-menu-item *ngIf="!getstepinsidetaskid(i,k)" (click)="edittask(i,k)">
+                                                                <mat-icon class="icon-options" >edit</mat-icon>
+                                                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                                            </button>
+                                                            <button class="fw-600" mat-menu-item (click)="removestepinsidetas(i,k)">
+                                                                <mat-icon class="icon-options">delete</mat-icon>
+                                                                <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                                            </button>
+                                                        </ng-template>
+                                                    </mat-menu>                    
+                                                     </div>
+                                            </div>
+                                            <div style="display: flex;width:100%;">
+                                                <div style="width:3%;"></div>
+                                                <div style="width: 97%;">
+                                                    <div formArrayName="SubTaskViewModels" class="row  w-100">
+                                                        <div class="row FivecolWithTwocol w-100" *ngFor="let x of getsteptaskmoduleForsubtask(i,k).controls; let g=index" [formGroupName]="g">
+                                                            <div  style="background: lightgray;color: black; font-weight: 600;display: flex;width: 100% !important;margin: 5px;border-radius: 3px;">
+                                                                <div style="width: 90%;display: flex;">
+                                                                    <mat-icon *ngIf="getstepinsidesubtaskIsMileStone(i,k,g)==false" style="color:green;" > assignment_turned_in</mat-icon>
+                                                                    <img *ngIf="getstepinsidesubtaskIsMileStone(i,k,g)" style="margin-right: 12px;"src="/assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg">
+                                                                    <p> {{getstepinsidesubtaskname(i,k,g)}}</p>
+                                                                </div>
+                                                                <div style="width: 10%;">
+                                                                        <mat-icon [matMenuTriggerFor]="moreMenu"  class="icon-options">more_vert</mat-icon>
+                                                                    <mat-menu #moreMenu="matMenu" class="eventlist">
+                                                                        <ng-template matMenuContent>
+                                                                            <button class="fw-600" mat-menu-item (click)="editsubtask(j,m,g,'View-subtask-initiatives')">
+                                                                                <mat-icon class="icon-options">visibility</mat-icon>
+                                                                                <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                                                            </button>
+                                                                            <button class="fw-600" mat-menu-item (click)="editsubtask(j,m,g,'edit-subtask-initiatives')">
+                                                                                <mat-icon class="icon-options" >edit</mat-icon>
+                                                                                <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                                                            </button>
+                                                                            <button class="fw-600" mat-menu-item (click)="removestepinsidesubtask(i,k,getstepinsidetaskid)">
+                                                                                <mat-icon class="icon-options">delete</mat-icon>
+                                                                                <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                                                            </button> 
+                                                                        </ng-template>
+                                                                    </mat-menu>                    
+                                                                     </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </ng-container>
+           </ng-container>
+
+           <!-- without step  -->
+           <ng-container *ngIf="getaddstepsstatus()==false">
+
+            <div formArrayName="taskmodule" class="row  w-100">
+                <div class="row FivecolWithTwocol w-100" *ngFor="let x of gettasks().controls; let j=index" [formGroupName]="j">
+                    <div  style="background: lightgray;color: black; font-weight: 600;display: flex;width: 100% !important;margin: 5px;border-radius: 3px;">
+                        <div style="width: 90%;display: flex;">
+                            <mat-icon *ngIf="gettaskIsMileStone(j)==false" style="color:green;" > assignment_turned_in</mat-icon>
+                            <img *ngIf="gettaskIsMileStone(j)" style="margin-right: 12px;"src="/assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg">
+                            <p> {{gettaskname(j)}}</p>
+                        </div>
+                        <div style="width: 10%;">
+                                <mat-icon [matMenuTriggerFor]="moreMenu"  class="icon-options">more_vert</mat-icon>
+                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                <ng-template matMenuContent>
+                                    <button class="fw-600" mat-menu-item (click)="showtaskdetails(j)">
+                                        <mat-icon class="icon-options">visibility</mat-icon>
+                                        <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="addsubtask(j)">
+                                        <mat-icon style="color: green;">assignment_turned_in</mat-icon>
+                                        <span class="fw-600 color_black"> {{'Add subTask'|translate}}</span>
+                                       </button>
+                                    <button class="fw-600" mat-menu-item *ngIf="!gettaskid(j)" (click)="edittask(j,'')">
+                                        <mat-icon class="icon-options" >edit</mat-icon>
+                                        <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                    </button>
+                                    <button class="fw-600" mat-menu-item (click)="removetask(j)">
+                                        <mat-icon class="icon-options">delete</mat-icon>
+                                        <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                    </button>
+                                </ng-template>
+                            </mat-menu>                    
+                             </div>
+                    </div>
+                    <div style="display: flex;width:100%;">
+                        <div style="width:3%;"></div>
+                        <div style="width: 97%;">
+                            <div formArrayName="SubTaskViewModels" class="row  w-100">
+                                <div class="row FivecolWithTwocol w-100" *ngFor="let x of getsubtask(j).controls; let m=index" [formGroupName]="m">
+                                    <div  style="background: lightgray;color: black; font-weight: 600;display: flex;width: 100% !important;margin: 5px;border-radius: 3px;">
+                                        <div style="width: 90%;display: flex;">
+                                            <mat-icon *ngIf="getsubtaskIsMileStone(j,m)==false" style="color:green;" > assignment_turned_in</mat-icon>
+                                            <img *ngIf="getsubtaskIsMileStone(j,m)==true"  style="margin-right: 12px;"src="/assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.svg">
+                                            <p> {{getsubtaskname(j,m)}}</p>
+                                        </div>
+                                        <div style="width: 10%;">
+                                                <mat-icon [matMenuTriggerFor]="moreMenu"  class="icon-options">more_vert</mat-icon>
+                                            <mat-menu #moreMenu="matMenu" class="eventlist">
+                                                <ng-template matMenuContent>
+                                                    <button class="fw-600" mat-menu-item (click)="editsubtask(j,m,'edit-subtask-initiatives')">
+                                                        <mat-icon class="icon-options">visibility</mat-icon>
+                                                        <span class="fw-600 color_black">{{'View'|translate}}</span>
+                                                    </button>
+                                                    <button class="fw-600" mat-menu-item (click)="editsubtask(j,m,'View-subtask-initiatives')">
+                                                        <mat-icon class="icon-options" >edit</mat-icon>
+                                                        <span class="fw-600 color_black">{{'Edit'|translate}}</span>
+                                                    </button>
+                                                    <button class="fw-600" mat-menu-item (click)="removesubtask(j,m)">
+                                                        <mat-icon class="icon-options">delete</mat-icon>
+                                                        <span class="fw-600 color_black">{{'Delete'|translate}}</span>
+                                                    </button>
+                                                </ng-template>
+                                            </mat-menu>                    
+                                             </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <button *ngIf="getaddstepsstatus()==false" mat-raised-button class="G-Green" (click)="ChooseTaskOption()">{{"Add a Task"|translate}}</button>
+            </div>
+          </ng-container>
+
+               <!-- 000000000000  -->
+        <div class="row mb-4 mt-4">
+         <div class="col-6">
+            <mat-slide-toggle formControlName="isTemplate"><b>Template</b></mat-slide-toggle>
+         </div>
+         <div class="col-6">
+         </div>
+    </div>
+
+        <!-- show tags  -->
+        <div class="row" formArrayName="Addtages"> 
+            <div class="row"
+                *ngFor="let conditionsBodyGroup of gettageBody().controls; let i=index"
+                [formGroupName]="i">
+                <div class="row">
+                    <!-- Bool  -->
+                    <ng-container *ngIf="fieldType(i)=='Bool'">
+                        <div class="col-10">
+                            <mat-checkbox formControlName="fieldValue"
+                                class="w-100">
+                                {{fieldname(i)}}
+                            </mat-checkbox>
+                        </div>
+                    </ng-container>
+                    <!-- Text  -->
+                    <ng-container *ngIf="fieldType(i)=='Text'">
+                        <div class="col-10">
+                            <mat-form-field class="w-100">
+                                <mat-label>{{fieldname(i)}}</mat-label>
+                                <input matInput type="text" placeholder="value"
+                                    formControlName="fieldValue">
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                    <!-- Number  -->
+                    <ng-container *ngIf="fieldType(i)=='Number'">
+                        <div class="col-10">
+                            <mat-form-field class="w-100">
+                                <mat-label>{{fieldname(i)}}</mat-label>
+                                <input matInput type="Number"
+                                    placeholder="value"
+                                    formControlName="fieldValue">
+                            </mat-form-field>
+                        </div>
+                    </ng-container> 
+                    <!-- Dropdown -->
+                    <ng-container *ngIf="fieldType(i)=='Dropdown'">
+                        <div class="col-10">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{fieldname(i)}}</mat-label>
+                                <mat-select placeholder="value"
+                                    formControlName="dropdownValues">
+                                    <mat-option [value]="x"
+                                        *ngFor="let x of dropdownvaluetotal(i)">
+                                        {{x|titlecase}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                    <!-- <ng-container *ngIf="screenType=='CreateUser'"> -->
+                        <div class="col-2">
+                            <mat-icon class="pointer"
+                                (click)="deletetagDialog(i)">delete</mat-icon>
+                        </div>
+                    <!-- </ng-container> -->
+                </div>
+            </div>
+        </div>
+        <mat-list>
+            <div class="d-flex justify-content-between">
+                <h4 class="m-0" style="color: grey;"><b>{{"Add Another Feild"|translate}}</b></h4>
+                <mat-chip-list>
+                    <mat-chip (click)="showdropdown()">{{"Add"|translate}}</mat-chip>
+                </mat-chip-list>
+            </div>
+        </mat-list>
+    </form>
+
+    <div class="overlay" *ngIf="spinner">
+        <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+        </mat-progress-spinner>
+    </div>  
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="my-1">
+    <div class="row mt-2 mb-4 justify-content-center" style="margin-bottom: 10px !important;">
+        <div class="col-4">
+            <button mat-raised-button mat-dialog-close class="W-blue">{{"Cancel"|translate}}</button>
+        </div>
+        <div class="col-4">
+            <button *ngIf="screentype == 'Create'" mat-raised-button class="b-blue" 
+            [disabled]="!Initiative.valid"   (click)="Applyinitiative()">{{"Apply"|translate}}</button>
+            <button *ngIf="screentype == 'Update'" mat-raised-button class="b-blue"
+            (click)="Applyinitiative()">{{"Update"|translate}}</button>
+        </div>
+    </div>
+</mat-dialog-actions> 
+

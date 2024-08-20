@@ -1,0 +1,61 @@
+.imageright1 {
+    width: 100%;
+    height: 500px;
+    background-image: url(../../../../../assets/images/map-1.png);
+    background-repeat: no-repeat;
+    object-fit: cover;
+    background-size: cover;
+    background-position: center;
+  }
+  .imageright2 {
+        width: 100%;
+      height: 500px;
+      background-image: url(../../../../../assets/images/map-2.png);
+      background-repeat: no-repeat;
+      object-fit: cover;
+      background-size: cover;
+      background-position: center;
+    }
+    .imageright3 {
+        width: 100%;
+      height: 500px;
+      background-image: url(../../../../../assets/images/map-3.png);
+      background-repeat: no-repeat;
+      object-fit: cover;
+      background-size: cover;
+      background-position: center;
+    }
+  
+  
+  
+  .imagelogo {
+    width: 100%;
+    height: 600px;
+    object-fit: cover;
+    background-image: url(../../../../../assets/images/map.png);
+    background-repeat: no-repeat;
+    object-fit: cover;
+    background-size: cover;
+    background-position: center;
+  
+  }
+  
+  
+  
+  
+  
+  .textcontentstyle{
+      width: 90%;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      
+  }
+  
+  .textcontentbody{
+    display: flex;
+    margin: auto;
+  overflow-y: hidden;
+  overflow: hidden;
+  }
+  

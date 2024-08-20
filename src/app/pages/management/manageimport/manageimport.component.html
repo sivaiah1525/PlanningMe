@@ -1,0 +1,248 @@
+<div class="d-flex flex-row  modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"Import Data"|translate}}</h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+<mat-dialog-content class="mr-0 ml-0">
+    <form [formGroup]="form">
+        <!-- --------------------step 00011111111111  -->
+        <ng-container *ngIf="showFirst">
+            <div class="row mt-2">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-2">
+                            <p class="count text-center">1</p>
+                        </div>
+                        <strong class="f-s-18 m-t-5">{{"Select The Type Of Import"|translate}}</strong>
+                    </div>
+                    <div class="row">
+                        <!-- --------------  -->
+                        <div class="row">
+                            <div class="col-10">
+                                <span class="lable">A . {{"From Template"|translate}}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-10">
+                                <mat-form-field appearance="legacy" class="w-100">
+                                    <mat-label> {{"Select Template File"|translate}} <span class="danger"> * </span></mat-label>
+                                    <input matInput type="text"  id="name"
+                                        formControlName="handleTemplateFileInput">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-2">
+                                <button style="border: none;background-color: transparent;"
+                                    (click)="fileInput1.click()">
+                                    <img src="../../../../assets/images/iconsForsvg/folder-view.svg">
+                                    <input #fileInput1 accept=".csv,.xlsx,.xls" type="file"
+                                        (change)="handleFileInput($event,'templateFile')" style="display:none;" />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"OR"|translate}}</h2>
+                        </div>
+                        <div class="row">
+                            <div class="col-10">
+                                <span class="lable">B . {{"From File"|translate}}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-10">
+                                <mat-form-field appearance="legacy" class="w-100">
+                                    <mat-label>{{"Selact Custom File"|translate}} <span class="danger"> * </span></mat-label>
+                                    <input matInput type="text" id="name"
+                                        formControlName="Name">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-2">
+                                <button style="border: none;background-color: transparent;"
+                                    (click)="fileInput2.click()">
+                                    <img src="../../../../assets/images/iconsForsvg/folder-view.svg">
+                                    <input #fileInput2 accept=".csv,.xlsx,.xls" type="file"
+                                        (change)="handleFileInput($event,'CustomFile')" style="display:none;" />
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"OR"|translate}}</h2>
+                        </div>
+                        <div class="row">
+                            <div class="col-10">
+                                <span class="lable">C . {{"Choose Your Web Services"|translate}}</span>
+                            </div>
+                        </div>
+                        <!-- <div class="row">
+                            <div class="col-10">
+                                <mat-form-field class="w-100">
+                                    <mat-label>Choose Your Web Services</mat-label>
+                                    <mat-select formControlName="applicationName">
+                                        <mat-option *ngFor="let app of applicationname" [value]="app"
+                                            (click)="onChange(app.id,app)">
+                                            {{app.applicationName}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div> -->
+                        <div class="row">
+                            <div class="col-10">
+                                <div class="col-2"></div>
+                                <mat-form-field class="w-100 m-t-10">
+                                    <mat-label>URL <span class="danger"> * </span></mat-label>
+                                    <input matInput (ngModelChange)="handileurlAndAPIKEY('s')" type="text"
+                                        placeholder="URL" formControlName="url">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-10">
+                                <div class="col-2"></div>
+                                <mat-form-field class="w-100 m-t-10">
+                                    <mat-label>API KEY <span class="danger"> * </span></mat-label>
+                                    <input matInput (ngModelChange)="handileurlAndAPIKEY('s')" type="text"
+                                        placeholder="API KEY" formControlName="apiKey">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-bottom: 8px;">
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6"></div>
+                    <ng-container *ngIf="NetButtonStatus">
+                        <button mat-raised-button mat-dialog-close>{{"Cancel"|translate}}</button>
+                        <button mat-raised-button class="b-blue" (click)="nextbutton1()">{{"Next"|translate}}</button>
+                    </ng-container>
+                    <ng-container *ngIf="templateFile">
+                        <button mat-raised-button mat-dialog-close>{{"Cancel"|translate}}</button>
+                        <button mat-raised-button class="b-blue" (click)="ImportTemplateFile()">{{"Import Template"|translate}}</button>
+                    </ng-container>
+
+                </div>
+            </div>
+        </ng-container>
+        <!-- ------------------------- step -------00000000002222222222 -->
+        <ng-container *ngIf="showsecond">
+            <div class="col-12">
+                <div class="row m-t-10">
+                    <div class="col-2">
+                        <mat-icon (click)="goToFirst()">keyboard_backspace</mat-icon>
+                    </div>
+                    <p class="count text-center">2</p>
+                    <strong class="f-s-18 m-t-5 m-l-10">{{"Select The Mapping"|translate}}</strong>
+                </div>
+
+                <div class="row">
+                    <div class="col-10">
+                        <mat-form-field class="w-100 m-t-10">
+                            <mat-label>{{"Choose Your Configuration"|translate}}</mat-label>
+                            <mat-select formControlName="applicationId">
+                                <mat-option *ngFor="let config of mapconfigurationName"
+                                    [value]="config.configurationName" (click)="selectConfiguration(config)">
+                                    {{config.configurationName}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-2">
+                        <button *ngIf="!chooseoptionFile" mat-raised-button class=" m-t-10 b-blue"
+                            (click)="importData()">{{"Apply"|translate}}</button>
+
+                        <button *ngIf="chooseoptionFile" mat-raised-button class=" m-t-10 b-blue"
+                            (click)="getConfigurationDetails()">{{"Apply"|translate}}</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-5"></div>
+                    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"OR"|translate}}</h2>
+
+                </div>
+                <div class="row m-t-10 m-b-24">
+                    <div class="col-3"></div>
+                    <button mat-raised-button class="b-blue" (click)="createMapping()">
+                        {{"Create a mapping Configuration"|translate}}</button>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="showthird">
+            <div class="col-12">
+                <div class="row m-t-10">
+                    <div class="col-2">
+                        <mat-icon (click)="goToSecond()">keyboard_backspace</mat-icon>
+                    </div>
+                    <p class="count text-center">3</p>
+                    <strong class="f-s-18 m-t-5 m-l-10">{{"Mapping Configuration"|translate}}</strong>
+                </div>
+                <ng-container *ngIf="!chooseoptionFile">
+                    <div class="row">
+                        <mat-form-field class="w-100 m-t-10">
+                            <mat-label>{{"Application Name"|translate}}</mat-label>
+                            <input matInput type="text" 
+                                formControlName="applicationName">
+                        </mat-form-field>
+                    </div>
+                </ng-container>
+                <div class="row">
+                    <mat-form-field class="w-100 m-t-10">
+                        <mat-label>{{"Configuration Name"|translate}}</mat-label>
+                        <input matInput type="text" 
+                            formControlName="configurationName">
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <mat-form-field class="w-100 m-t-10">
+                        <mat-label>{{"Configuration Description"|translate}}</mat-label>
+                        <input matInput type="text"
+                            formControlName="configurationDescription">
+                    </mat-form-field>
+                </div>
+            </div>
+        </ng-container>
+
+    </form>
+
+    <!-- ----------------- -->
+    <ng-container *ngIf="showthird">
+        <div class="row" *ngFor="let col of mappedColumn;let i=index">
+            <div class="col-6 m-t-14 p-0">
+                <mat-checkbox [(ngModel)]="col.isChecked" [ngModelOptions]="{standalone: true}">
+                    {{col.fileColumnName}}
+                </mat-checkbox>
+            </div>
+            <div class="col-6">
+                <mat-form-field class="w-100 ">
+                    <mat-label> {{"Planning Columns"|translate}}</mat-label>
+                    <mat-select [(ngModel)]="col.entityFieldName" [(value)]="col.entityFieldName">
+                        <mat-option *ngFor="let plan of planningCoulmns;let i=index" [value]="plan.name">
+                            {{plan.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <!-- <ng-container *ngIf="col?.isTag==true">
+                <div class="col-2">
+                    <mat-form-field class="w-100 ">
+                        <mat-label> Data Type</mat-label>
+                        <mat-select [(ngModel)]="col.dataType" [(value)]="col.dataType">
+                            <mat-option *ngFor="let type of tagType;let i=index" [value]="type.type">
+                                {{type.type}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </ng-container> -->
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="showthird">
+        <div class="row m-b-24">
+            <div class="col-5"></div>
+            <button mat-raised-button (click)="goToSecond()">{{"Cancel"|translate}}</button>
+            <button mat-raised-button class="b-blue" (click)="SaveAndUpdateConfiguration()">{{"Apply"|translate}}</button>
+        </div>
+    </ng-container>
+</mat-dialog-content>

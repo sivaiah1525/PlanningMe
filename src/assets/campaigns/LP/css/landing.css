@@ -1,0 +1,151 @@
+/*---------------------------------------------------------------------------*/
+/*------------------ PERSONNALISATION D'ELEMENTS DE TYPE LANDING PAGE ----------------------*/
+/*---------------------------------------------------------------------------*/
+
+	/*--------------------------------  Fonts ------------------------------------*/
+
+	body { 
+		font-family: 'Quicksand', 'Helvetica', 'Roboto'; font-weight:500 !important;
+	}
+
+	
+	/*--------------------------------  Couleurs ------------------------------------*/
+	* { color:#1d1d1d;}	
+	.my_page .bg-color-1 { background-color:#01b1c1 !important; }
+	.my_page .bg-color-2 { background-color:#00DC00 !important; }
+	.my_page .bg-color-3 { background-color:#f2f2f2 !important; }
+	.my_page .bg-color-4 { background-color:#333333 !important; }
+
+	.my_page .color-1 { color:#01b1c1 !important; }
+	.my_page .color-2 { color:#00DC00 !important; }
+	.my_page .color-3 { color:#f2f2f2 !important; }
+	.my_page .color-4 { color:#333333 !important; }
+
+	
+	
+	#logo {
+		margin:15px 0px 15px 0px;
+	}	
+	
+	
+	#droite { max-width:700px; margin:0px auto; }
+	
+	/*--------------------------------  Conteneurs : généralités ------------------------------------*/
+@media (min-width: 640px) {	
+	#logo {
+		margin-bottom:35px;
+	}
+}
+
+	#conteneur-form {
+		border-left:3px solid #8DC6FE;
+		position:relative;
+	}
+	
+	.picto { margin-bottom:50px; }
+	
+	
+	.slide {
+		position:relative;
+	}
+	
+	.slide:before {
+		position:absolute;
+		left:40px;
+		top:60px;
+		color:#ffffff;
+		font-size:20rem;
+		color:rgb(255, 255, 255, 0.3);
+		line-height:0;
+		font-weight:bold;
+	}
+	
+	.slide-1:before {
+		content:'1';
+	}
+	.slide-2:before {
+		content:'2';
+	}
+	.slide-3:before {
+		content:'3';
+	}
+	.slide-4:before {
+		content:'4';
+	}
+	.slide-5:before {
+		content:'5';
+	}
+	.slide-6:before {
+		content:'6';
+	}
+	.slide-7:before {
+		content:'7';
+	}
+	
+	#droite {
+		position:relative;
+	}
+	
+	#gauche {
+		/* background-image:url('../img/motif-mobile.png'); */
+		background-repeat:no-repeat;
+		background-position:bottom center;
+	}
+	
+	
+	#book {
+		margin:0px auto;
+		display:block
+	}
+	
+	.my_page #top_form {
+		text-align:center;
+		wifth:100%;
+	}
+@media (min-width: 1024px) {	
+	#gauche {
+		/* background-image:url('../img/motif.png'); */
+	}
+}
+@media (min-width: 640px) {
+	
+	.my_page #top_form {
+		text-align:left;
+	}
+	
+
+	
+	#book {
+		position:absolute;
+		left:0%;
+		top:15%;
+		margin:0px auto;
+		z-index:3;
+	}
+	
+	#gauche { margin-top:-65px;}
+	
+	
+}
+	
+	#top_form p {
+		color:#7536f0;
+	}
+	
+	
+	/* #mentions-diffuseur { padding-top:300px; } */
+	
+@media (min-width: 640px) {
+	
+	.merci .my_page #top_form {
+		text-align:center;
+	}
+}
+
+@media (min-width: 1024px) {
+
+	#gauche .padding-responsive {
+		padding-bottom:250px;
+	}
+
+}

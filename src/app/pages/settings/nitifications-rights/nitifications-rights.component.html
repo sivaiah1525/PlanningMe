@@ -1,0 +1,114 @@
+<div class="d-flex flex-row align-items-center modal-header-in-error ">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{"Notifications"|translate}}</h2>
+    <mat-icon matDialogClose>close</mat-icon>
+</div>
+<mat-dialog-content class="mr-0 ml-0 p-0">
+            <mat-card style="width:100%;">
+                <mat-card-content>
+                    <div class="row">
+                        <h4><u><b>Management</b></u></h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Users</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.management.Users" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Contacts</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.management.Contacts" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Sites</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.management.Sites" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Products</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.management.Products" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Transactions</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.management.Transactions" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Targets</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.management.Targets" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Discounts</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.management.Discounts" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Groups</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.management.Groups" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h4><u><b>Planning</b></u></h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Normal Events</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.Planning.option1" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Simulation Events</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.Planning.option2" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Synchronization</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.Planning.option3" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h4><u><b>Map</b></u></h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>option 1</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.Map.option1" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>option 2</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.Map.option2" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h4><u><b>General</b></u></h4>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Files and Notes</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.FilesandNotes" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Activity Reports</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.ActivityReports" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Permission Rights</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.PermissionRights" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Alerts</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.Alerts" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-10"><h4>Profile Details</h4></div>
+                        <div class="col-2"> <mat-slide-toggle (click)="updatenotificationsrights()" [(ngModel)]="getAllnotificationsoptions.ProfileDetails" color="primary"></mat-slide-toggle>
+                        </div>
+                    </div>
+                </mat-card-content>
+              </mat-card>
+</mat-dialog-content>
+
+  

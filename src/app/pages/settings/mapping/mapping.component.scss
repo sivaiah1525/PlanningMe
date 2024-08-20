@@ -1,0 +1,172 @@
+.divider {
+    background-color: #fb4444;
+    height: 5px;
+}
+
+.companylogostyle{
+    border-radius: 14%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    object-fit: contain;
+    width: 100px;
+    position: relative;
+    top: 10px;
+}
+
+.p-0 {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+::ng-deep  primary .mat-ink-bar {
+    background-color: transparent;
+}
+
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar,.mat-tab-nav-bar.mat-primary .mat-ink-bar {
+     background-color: transparent !important; 
+}
+
+.chip {
+    // width: 40%;
+    background-color: #fb4444;
+    color: white
+}
+
+.mat-mdc-radio-button~.mat-mdc-radio-button {
+    margin-left: 16px;
+}
+
+.importchip {
+    background-color: #11aa84;
+    color: white
+}
+
+.cardsize {
+    width: 35% !important;
+}
+
+.m-t-20 {
+    margin-top: 20px !important;
+}
+
+.display {
+    display: unset !important;
+}
+
+.light_grey {
+    color: #b9b5b5;
+}
+
+.connectcheck {
+    color: #c7c6cb !important
+}
+
+
+
+.des {
+    color: #888888 !important;
+    font-weight: bold !important;
+}
+
+
+// tab2 css starts here
+.configdivider {
+    background-color: #3880ff !important;
+    height: 5px !important;
+}
+
+.configchip {
+    // width: 40%;
+    background-color: #3880ff !important;
+    color: white
+}
+
+.m-l-14 {
+    margin-left: 14px !important;
+}
+
+.m-t-14 {
+    margin-top: 14px !important;
+}
+
+.color-des {
+    color: #2c2c2c !important;
+}
+
+.mapcardsize {
+    height: 260px;
+}
+
+
+
+
+.example-card {
+    // width: 400px !important;
+    // height: 200px !important;
+    // background: #F8F8F8 0% 0% no-repeat padding-box;
+    // box-shadow: 0px 2px 8px #00000022;
+    // border: 1px solid #DBDBDB;
+    // border-radius: 5px;
+    opacity: 1;
+    // height: 210px;
+    margin: auto;
+    // margin-bottom: 40px;
+}
+
+.br-1 {
+    border: 1px solid lightgrey;
+}
+
+.configtuype {
+    border: 1px solid #fb4444;
+    background-color: #fb4444;
+    color: white;
+    border-radius: 21px;
+    width: 73%;
+    padding: 2%;
+    text-align: center;
+}
+
+
+.import {
+    border: 1px solid #11aa84;
+    background-color: #11aa84;
+    color: white;
+    border-radius: 21px;
+    padding: 2%;
+    text-align: center;
+}
+
+.export {
+    border: 1px solid #528bf1;
+    background-color: #528bf1;
+    color: white;
+    border-radius: 21px;
+    padding: 2%;
+    text-align: center;
+}
+
+
+
+.overflow_unset {
+    overflow: unset !important;
+}
+
+.margin-0 {
+    margin: 0px !important;
+}
+
+.companyProfile {
+    height: 90px;
+    width: 150px;
+    margin-bottom: 10px;
+}
+
+.invoiceImage {
+    height: 80px;
+    width: 80px;
+}
+
+

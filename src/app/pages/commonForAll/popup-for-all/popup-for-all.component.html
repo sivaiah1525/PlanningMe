@@ -1,0 +1,127 @@
+
+
+
+<div class="d-flex flex-row align-items-center modal-header">
+  <h2 mat-dialog-title *ngIf="type=='margineprice'" class="m-0 dialog-title text-center w-100">Confirmation</h2>
+  <h2 mat-dialog-title *ngIf="type=='teamusers'" class="m-0 dialog-title text-center w-100">
+    {{teamname}}  Users
+  </h2>
+  <h2 mat-dialog-title *ngIf="type=='subteams'" class="m-0 dialog-title text-center w-100">
+    {{teamname}}  Sub Teams
+  </h2>
+  <h2 mat-dialog-title *ngIf="type=='transactionKeyword'||type=='orderKeyword'||type=='discountKeyword'||type=='groupKeyword'" class="m-0 dialog-title text-center w-100">
+  {{data?.data?.keyword|titlecase}} 
+  </h2>
+  <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+  <mat-dialog-content class="mr-0 ml-0">
+
+<ng-container *ngIf="type=='margineprice'">
+    <div class="row mb-4 mt-4 justify-content-center">
+        <mat-radio-group aria-label="Select an option">
+            <mat-radio-button (click)="getoption(1)" value="1">With Base Price only </mat-radio-button><br><br>
+            <mat-radio-button (click)="getoption(2)"  value="2">With Keywords only </mat-radio-button>
+          </mat-radio-group>
+    </div>
+    <div class="row mb-2 justify-content-end">
+        <div class="col-3">
+          <button mat-raised-button mat-dialog-close>Cancel</button>
+        </div>
+        <div class="col-3">
+            <button mat-raised-button (click)="clearpopup()" class="b-blue">{{'ok'|translate}}</button>
+        </div>
+      </div>
+  </ng-container>
+
+<ng-container *ngIf="type=='teamusers'">
+    <div class="row mb-4 mt-4 justify-content-center">
+   <div class="row mt-2 mb-2" *ngFor="let x of list" (click)="openUserDialog(x.id,x, 'user')">
+    <div class="col-2">
+
+      <div class="avatar">
+        <img class="avatar" *ngIf="x?.profile!=null"  style="cursor: pointer;"
+            onError="this.src='assets/avatar.svg'"
+            [src]="x?.profile ? x.profile:'assets/avatar.svg'"
+            onError="this.src='assets/avatar.svg'">
+            <span  *ngIf="x?.profile==null" 
+            [style.background]="getColor(i)"  style="color: white; padding: 8px;border-radius: 50%;position: relative;top: 5px;margin: 5px;right: 8px;">{{getuserFLnames(x.firstName+' '+x.lastName)}}</span>
+    </div>
+    </div>
+    <div class="col-5">{{x.firstName+' '}} {{' '+x.lastName}}</div>
+    <div class="col-5">
+      <span *ngIf="x.roleName=='Creator'" class="border-box1">{{x.roleName}}</span>
+      <span *ngIf="x.roleName!='Creator'" class="border-box">{{x.roleName}}</span>
+    </div>
+   </div>
+    </div>
+    </ng-container>
+
+    <ng-container *ngIf="type=='subteams'">
+      <div class="container">
+        <div class="mt-2 mb-2" *ngFor="let x of list" (click)="getteamusers(x)">
+          <div class="row">
+            <div class="col-8">
+              <button class="fw-600" mat-menu-item >
+                {{x.teamName |titlecase}}
+              </button>
+            </div>
+            <div class="col-4 mt-2">
+              <div style="margin: 0 23px;"  class="usercount" *ngIf="x.usersCount!=0">Users  <span class="countpostion">{{x.usersCount}}</span> </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    </ng-container>
+
+    <ng-container *ngIf="type=='transactionKeyword'||type=='orderKeyword'||type=='discountKeyword'||type=='groupKeyword'">
+      <ng-container *ngIf="list.length==0">
+        <p style="text-align: center;">No Data Found</p>
+      </ng-container>
+      <ng-container *ngIf="list.length!=0">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th></th>
+              <th></th>
+              <th scope="col">Order Id</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Unit Price</th>
+              <th scope="col">Final Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="cursor: pointer;" *ngFor="let x of list" (click)="openTransactionDialog(x)">
+              <th>
+                <span *ngIf="x.statusName == 'Pending'">
+                  <mat-icon style="font-size: 12px;  color:yellow;">fiber_manual_record</mat-icon>
+              </span>
+              <span *ngIf="x.statusName == 'Validated'">
+                  <mat-icon style="font-size: 12px;  color:blue;margin-top:18px;">fiber_manual_record</mat-icon>
+              </span>
+              <span *ngIf="x.statusName == 'Cancelled'">
+                  <mat-icon style="font-size: 12px;  color:green;margin-top:18px;">fiber_manual_record</mat-icon>
+              </span>
+              </th>
+              <th>
+                <span *ngIf="x.transactionType=='Sale'">
+                  <img src="../../../../assets/images/iconsForsvg/cart1.svg" alt="">
+              </span>
+              <span *ngIf="x.transactionType=='Buy'">
+                  <img src="../../../../assets/images/iconsForsvg/cart2.svg" alt="">
+              </span>
+              </th>
+              <th>{{x.orderId}}</th>
+              <td>{{x.quantity}} {{x.unit}}</td>
+              <td>{{x.baseUnitPrice}} {{x.currencyName}}</td>
+              <td>{{x.finalPrice}} {{x.currencyName}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-container>
+
+    </ng-container>
+    <div class="overlay" *ngIf="loader">
+      <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+      </mat-progress-spinner>
+  </div>
+    </mat-dialog-content>

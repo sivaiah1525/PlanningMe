@@ -1,0 +1,235 @@
+<div class="d-flex justify-content-between align-items-center modal-header">
+    <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+        <mat-icon style="position: relative;right: 10px;"> loyalty</mat-icon>
+        <span *ngIf="addbutton"> {{'Add Discount'|translate}}</span>
+        <span *ngIf="updatebutton"> {{'Update Discount'|translate}}</span>
+
+    </h2>
+    <mat-icon mat-dialog-close>close</mat-icon>
+</div>
+
+<mat-dialog-content class="mr-0 ml-0">
+    <form [formGroup]="discountForm">
+        <!-- Contacts  -->
+        <ng-container *ngIf="ManagenemtEntity=='Contacts'">
+            <div class="row mt-3 mt-3 justify-content-center">
+                <div class="col-3">
+                    <img class="avatar-img"
+                        [src]="ManagementData?.profilePicture ? ManagementData.profilePicture:'assets/avatar.svg'"
+                        onError="this.src='assets/avatar.svg'" />
+                </div>
+            </div>
+            <h2 class="name_red" style="text-align: center; align-items: center;">
+                {{ManagementData.firstName+' '+ManagementData.lastName|titlecase}}
+            </h2>
+        </ng-container>
+        <!-- Sites  -->
+        <ng-container *ngIf="ManagenemtEntity=='Sites'">
+            <div class="row  mt-3 justify-content-center">
+                <div class="col-3">
+                    <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                </div>
+            </div>
+            <h2 class="name_red" style="text-align: center; align-items: center; margin-top: 20px;">
+                {{ManagementData.companyName|titlecase}}
+            </h2>
+        </ng-container>
+        <!-- Products  -->
+        <ng-container *ngIf="ManagenemtEntity=='Products'">
+            <div class="row mt-3 justify-content-center">
+                <div class="col-3">
+                    <img class="avatar-img"
+                        [src]="ManagementData?.profilePicture ?  ManagementData.profilePicture:'assets/images/iconsForsvg/icon_product.svg'"
+                        onError="this.src='assets/images/iconsForsvg/icon_product.svg'" />
+                </div>
+            </div>
+            <h2 class=" name_red" style="text-align: center; align-items: center;">
+                {{ManagementData.productName|titlecase}}
+            </h2>
+        </ng-container>
+        <!-- orders  -->
+        <ng-container *ngIf="ManagenemtEntity=='orders'">
+            <div class="row  mt-3 justify-content-center">
+                <div class="col-3">
+                    <mat-icon class="vertical-bottom"
+                        style="color: rgb(229, 62, 62);font-size: 50px;">assignment</mat-icon>
+                </div>
+            </div>
+            <h2 class="name_red" style="text-align: center; align-items: center; margin-top: 20px;">
+                {{'OrderId : '}}{{ManagementData.orderId|titlecase}}
+            </h2>
+        </ng-container>
+        <!-- transactions  -->
+        <ng-container *ngIf="ManagenemtEntity=='transactions'">
+            <div class="row  mt-3 justify-content-center">
+                <div class="col-3">
+                    <mat-icon class="vertical-bottom"
+                        style="color: rgb(229, 62, 62);font-size: 50px;">shopping_cart</mat-icon>
+                </div>
+            </div>
+            <h2 class="name_red" style="text-align: center; align-items: center; margin-top: 20px;">
+                {{'Transaction ID : '}}{{ManagementData.id}}
+            </h2>
+        </ng-container>
+        <!-- For Group  -->
+        <ng-container
+            *ngIf="ManagenemtEntity=='ContactsGroup' || ManagenemtEntity=='ProductsGroup' || ManagenemtEntity=='SitesGroup'">
+            <div class="row  mt-3 justify-content-center">
+                <div class="col-3">
+                    <mat-icon *ngIf="ManagementData.dynamicGroupId ==null" class="vertical-bottom"
+                        style="color: red;font-size: 50px;">group</mat-icon>
+                    <mat-icon *ngIf="ManagementData.dynamicGroupId !=null" class="vertical-bottom"
+                        style="color: blue;font-size: 50px;">group</mat-icon>
+                </div>
+            </div>
+            <!-- ContactsGroup  -->
+            <ng-container *ngIf="ManagenemtEntity=='ContactsGroup'">
+                <h2 class="name_red" style="text-align: center; align-items: center; margin-top: 20px;">
+                    {{ManagementData.contactGroupName|titlecase}}
+                </h2>
+            </ng-container>
+            <!-- ProductsGroup  -->
+            <ng-container *ngIf="ManagenemtEntity=='ProductsGroup'">
+                <h2 class="name_red" style="text-align: center; align-items: center; margin-top: 20px;">
+                    {{ManagementData.productGroupName|titlecase}}
+                </h2>
+            </ng-container>
+            <!-- SitesGroup  -->
+            <ng-container *ngIf="ManagenemtEntity=='SitesGroup'">
+                <h2 class="name_red" style="text-align: center; align-items: center; margin-top: 20px;">
+                    {{ManagementData.siteGroupName|titlecase}}
+                </h2>
+            </ng-container>
+        </ng-container>
+        <div class="row" formArrayName="discountBody">
+            <div class="row" *ngFor="let conditionsBodyGroup of getDiscountBody().controls; let i=index"
+                [formGroupName]="i">
+                <div class="row">
+                    <mat-form-field appearance="fill" class="w-100 ">
+                        <mat-label>{{'Discount Name'|translate}}</mat-label>
+                        <mat-select single formControlName="name">
+                            <mat-option class="f-weight" [value]="list.id" *ngFor="let list of discountDetails;"
+                                (click)="selectDiscount(list,i)">
+                                <span *ngIf="list.isPublic ==true">
+                                    <img style="border-radius: 50%;"
+                                        src="assets/images/iconsForsvg/discount-icon-Blue.svg">
+                                </span>
+                                <span *ngIf="list.isPublic !=true">
+                                    <img style="border-radius: 50%;"
+                                        src="assets/images/iconsForsvg/discount-icon-Green.svg">
+                                </span>
+                                <span>
+                                    {{list.codeAndName|titlecase}}
+                                </span>
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <div class="col-6 p-0">
+                        <mat-form-field class="w-100">
+                            <mat-label>{{'Discount Code'|translate}}</mat-label>
+                            <input matInput type="text" placeholder="Discount Code" formControlName="code" readonly>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6">
+                        <mat-form-field class="w-100">
+                            <mat-label>{{'Discount'|translate}} (%)</mat-label>
+                            <input matInput type="text" placeholder="Discount (%)" formControlName="amount" readonly>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4 p-1">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>{{'Start Date'|translate}}</mat-label>
+                            <input matInput [matDatepicker]="startdatepicker2" placeholder="Start-Date"
+                                formControlName="startDate" readonly>
+                            <mat-datepicker-toggle matSuffix [for]="startdatepicker2"></mat-datepicker-toggle>
+                            <mat-datepicker #startdatepicker2></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-4 p-1">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>{{'End Date'|translate}}</mat-label>
+                            <input matInput [matDatepicker]="enddatepicker2" placeholder="End-Date"
+                                formControlName="endDate" readonly>
+                            <mat-datepicker-toggle matSuffix [for]="enddatepicker2"></mat-datepicker-toggle>
+                            <mat-datepicker #enddatepicker2></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-4 p-1">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>{{'Max limit'|translate}}</mat-label>
+                            <input matInput type="text" placeholder="Max Use" formControlName="limit" readonly>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <!-- Keywords  -->
+                <div class="row">
+                    <mat-form-field appearance="fill" class="example-chip-list">
+                        <mat-label>{{'keyword'|translate}}</mat-label><br>
+                        <mat-chip-list #chipGridforkeyword aria-label="Fruit selection"
+                            style="margin-top: 10px !important;">
+                            <mat-chip-row style="margin-top:5px !important; margin-bottom:6px !important;"
+                                *ngFor="let keyword of keywordlist">
+                                <button style="border: none; border-radius:20px; background-color: rgb(228, 223, 223);padding-left: 15px;
+                                        padding-right: 15px;">
+                                    <span style="position: relative;  left: 3px;">{{keyword|titlecase}}</span></button>
+                            </mat-chip-row>
+                        </mat-chip-list>
+                        <input formControlName="keyword" [matChipInputFor]="chipGridforkeyword"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="add($event)" />
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <mat-form-field class="w-100">
+                        <mat-label>{{'Discount description'|translate}}</mat-label>
+                        <input matInput type="text" placeholder="Discount description" formControlName="description"
+                            readonly>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions class="my-1">
+    <div class="row">
+        <div class="col-6" *ngIf="!updatebutton">
+            <button *ngIf="hasPrivateDiscount==false&& hasPublicDiscount==false" mat-raised-button class="b-blue"
+                (click)="addCondition()">{{'Add Discount'|translate}}</button>
+        </div>
+        <div class="col-6">
+            <button mat-button mat-dialog-close>{{'Cancel'|translate}}</button>
+            <button mat-raised-button class="b-blue" *ngIf="addbutton"
+                (click)="Discountcreate(ConfirmationDialog)">{{'Apply'|translate}}</button>
+            <button mat-raised-button class="b-blue" *ngIf="updatebutton"
+                (click)="UpdatediscountFormanagement(ConfirmationDialog)">{{'Update'|translate}}</button>
+        </div>
+    </div>
+</mat-dialog-actions>
+
+
+
+
+<ng-template #ConfirmationDialog class="container">
+    <div class="d-flex flex-row align-items-center modal-header">
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">{{'Confirmation'|translate}}</h2>
+    </div>
+    <mat-dialog-content class="viewDialog pading " style="padding: 0px  !important; margin: 0px !important">
+        <div class="row mt-2 mb-2 justify-content-center">
+            <div class="col-10">
+                <h3>{{errorMessange}}</h3>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-action>
+        <div class="row" style="margin-bottom: 8px;">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6"></div>
+            <button mat-raised-button mat-dialog-close>{{'Cancel'|translate}}</button>
+            <button mat-raised-button mat-dialog-close class="b-blue"
+                (click)="ConfirmationAddDiscount(ConfirmationDialog)">{{'Apply'|translate}}</button>
+        </div>
+    </mat-dialog-action>
+</ng-template>

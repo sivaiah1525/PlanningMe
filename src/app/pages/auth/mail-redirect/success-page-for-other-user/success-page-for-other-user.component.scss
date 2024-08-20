@@ -1,0 +1,113 @@
+.thankyoulable{
+    font-size: 35px;
+    font-weight: bold;
+    text-align: center;
+    margin-top:30px;
+    line-height: 2;
+    color: #fb5e26;
+}
+
+
+.lablefortitle{
+    font-size: 30px;
+    text-align: center;
+    margin-top:30px;
+    line-height: 2;
+    color: #fb5e26;
+}
+
+.imagestyle{
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: start;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    object-fit: contain;
+}
+
+
+
+
+.ladyimage{
+    border-style: none;
+    width: 300px;
+    height: 400px;
+    margin: auto;
+    object-fit: contain;
+    display: flex;
+}
+
+.loginbody {
+    width: 100%;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    object-fit: cover !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+}
+
+
+.login-card {
+    width: 350px;
+    align-items: center;
+    opacity: 0.9;
+    height: 350px;
+    img {
+        height: 70px;
+        padding: 0;
+        border: none;
+    }
+}
+
+
+.imageiconstyle{
+    vertical-align: middle;
+    border-style: none;
+    width: 80px;
+    height: 80px;
+    margin: auto;
+    margin-top: 20px;
+}
+
+
+
+@media all and (max-width:1900px) {
+    .maincontent{
+        width: 50%;
+        margin: auto;
+    }
+    .pnm-logo{
+        width: 195px;
+        height: 100px;
+        display: flex;
+        justify-content: start;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: cover;
+        object-fit: contain;
+        margin-right: 60px;
+    }
+    }
+    
+    @media all and (max-width:900px) {
+        .maincontent{
+            width: 100%;
+            margin: auto;
+        }
+        .pnm-logo{
+            width: 195px;
+            height: 100px;
+            display: flex;
+            justify-content: start;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            object-fit: contain;
+            margin-right: 0 !important;
+            margin: 0 !important;
+        }
+        }

@@ -1,0 +1,61 @@
+<pnm-top-navbar></pnm-top-navbar>
+    <div class="loginbody" [ngStyle]="{'background-image': 'url(' + image + ')'}">
+    <div>
+        <mat-card class="login-card mat-elevation-z8 p-4 ">
+            <form [formGroup]="loginForm" novalidate (ngSubmit)="onSubmit()">
+                <mat-card-content>
+                    <div class="d-flex justify-content-center mb-3" (click)="gotodashboard()" >
+                        <img src="assets/logo/login-logo.png"  />
+                    </div>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-icon matPrefix>person</mat-icon> 
+                        <mat-label>{{'Username'|translate}}</mat-label>
+                        <input matInput type="text"  formControlName="username">
+                        <mat-error *ngIf="loginForm.controls['username'].hasError('required')">
+                            {{'Username is required'|translate}}
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-icon matPrefix>lock</mat-icon>
+                        <mat-label>{{'Password'|translate}}</mat-label>
+                        <input matInput [type]="fieldTextType=='text'? 'text':'password'"
+                            formControlName="password">
+                        <mat-icon *ngIf="fieldTextType=='password'" (click)="showpassword('off')"
+                            matSuffix>visibility_off</mat-icon>
+                        <mat-icon *ngIf="fieldTextType=='text'" (click)="showpassword('on')"
+                            matSuffix>visibility</mat-icon>
+                        <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
+                            {{'Password is required'|translate}}
+                        </mat-error>
+                    </mat-form-field>
+                    <div class="row justify-content-between align-items-center mx-1">
+                        <mat-checkbox class="ml-1">{{'Remember Me'|translate}}</mat-checkbox>
+                        <a mat-button (click)="ForgotPassword()">{{'Forgot Password?'|translate}}</a>
+                    </div> 
+                </mat-card-content>
+                <mat-card-actions class="px-2">
+                    <button mat-raised-button 
+                    [disabled]="!loginForm.valid"
+                     [ngClass]="loginForm.valid==true? 'b-blue' : 'g-blue'" 
+                       class="w-100">{{'Login'|translate}}</button>
+                </mat-card-actions>
+                <div class="row justify-content-center">
+                        <div class="col-12"> 
+                            <span class="font-med fs-14"> {{'Ready to get started ?'|translate}} </span>
+                            <a  style="cursor: pointer;color:blue"  class="cur-ptr fs-14" (click)="locationchange('false')">{{'Create an account !'|translate}}</a>
+                        </div><br>
+                        <div class="col-12 mt-2"> 
+                            <span class="font-med fs-14"> {{'Not decided yet ?'|translate}} </span>
+                            <a style="color: green;cursor: pointer;" class="cur-ptr fs-14" (click)="locationchange('true')">{{'Test for 15 days !'|translate}}</a>
+                        </div>                 
+                </div>
+            </form>
+        </mat-card>
+    </div>
+</div>
+<div class="overlay" *ngIf="spinnerloding">
+    <mat-progress-spinner class="spinner" [color]="color" [mode]="mode" [value]="value">
+    </mat-progress-spinner>
+</div>
+
+<pnm-navbar-footer></pnm-navbar-footer>

@@ -1,0 +1,587 @@
+<ng-container>
+    <div class="d-flex flex-row align-items-center modal-header">
+        <mat-icon mat-dialog-close>keyboard_backspace</mat-icon>
+        <h2 mat-dialog-title class="m-0 dialog-title text-center w-100">
+            <img style="margin-right: 12px;" src="../../../../../assets/images/iconsForsvg/nearby_white.svg">
+            <span *ngIf="screenType=='Create-subTask'||screenType=='addsubtask'"> {{"Add Sub Milestone"|translate}}</span>
+            <span *ngIf="screenType=='Create-Milestone'||screenType=='Create-task-initiatives'">{{"Create New Milestone"|translate}}</span>
+            <span *ngIf="screenType=='edit-task'||screenType=='edit-task-initiatives'||screenType=='edit-subtask-initiatives'">{{"Update Milestone"|translate}}</span>
+            <span *ngIf="screenType=='View-task-initiatives'||screenType=='View-subtask-initiatives'">{{"Milestone Details"|translate}}</span>
+            
+        </h2>
+        <mat-icon [matMenuTriggerFor]="menu">more_vert</mat-icon>
+        <mat-menu #menu="matMenu">
+            <button class="fw-600" (click)=" importdata()" mat-menu-item>
+                <mat-icon> import_export</mat-icon>{{"Import Data"|translate}}
+            </button>
+            <button class="fw-600" mat-menu-item (click)="downloadTemplate()">
+                <mat-icon>download</mat-icon> {{"Download Template"|translate}}
+            </button>
+        </mat-menu>
+    </div>
+
+    <mat-dialog-content class="mr-0 ml-0">
+        <form [formGroup]="form" >
+            <!-- Title  -->
+            <div class="row mt-2">
+                <mat-form-field class="w-100">
+                    <mat-label>{{"Title"|translate}}<span class="danger">* </span></mat-label>
+                    <input matInput type="text" id="Title" formControlName="Title">
+                    <mat-error *ngIf="form.controls['Title'].hasError('required')">
+                        {{"Title required"|translate}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <!-- Description  -->
+            <div class="row">
+                <mat-form-field class="w-100 mt-2 mb-2">
+                    <mat-label>{{"Description"|translate}}</mat-label><br>
+                    <textarea matInput formControlName="Description"></textarea>
+                    <mat-error *ngIf="form.controls['Description'].hasError('required')">
+                        {{"Description is required"|translate}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <!-- Start Date & End Date   -->
+            <div class="row firstAndLastName">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"End Date"|translate}}<span class="danger">* </span></mat-label>
+                        <input matInput [matDatepicker]="enddatepicker1" style="color: black;"
+                            formControlName="EndDate">
+                        <mat-datepicker-toggle matSuffix [for]="enddatepicker1"></mat-datepicker-toggle>
+                        <mat-datepicker #enddatepicker1></mat-datepicker>
+                    </mat-form-field>
+                </div>̉
+                <div class="col-12 col-sm-12  col-md-12 col-lg-6 col-xl-6">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"End Time"|translate}}<span class="danger">* </span></mat-label>
+                        <mat-select  formControlName="EndTime">
+                            <mat-option *ngFor="let time of timeList" [value]="time">
+                                {{ time }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div> 
+                 <!-- Public are Private  -->
+
+                    <div class="row">
+                        <div class="col-12 col-sm-12  col-md-12 col-lg-4 col-xl-4">
+                            <mat-list-item>
+                                <mat-checkbox [disabled]="publiccheckboxstatus" formControlName="IsPublic">
+                                    <img src="../../../../assets/images/iconsForsvg/Unlock.svg" style="position: relative;
+                                    top: -3px;">
+                                    {{"Public"|translate}}</mat-checkbox>
+                            </mat-list-item>
+                        </div>
+                        </div>
+                        <ng-container *ngIf="!getIsPublicstatus()">
+                            <div class="row">
+                                <mat-form-field [disabled]="publiccheckboxstatus" appearance="fill" class="w-100">
+                                    <mat-label>{{"Access for private users"|translate}} </mat-label>
+                                    <mat-select [disabled]="publiccheckboxstatus" multiple (openedChange)="filterOptions('','users')" #select formControlName="PermittedUserIds">
+                                        <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'users')"
+                                            placeholder="Filter" />
+                                        <mat-option *ngFor="let user of filteredusers" [value]="user.id">
+                                            <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                                [src]="user?.profilePicture ? user.profilePicture:'assets/avatar.svg'"
+                                                onError="this.src='assets/avatar.svg'">
+                                            {{ user.firstName| titlecase}} {{user.lastName|titlecase}}
+                                        </mat-option>
+                                    </mat-select> 
+                                </mat-form-field>
+                            </div>
+                        </ng-container>
+                 
+            <div class="row mt-2 mb-2 twodropdowns">
+                <div class="col-6">
+                    <mat-checkbox formControlName="IsPredecessortask" class="example-margin">
+                        <img  src="../../../../../assets/images/iconsForsvg/left-arrow.svg">
+                        {{'Predecessor'|translate}}</mat-checkbox>
+                             <ng-container *ngIf="getPredecessorstatus()">
+                                <div class="row mt-2">
+                                    <mat-form-field appearance="fill" class="w-100">
+                                        <mat-label>{{"Select Predecessor"|translate}} </mat-label>
+                                        <mat-select multiple #select formControlName="ListofPredecessor" >
+                                            <input style="padding: 15px;" matInput (keyup)="filterOptionsforPredecessor($event.target.value)" placeholder="Filter" />
+                                            <mat-option *ngFor="let Predecessor of listofisPredecessor" [value]="Predecessor.taskId" (click)="filterPredecessor()">
+                                                <span *ngIf="Predecessor.isMileStone">
+                                                    <img style="padding: 0px 17px 0px 0px;"   src="../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.png">
+                                                </span>
+                                                <span *ngIf="!Predecessor.isMileStone">
+                                                    <img style="padding: 0px 17px 0px 0px;"   src="../../../../../assets/images/iconsForsvg/image_2024_06_21T05_22_42_752Z.png">
+                                                </span>
+                                                {{ Predecessor.title| titlecase}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                             </ng-container>
+                </div>
+                <div class="col-6">
+                    <mat-checkbox formControlName="IsSuccessortask" class="example-margin">
+                        <img  src="../../../../../assets/images/iconsForsvg/right-arrow.svg">
+                        {{'Successor'|translate}}
+                    </mat-checkbox>
+                    <ng-container *ngIf="getSuccessorstatus()">
+                        <div class="row mt-2">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"Select Successor"|translate}} </mat-label>
+                                <mat-select multiple #select formControlName="ListofSuccessor" >
+                                    <input style="padding: 15px;" matInput (keyup)="filterOptionsforSuccessor($event.target.value)" placeholder="Filter" />
+                                    <mat-option *ngFor="let Successor of listofisSuccessor" [value]="Successor.taskId" (click)="filterSuccessor()">
+                                        <span *ngIf="Successor.isMileStone">
+                                            <img style="padding: 0px 17px 0px 0px;"   src="../../../../../assets/images/iconsForsvg/nearby_FILL0_wght400_GRAD0_opsz24.png">
+                                        </span>
+                                        <span *ngIf="!Successor.isMileStone">
+                                            <img style="padding: 0px 17px 0px 0px;"   src="../../../../../assets/images/iconsForsvg/image_2024_06_21T05_22_42_752Z.png">
+                                        </span>
+                                        {{ Successor.title| titlecase}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                     </ng-container>
+                </div>
+              </div> 
+
+              <ng-container *ngIf="screenType=='Create-Milestone'||screenType=='edit-task'||screenType=='Create-subTask'">
+                <div class="row mt-2">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"Select Initiative"|translate}} </mat-label>
+                        <mat-select multiple #select formControlName="initiatives" >
+                            <input style="padding: 15px;" matInput (keyup)="filterOptionsforinitiatives($event.target.value)" placeholder="Filter" />
+                            <mat-option *ngFor="let initiatives of listofinitiatives" [value]="initiatives.id">
+                                {{ initiatives.title| titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+              </ng-container>
+
+            <!-- Sites  -->
+            <div class="row p-0">
+                <div class="col-12 p-0">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"Site"|translate}} </mat-label>
+                        <mat-select (openedChange)="filterOptions('','Sites')" #select formControlName="SiteId"
+                            (selectionChange)="updateAddress($event)">
+                            <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'Sites')"
+                                placeholder="Filter" />
+                            <mat-option *ngFor="let site of filteredsites" [value]="site.id">
+                                <span>
+                                    <img src="../../../../../assets/images/iconsForsvg/Site_Icon.svg">
+                                </span>
+                                {{site.companyName|titlecase}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div> 
+            </div>
+
+
+            <!-- ------------  --> 
+            <!-- --------------  -->
+            <!-- Address  -->
+            <div class="row p-0">
+                <mat-form-field class="w-100">
+                    <mat-label>{{"Address"|translate}}</mat-label>
+                    <input ngx-google-places-autocomplete [options]='options' #placesRef="ngx-places"
+                        (onAddressChange)="handleAddressChange($event)" matInput type="text" formControlName="Address">
+                </mat-form-field>
+            </div>
+            <!-- City Country Zipcode  -->
+            <div class="row mt-2 countryCityZipCode">
+                <div class=" col-4 col-md-4 col-sm-12">
+                    <mat-form-field class="w-100 p-0">
+                        <mat-label>{{"City"|translate}}</mat-label>
+                        <input matInput type="text" formControlName="City">
+                    </mat-form-field>
+                </div>
+                <div class="col-4 col-md-4 col-sm-12">
+                    <mat-form-field class="w-100">
+                        <mat-label>{{"Country"|translate}}</mat-label>
+                        <mat-select formControlName="SelactCountry">
+                            <div class="mat-filter-field">
+                                <input class="mat-filter-input-search" matInput
+                                    (input)="filterCountry($event.target.value)">
+                            </div>
+                            <div>
+                                <mat-option [value]="country.name" (click)="selactcountry(country.code)"
+                                    *ngFor="let country of listofcountry$">
+                                    {{country.name|titlecase}}
+                                </mat-option>
+                            </div>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-4 col-md-4 col-sm-12">
+                    <mat-form-field class="w-100 p-0">
+                        <mat-label>{{"Zipcode"|translate}}</mat-label>
+                        <input matInput type="text" formControlName="ZipCode">
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- -----------  -->
+            <!-- Users  -->
+            <div class="row justify-content-end">
+                <div class="col-12 p-0 m-0">
+                    <mat-tab-group class="w-100">
+                        <mat-tab label="Users">
+                            <mat-form-field  appearance="fill" class="w-100">
+                                <mat-label>{{"Users"|translate}} </mat-label>
+                                <mat-select  multiple (openedChange)="filterOptions('','users')" #select formControlName="UserId">
+                                    <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'users')"
+                                        placeholder="Filter" />
+                                    <mat-option *ngFor="let user of filteredusers" [value]="user.id">
+                                        <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                            [src]="user?.profilePicture ? user.profilePicture:'assets/avatar.svg'"
+                                            onError="this.src='assets/avatar.svg'">
+                                        {{ user.firstName| titlecase}} {{user.lastName|titlecase}}
+                                    </mat-option>
+                                </mat-select> 
+                            </mat-form-field>
+                        </mat-tab>
+                        <mat-tab label="Add group member into user">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>Groups</mat-label>
+                                <mat-select multiple>
+                                    <mat-select-filter
+                                        [placeholder]="'Filter'"
+                                        [displayMember]="'groupName'"
+                                        [array]="userGroups$"
+                                        (filteredReturn)="filteredList4 =$event"></mat-select-filter>
+                                    <mat-option [value]="userGroup.id"
+                                        *ngFor="let userGroup of filteredList4"
+                                        (click)="GroupToSingleconvert(userGroup)">
+                                        <span
+                                            *ngIf="userGroup.dynamicGroupId ==null">
+                                            <img style="border-radius: 50%;" width="30" height="30"
+                                             src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                                        </span>
+                                        <span
+                                            *ngIf="userGroup.dynamicGroupId !=null">
+                                            <img style="border-radius: 50%;" width="30" height="30" 
+                                            src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                                        </span>
+                                        {{userGroup.groupName|titlecase}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </mat-tab>
+                    </mat-tab-group>
+                </div>
+            </div>
+
+
+ 
+
+            <!-- User Group  --> 
+            <div class="row">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{"User Group"|translate}}</mat-label>
+                    <mat-select multiple (openedChange)="filterOptions('','UserGroups')" #select
+                        formControlName="UserGroupsId">
+                        <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'UserGroups')"
+                            placeholder="Filter" />
+                        <mat-option [value]="userGroup.id" *ngFor="let userGroup of filteredusersgroup">
+                            <span *ngIf="userGroup.dynamicGroupId ==null">
+                                <img style="border-radius: 50%;" width="30" height="30"
+                                    src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                            </span>
+                            <span *ngIf="userGroup.dynamicGroupId !=null">
+                                <img style="border-radius: 50%;" width="30" height="30"
+                                    src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                            </span>
+                            {{userGroup.groupName|titlecase}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+            </div>
+            <!-- Contact  -->
+            <div class="row">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{'Contact'|translate}} </mat-label>
+                    <mat-select multiple (openedChange)="filterOptions('','Contacts')" #select
+                        formControlName="ContactId">
+                        <input style="padding: 15px;" matInput (keyup)="filterOptions($event.target.value,'Contacts')"
+                            placeholder="Filter" />
+                        <mat-option *ngFor="let contact of filteredcontacts" [value]="contact.id"
+                            (click)="getDiscountValue(contact,'Contacts')">
+                            <img style="border-radius: 50%; margin-right: 6px;" width="30" height="30"
+                                [src]="contact?.profilePicture ? contact.profilePicture:'assets/avatar.svg'"
+                                onError="this.src='assets/avatar.svg'">
+                            {{ contact.firstName|titlecase }} {{contact.lastName|titlecase}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <!-- Contact Group  -->
+            <div class="row">
+                <mat-form-field appearance="fill" class="w-100">
+                    <mat-label>{{"Contact Group"|translate}}</mat-label> 
+                    <mat-select multiple (openedChange)="filterOptions('','ContactGroups')" #select
+                        formControlName="ContactGroupsId">
+                        <input style="padding: 15px;" matInput
+                            (keyup)="filterOptions($event.target.value,'ContactGroups')" placeholder="Filter" />
+                        <mat-option [value]="contactGroup.id" *ngFor="let contactGroup of filteredcontactsgroup">
+                            <span *ngIf="contactGroup.dynamicGroupId ==null">
+                                <img style="border-radius: 50%;" width="30" height="30"
+                                    src="../../../../../assets/images/iconsForsvg/groupiconRed.svg">
+                            </span>
+                            <span *ngIf="contactGroup.dynamicGroupId !=null">
+                                <img style="border-radius: 50%;" width="30" height="30"
+                                    src="../../../../../assets/images/iconsForsvg/groupiconblue.svg">
+                            </span>
+                            {{contactGroup.groupName|titlecase}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="row p-0">
+                <div class="col-11 p-0">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"Category"|translate}} <span class="danger">* </span></mat-label>
+                        <mat-select id="CategoryId" formControlName="CategoryId">
+                            <mat-option (click)="removecategory()">Select Category</mat-option>
+                            <mat-option (click)="updatecategory(category)" [value]="category.id"
+                                *ngFor="let category of categories ">{{category.categoryName|titlecase}}
+                            </mat-option>
+                            <mat-option value="OffTime">{{"Off Time"|translate}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-1 pointer">
+                    <mat-icon *ngIf="showcreate == 0 && totalitems < 4" (click)="createcategory()"
+                        matTooltip="create category" class="danger">
+                        add</mat-icon>
+                    <mat-icon *ngIf="showcreate == 1 && totalitems < 4" (click)="closecategory()" matTooltip="close"
+                        class="danger">close
+                    </mat-icon>
+                </div>
+            </div>
+
+            <div class="row" *ngIf="totalitems < 4 && category">
+                <mat-label *ngIf="totalitems < 4 && category">{{"Create Category"|translate}}</mat-label>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"Category name"|translate}} <span class="danger">* </span></mat-label>
+                        <input matInput formControlName="categoryname">
+                    </mat-form-field>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-6">
+                    <mat-label>{{"Category Color"|translate}} <span class="danger">* </span></mat-label>
+                    <input [style.background]="color1" [(colorPicker)]="color1"
+                        (colorPickerOpen)="onEventLog('colorPickerOpen', $event)"
+                        (colorPickerClose)="onEventLog('colorPickerClose', $event)" />
+                </div>
+            </div>
+
+            <div class="row firstAndLastName p-0">
+                <div class="col-12 col-sm-12  col-md-12 col-lg-12 col-xl-12 p-0">
+                    <mat-form-field appearance="fill" class="w-100">
+                        <mat-label>{{"Critic Level"|translate}}</mat-label>
+                        <mat-select formControlName="CriticityId">
+                            <mat-option [value]="criticity.criticityId" *ngFor="let criticity of CriticityId$ | async">
+                                {{criticity.criticityName|translate}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+
+            <section *ngIf="showFilterDay == true">
+                <ng-container *ngFor="let trd of trade">
+                    <label class="btn btn-filter">
+                        <mat-checkbox class="example-margin" (change)="changeTradesByCategory($event,trd.id)"
+                            [checked]="trd.selected">{{ trd.label }}</mat-checkbox>
+                    </label>&nbsp;
+                </ng-container>
+            </section>
+
+            <!-- Keywords  -->
+            <div class="row">
+                <mat-form-field class="example-chip-list" style="width: 100% !important;">
+                    <mat-label>{{"keyword"|translate}}</mat-label><br>
+                    <mat-chip-list #chipGridforkeyword aria-label="Fruit selection" class="keywordlist">
+                        <mat-chip-row class="keywordrow" *ngFor="let keyword of keywordlist">
+                            <button class="keywordbutton">
+                                <span class="keywordpostion">{{keyword|titlecase}}</span>
+                                <mat-icon class="keywordcancelicon" (click)="remove(keyword)">cancel</mat-icon>
+                            </button>
+                        </mat-chip-row>
+                    </mat-chip-list>
+                    <input [matChipInputFor]="chipGridforkeyword" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        (matChipInputTokenEnd)="add($event)" />
+                </mat-form-field>
+            </div>
+            <!-- Do you want to add steps   -->
+            <div class="row mt-2 mb-2">
+                <mat-checkbox formControlName="HasStep" class="example-margin">Do you want to add steps .. ?</mat-checkbox>
+            </div>
+            <ng-container *ngIf="getaddstepsstatus()" >
+                <div class="row mt-2">
+                    <mat-radio-group   (change)="onRadioChange($event)" aria-label="Select an option"
+                        formControlName="PipeLinetype">
+                        <mat-radio-button value="1">New PipeLine</mat-radio-button>
+                        <mat-radio-button value="2">Existing PipeLine</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div class="row mt-2">
+                    <ng-container *ngIf="getPipeLinetype()==='1'">
+                        <div class="row">
+                            <mat-form-field class="w-100">
+                                <mat-label>{{"New Pipeline Name"|translate}}</mat-label>
+                                <input matInput type="text" placeholder="Pipelinename" formControlName="Pipelinename">
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                </div>
+                <div class="row mt-2">
+                    <ng-container *ngIf="getPipeLinetype()==='2'">
+                        <div class="row">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{"Select Existing Pipeline"|translate}} *</mat-label>
+                                <mat-select #select formControlName="pipelineID" (selectionChange)="onSelectionChange($event)">
+                                    <input style="padding: 15px;" matInput (keyup)="filterOptionsforExistingPipeline($event.target.value)" placeholder="Filter" />
+                                    <mat-option *ngFor="let Pipeline of listofPipelines" [value]="Pipeline.id">
+                                        {{ Pipeline.name| titlecase}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                </div>
+                    <ng-container *ngIf="getpipelinestatus()">
+                        <div class="row p-2 justify-content-around w-100"
+                        style="color: white; background-color:#fb4444; font-weight: 600;border-radius: 3px;">
+                        <div class="col-10">
+                            <p style="margin: 0 !important;">Add Steps</p>
+                        </div>
+                        <div class="col-2">
+                            <mat-icon style="color: white;" (click)="AddSteps()">add</mat-icon>
+                        </div>
+                    </div>
+                        <div formArrayName="AddSteps" class="row  w-100 mt-2">
+                            <div class="row FivecolWithTwocol w-100" *ngFor="let x of getSteps().controls; let j=index" [formGroupName]="j">
+                                <div class="row">
+                                    <div class="col-5">
+                                        <mat-form-field class="w-100">
+                                            <mat-label>{{"Step Name"|translate}}<span class="danger"></span></mat-label>
+                                            <input matInput type="text" id="Step Name" formControlName="name">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col-5">
+                                        <mat-slider style="margin-top:10px !important;" class="w-100"
+                                        formControlName="Progress"
+                                        [min]="0"
+                                        [max]="99"
+                                        [step]="1"
+                                        thumbLabel
+                                        tickInterval="10"
+                                      ></mat-slider>
+                                      <p style="position: relative;top: -10px;margin: 0 !important;font-weight: 900;">
+                                        <span class="fw-600 color_grey ">Progress value :</span> {{ getpercentage(j) }}</p>
+                                    </div>
+                                    <div class="col-2">
+                                        <mat-icon class="maticonpostion" (click)="RemoveStep(j)">delete</mat-icon>
+                                    </div>
+                                   </div>
+                            </div>
+                        </div>
+                    </ng-container>
+            </ng-container>
+        <!-- show tags  -->
+        <div class="row" formArrayName="Addtages">
+            <div class="row"
+                *ngFor="let conditionsBodyGroup of gettageBody().controls; let l=index"
+                [formGroupName]="l">
+                <div class="row">
+                    <!-- Bool  -->
+                    <ng-container *ngIf="fieldType(l)=='Bool'">
+                        <div class="col-10">
+                            <mat-checkbox formControlName="fieldValue"
+                                class="w-100">
+                                {{fieldname(l)}}
+                            </mat-checkbox>
+                        </div>
+                    </ng-container>
+                    <!-- Text  -->
+                    <ng-container *ngIf="fieldType(l)=='Text'">
+                        <div class="col-10">
+                            <mat-form-field class="w-100">
+                                <mat-label>{{fieldname(l)}}</mat-label>
+                                <input matInput type="text" placeholder="value"
+                                    formControlName="fieldValue">
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                    <!-- Number  -->
+                    <ng-container *ngIf="fieldType(l)=='Number'">
+                        <div class="col-10">
+                            <mat-form-field class="w-100">
+                                <mat-label>{{fieldname(l)}}</mat-label>
+                                <input matInput type="Number"
+                                    placeholder="value"
+                                    formControlName="fieldValue">
+                            </mat-form-field>
+                        </div>
+                    </ng-container> 
+                    <!-- Dropdown -->
+                    <ng-container *ngIf="fieldType(l)=='Dropdown'">
+                        <div class="col-10">
+                            <mat-form-field appearance="fill" class="w-100">
+                                <mat-label>{{fieldname(l)}}</mat-label>
+                                <mat-select placeholder="value"
+                                    formControlName="dropdownValues">
+                                    <mat-option [value]="x"
+                                        *ngFor="let x of dropdownvaluetotal(l)">
+                                        {{x|titlecase}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                        <div class="col-2">
+                            <mat-icon class="pointer"
+                                (click)="deletetagDialog(l)">delete</mat-icon>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <mat-list>
+            <div class="d-flex justify-content-between">
+                <h4 class="m-0" style="color: grey;"><b>{{"Add Another Feild"|translate}}</b></h4>
+                <mat-chip-list>
+                    <mat-chip (click)="showdropdown()">{{"Add"|translate}}</mat-chip>
+                </mat-chip-list>
+            </div>
+        </mat-list>
+
+
+
+            
+           
+            <!-- -----------  -->
+        </form>
+        <mat-dialog-actions align="end" class="mb-24">
+            <div class="row mt-2 mb-4 justify-content-center" *ngIf="screenType !='View-task-initiatives'||screenType !='View-subtask-initiatives'">
+                <div class="col-4">
+                    <button mat-raised-button mat-dialog-close class="W-blue">{{"Cancel"|translate}}</button>
+                </div>
+                <div class="col-4" *ngIf="screenType=='Create-Milestone' || screenType=='Create-subTask'||screenType=='Create-task-initiatives'||screenType=='addsubtask'">
+                    <button mat-raised-button class="b-blue" [disabled]="!form.valid" (click)="ApplyEvent()">{{"Apply"|translate}}</button>
+                </div>
+                <div class="col-4" *ngIf="screenType =='edit-task'||screenType =='edit-task-initiatives'||screenType =='edit-subtask-initiatives'">
+                    <button mat-raised-button class="b-blue" [disabled]="!form.valid" (click)="ApplyEvent()">{{"Update"|translate}}</button>
+                </div>
+            </div>
+        </mat-dialog-actions>
+    </mat-dialog-content>
+
+</ng-container>  
