@@ -265,7 +265,7 @@
                 </div>
                 <div class="col-9">
                     <mat-form-field class="w-100">
-                        <input matInput type="datetime-local" [min]="minDate" formControlName="dateTime"/>
+                        <input matInput type="datetime-local" min="minDate" formControlName="dateTime"/>
                     </mat-form-field>
                 </div>
             </div>
@@ -389,7 +389,7 @@
                                     </mat-form-field>
                                 </ng-container>
                                 <!-- Products  -->
-                                <ng-container *ngIf="getentityvalue1(i)=='Products'">
+                                <ng-container *ngIf="getentityvalue1()=='Products'">
                                     <mat-form-field class="w-100">
                                         <mat-label>{{'Parameter'|translate}}</mat-label>
                                         <mat-select formControlName="condition">
@@ -401,7 +401,7 @@
                                     </mat-form-field>
                                 </ng-container>
                                 <!-- Sites  -->
-                                <ng-container *ngIf="getentityvalue1(i)=='Sites'">
+                                <ng-container *ngIf="getentityvalue1()=='Sites'">
                                     <mat-form-field class="w-100">
                                         <mat-label>{{'Parameter'|translate}}</mat-label>
                                         <mat-select formControlName="condition">
@@ -413,7 +413,7 @@
                                     </mat-form-field>
                                 </ng-container>
                                 <!-- TransationValue  -->
-                                <ng-container *ngIf="getentityvalue1(i)=='Transactions'">
+                                <ng-container *ngIf="getentityvalue1()=='Transactions'">
                                     <mat-form-field class="w-100">
                                         <mat-label>{{'Parameter'|translate}}</mat-label>
                                         <mat-select formControlName="condition">
@@ -425,7 +425,7 @@
                                     </mat-form-field>
                                 </ng-container>
                                 <!-- EventsValue  -->
-                                <ng-container *ngIf="getentityvalue1(i)=='Events'">
+                                <ng-container *ngIf="getentityvalue1()=='Events'">
                                     <mat-form-field class="w-100">
                                         <mat-label>{{'Parameter'|translate}}</mat-label>
                                         <mat-select formControlName="condition">

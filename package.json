@@ -13,7 +13,7 @@
   "dependencies": {
     "@agm/core": "^1.0.0",
     "@agm/js-marker-clusterer": "^1.1.0",
-    "@angular-material-extensions/google-maps-autocomplete": "^9.0.3",
+    "@angular-material-extensions/google-maps-autocomplete": "^6.2.2",
     "@angular/animations": "~11.0.9",
     "@angular/cdk": "^11.2.13",
     "@angular/common": "~11.0.0",

@@ -208,7 +208,7 @@ export class ViewdetailsComponent implements OnInit, PipeTransform {
     }
 
       // findnotesLinked
-  findnotesLinked(count:any) {
+  findnotesLinked(count:any,type:any) {
     if (count > 0) {
       this.manageUsersService.getnotesfororder(this.orderId.id, 'Orders',false).subscribe((res) => {
         this.getnotes = res;

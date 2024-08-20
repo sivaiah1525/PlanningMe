@@ -3,12 +3,12 @@ import { environment } from 'src/environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import jsPDF, { CellConfig } from 'jspdf';
-import * as pdfMake from 'pdfmake/build/pdfmake';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+// import * as pdfMake from 'pdfmake/build/pdfmake';
+// import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { ManageContactsService } from './manage-contacts.service';
 import { DatePipe } from '@angular/common';
 import { DriveService } from './drive.service';
-(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+// (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
 
 const baseUrl = environment.baseUrl;
@@ -48,8 +48,8 @@ export class StrategyService {
 
   async loadPdfMaker() {
     if (!this.pdfMake) {
-      const pdfMakeModule = await import('pdfmake/build/pdfmake');
-      const pdfFontsModule = await import('pdfmake/build/vfs_fonts');
+      // const pdfMakeModule = await import('pdfmake/build/pdfmake');
+      // const pdfFontsModule = await import('pdfmake/build/vfs_fonts');
       // this.pdfMake = pdfMakeModule.default;
       // this.pdfMake.vfs = pdfFontsModule.default.pdfMake.vfs;
     }

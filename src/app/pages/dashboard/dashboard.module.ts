@@ -111,7 +111,8 @@ const routes: Routes = [
     ManageProductsService,
     ManageTransactionsService,
     GooglePlaceDirective,
-    TranslateService
+    TranslateService,
+    ManageUsersService
   ],
 })
 export class DashboardModule { }
